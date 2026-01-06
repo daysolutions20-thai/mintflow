@@ -572,3 +572,36 @@ body { overflow: hidden !important; }
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
 }
+/* ===== MintFlow FINAL: top spacing same as Filters (mock) ===== */
+
+/* Layout base */
+html, body { height: 100%; }
+body { overflow: hidden; }
+
+.app{
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  gap: 16px;          /* <<< ช่องไฟแบบเดียวกับ Filters (mock) */
+}
+
+/* Topbar */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Content scroll */
+.content{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
