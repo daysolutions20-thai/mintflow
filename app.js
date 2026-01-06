@@ -1,4 +1,3 @@
-
 /**
  * Quotation Request Prototype (static HTML)
  * - No backend. Uses localStorage as a fake database.
@@ -42,6 +41,7 @@ function nanoid(len=16){
 
 function toast(msg){
   const el = $("#toast");
+  if(!el) return;
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(window.__toast_t);
@@ -126,7 +126,8 @@ function isAdmin(){
 }
 function setAdminMode(flag){
   localStorage.setItem(LS_ADMIN, flag ? "1" : "0");
-  $("#roleLabel").textContent = flag ? "Admin" : "Requester";
+  const rl = $("#roleLabel");
+  if(rl) rl.textContent = flag ? "Admin" : "Requester";
   toast(flag ? "เข้าสู่โหมดแอดมินแล้ว" : "กลับเป็นโหมดพนักงานแล้ว");
   renderRoute();
 }
@@ -139,21 +140,38 @@ function route(){
 }
 
 function setPageTitle(title, sub){
-  $("#pageTitle").textContent = title;
-  $("#pageSub").textContent = sub || "";
+  const t = $("#pageTitle");
+  const s = $("#pageSub");
+  if(t) t.textContent = title;
+  if(s) s.textContent = sub || "";
 }
 
 function renderRoute(){
   const { r, param } = route();
+
+  // highlight sidebar nav items (if present)
   $$(".nav-item").forEach(a => a.classList.toggle("active", a.dataset.route === r));
+
   const view = $("#view");
+  if(!view) return;
+
   if(r === "home") renderHome(view);
+
+  // QR
   else if(r === "request-qr") renderCreateQR(view);
   else if(r === "summary-qr") renderSummaryQR(view);
+
+  // PR
   else if(r === "request-pr") renderCreatePR(view);
   else if(r === "summary-pr") renderSummaryPR(view);
-  else if(r === "detail") renderDetail(view, param);
+
+  // Detail / Help
+  else if(r === "detail") renderDetail(view, decodeURIComponent(param || ""));
   else if(r === "help") renderHelp(view);
+
+  // ✅ support legacy route used by some buttons
+  else if(r === "create") renderCreateQR(view);
+
   else renderHome(view);
 }
 
@@ -279,24 +297,10 @@ function badge(status){
   return `<span class="badge ${cls}">${label}</span>`;
 }
 
-function rowToTr(r){
-  return `
-    <tr>
-      <td class="mono">${r.docDate}</td>
-      <td class="mono"><a href="#/detail/${encodeURIComponent(r.docNo)}">${r.docNo}</a></td>
-      <td>${escapeHtml(r.project || "")}</td>
-      <td>${escapeHtml(r.requester)}<div class="subtext">${escapeHtml(r.phone)}</div></td>
-      <td>${badge(r.status)}</td>
-      <td class="mono">${(r.updatedAt||"").slice(0,10)}</td>
-      <td><button class="kebab" data-kebab="${r.docNo}" title="Actions">⋯</button></td>
-    </tr>
-  `;
-}
-
 function renderSummaryQR(el){
   setPageTitle("Summary", "ค้นหาได้ทุกมิติ: QR / ชื่อคน / เบอร์ / ชื่อสินค้า / model / code");
   const db = loadDB();
-  const q = ($("#globalSearch").value || "").trim().toLowerCase();
+  const q = ($("#globalSearch")?.value || "").trim().toLowerCase();
   const rows = filterRequests(db.qr||[], q);
 
   el.innerHTML = `
@@ -362,22 +366,23 @@ function renderSummaryQR(el){
     </div>
   `;
 
-  $("#btnCreate2").onclick = ()=> location.hash = "#/create";
+  // ✅ fixed route
+  $("#btnCreate2").onclick = ()=> location.hash = "#/request-qr";
+
   $("#btnReset").onclick = ()=>{
     localStorage.removeItem(LS_KEY);
     toast("รีเซ็ตข้อมูลเดโมแล้ว");
     renderRoute();
   };
 
-  // open buttons
   $$("[data-open]").forEach(b=>{
     b.onclick = ()=> location.hash = `#/detail/${encodeURIComponent(b.dataset.open)}`;
   });
 
-  // filters (mock): set search to status
   $$("[data-filter]").forEach(b=>{
     b.onclick = ()=>{
-      $("#globalSearch").value = b.dataset.filter;
+      const gs = $("#globalSearch");
+      if(gs) gs.value = b.dataset.filter;
       toast("กรองแบบเดโมด้วยคำค้น: " + b.dataset.filter);
       renderRoute();
     };
@@ -548,7 +553,6 @@ function renderCreateQR(el){
   $("#btnAddItem").onclick = addItem;
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
-  // start with 1 item
   addItem();
 
   $("#frmCreate").onsubmit = (e)=>{
@@ -581,14 +585,10 @@ function renderCreateQR(el){
       if(!name || !(qty > 0) || !unit){
         throw new Error(`รายการที่ ${idx+1} ต้องมี Name, QTY>0 และ Unit`);
       }
-      if(!photos.length){
-        // in real system: enforce at least 1 photo; for demo: allow but warn
-      }
       return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
     });
 
     try{
-      // validate items (throws)
       items.forEach((it, i)=>{
         if(!it.name || !(it.qty>0) || !it.unit) throw new Error(`รายการที่ ${i+1} ไม่ครบ`);
       });
@@ -603,6 +603,7 @@ function renderCreateQR(el){
     db.qr = db.qr || [];
 
     const reqObj = {
+      kind: "QR",
       id: nanoid(12),
       docNo,
       docDate,
@@ -638,7 +639,6 @@ function renderCreateQR(el){
   };
 }
 
-
 function renderCreatePR(el){
   setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
@@ -664,7 +664,7 @@ function renderCreatePR(el){
                 <option value="Work order">Work order</option>
               </select>
             </div>
-          
+
             <div class="field">
               <label>For job</label>
               <select class="input" name="forJob" required>
@@ -675,7 +675,6 @@ function renderCreatePR(el){
                 <option value="Other">Other</option>
               </select>
             </div>
-
           </div>
 
           <div class="row">
@@ -933,7 +932,7 @@ function renderCreatePR(el){
 function renderSummaryPR(el){
   setPageTitle("Summary PR", "ค้นหาได้ทุกมิติ: PR / ชื่อคน / เบอร์ / รายการ / code / detail");
   const db = loadDB();
-  const q = ($("#globalSearch").value || "").trim().toLowerCase();
+  const q = ($("#globalSearch")?.value || "").trim().toLowerCase();
   const rows = filterPR(db.pr||[], q);
 
   el.innerHTML = `
@@ -1022,12 +1021,21 @@ function filterPR(reqs, q){
 
 function renderDetail(el, docNo){
   const db = loadDB();
-  const req = db.qr.find(r => r.docNo === docNo);
+
+  // ✅ find in qr or pr
+  let req = (db.qr || []).find(r => r.docNo === docNo);
+  let isPR = false;
+  if(!req){
+    req = (db.pr || []).find(r => r.docNo === docNo);
+    isPR = true;
+  }
+
   if(!req){
     el.innerHTML = `<div class="card">ไม่พบเอกสาร ${escapeHtml(docNo)}</div>`;
     return;
   }
-  setPageTitle(req.docNo, "ทุกอย่างผูกกับ QR ใบนี้ (Quotation / PO / Shipping)");
+
+  setPageTitle(req.docNo, isPR ? "รายละเอียด PR" : "ทุกอย่างผูกกับ QR ใบนี้ (Quotation / PO / Shipping)");
 
   const admin = isAdmin();
   const tabState = window.__tab || (isPR ? "pr" : "qr");
@@ -1038,7 +1046,7 @@ function renderDetail(el, docNo){
         <div>
           <h2 style="margin:0">${req.docNo}</h2>
           <div class="subtext">Doc date: <span class="mono">${req.docDate}</span> • Requester: <b>${escapeHtml(req.requester)}</b> (${escapeHtml(req.phone)})</div>
-          <div class="subtext">Project: ${escapeHtml(req.project||"-")}</div>
+          ${!isPR ? `<div class="subtext">Project: ${escapeHtml(req.project||"-")}</div>` : `<div class="subtext">Subject: ${escapeHtml(req.subject||"-")}</div>`}
         </div>
         <div class="row tight">
           ${badge(req.status)}
@@ -1076,7 +1084,7 @@ function renderDetail(el, docNo){
 
     <div class="card" style="margin-top:12px">
       <div class="section-title">
-        <h2 style="margin:0; font-size: 16px">Search within this QR</h2>
+        <h2 style="margin:0; font-size: 16px">Search within this ${isPR ? "PR" : "QR"}</h2>
         <div class="subtext">ค้นในรายการสินค้า / รายละเอียด / ชื่อไฟล์แนบ</div>
       </div>
       <div class="row">
@@ -1087,7 +1095,6 @@ function renderDetail(el, docNo){
     </div>
   `;
 
-  // Tabs
   $$("[data-tab]").forEach(b=>{
     b.onclick = ()=>{
       window.__tab = b.dataset.tab;
@@ -1097,7 +1104,7 @@ function renderDetail(el, docNo){
 
   const tc = $("#tabContent");
 
-  if(tabState === "qr"){
+  if(!isPR && tabState === "qr"){
     tc.innerHTML = `
       <div class="grid cols-2">
         <div>
@@ -1151,7 +1158,6 @@ function renderDetail(el, docNo){
     `;
   }
 
-  
   if(isPR && tabState === "pr"){
     const fmt = (n)=> Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
     const grand = (req.items||[]).reduce((s,it)=> s + Number(it.total || (Number(it.qty||0)*Number(it.price||0))), 0);
@@ -1227,20 +1233,20 @@ function renderDetail(el, docNo){
     `;
   }
 
-if(tabState === "quote"){
-    tc.innerHTML = renderFileTab("Quotation", req.files.quotation, admin, "quotation");
+  if(!isPR && tabState === "quote"){
+    tc.innerHTML = renderFileTab("Quotation", req.files?.quotation, admin, "quotation");
   }
-  if(tabState === "po"){
-    tc.innerHTML = renderFileTab("Purchase Orders", req.files.po, admin, "po");
+  if(!isPR && tabState === "po"){
+    tc.innerHTML = renderFileTab("Purchase Orders", req.files?.po, admin, "po");
   }
-  if(tabState === "ship"){
+  if(!isPR && tabState === "ship"){
     tc.innerHTML = renderShipTab(req, admin);
   }
   if(tabState === "act"){
     tc.innerHTML = `
       <div class="subtext">Audit log (เดโม)</div>
       <div class="hr"></div>
-      ${req.activity.map(a=>`
+      ${(req.activity||[]).map(a=>`
         <div class="file">
           <div class="meta">
             <div class="name">${escapeHtml(a.action)}</div>
@@ -1253,7 +1259,7 @@ if(tabState === "quote"){
     `;
   }
 
-  // Admin actions (mock modals)
+  // Admin actions
   if(admin){
     if(isPR){
       $("#btnAddReceipt").onclick = ()=> openUploadModal(req, "receipts");
@@ -1267,6 +1273,7 @@ if(tabState === "quote"){
       const reason = prompt("เหตุผลขอแก้ไข (สั้นๆ):") || "";
       if(!reason.trim()) return;
       req.status = "EditRequested";
+      req.activity = req.activity || [];
       req.activity.unshift({ at: nowISO(), actor: `${req.requester} (${req.phone})`, action:"REQUEST_EDIT", detail: reason });
       req.updatedAt = nowISO();
       saveBack(req);
@@ -1275,7 +1282,6 @@ if(tabState === "quote"){
     };
   }
 
-  // Case search
   $("#btnCaseSearch").onclick = ()=>{
     const q = ($("#caseSearch").value||"").trim().toLowerCase();
     const res = caseSearch(req, q);
@@ -1324,7 +1330,7 @@ function renderShipTab(req, admin){
       </div>
       <div class="card" style="box-shadow:none">
         <h3>Shipping Documents</h3>
-        ${(req.files.shipping||[]).length ? (req.files.shipping||[]).map(f=>`
+        ${(req.files?.shipping||[]).length ? (req.files.shipping||[]).map(f=>`
           <div class="file">
             <div class="meta">
               <div class="name">${escapeHtml(f.name)}</div>
@@ -1341,18 +1347,29 @@ function renderShipTab(req, admin){
 }
 
 function openUploadModal(req, bucket){
-  const title = bucket === "quotation" ? "Add Quotation" : bucket === "po" ? "Add Purchase Order" : bucket === "receipts" ? "Add Receipt" : "Upload";
-  const name = prompt(`${title}: ใส่ชื่อไฟล์ (เดโม)`, bucket === "quotation" ? "VendorA_Quote.pdf" : bucket === "po" ? "PO2601-xxx.pdf" : "Receipt.jpg");
+  const title = bucket === "quotation" ? "Add Quotation"
+    : bucket === "po" ? "Add Purchase Order"
+    : bucket === "receipts" ? "Add Receipt"
+    : "Upload";
+  const name = prompt(`${title}: ใส่ชื่อไฟล์ (เดโม)`,
+    bucket === "quotation" ? "VendorA_Quote.pdf"
+    : bucket === "po" ? "PO2601-xxx.pdf"
+    : "Receipt.jpg");
   if(!name) return;
 
-  req.files = req.files || {}; req.files[bucket] = req.files[bucket] || [];
+  req.files = req.files || {};
+  req.files[bucket] = req.files[bucket] || [];
   req.files[bucket].unshift({ id:nanoid(10), name, by:"admin", at: nowISO() });
+
+  req.activity = req.activity || [];
   req.activity.unshift({ at: nowISO(), actor:"admin", action:`ADD_${bucket.toUpperCase()}`, detail: name });
   req.updatedAt = nowISO();
+
   if(req.kind !== "PR"){
     if(bucket === "quotation" && req.status === "Submitted") req.status = "Quoted";
     if(bucket === "po") req.status = "PO Issued";
   }
+
   saveBack(req);
   toast("แนบไฟล์แล้ว (เดโม): " + name);
   renderRoute();
@@ -1370,6 +1387,7 @@ function openShippingModal(req){
 
   req.shipping = { etd, eta, tracking, notes };
   req.status = "Shipping";
+  req.activity = req.activity || [];
   req.activity.unshift({ at: nowISO(), actor:"admin", action:"UPDATE_SHIPPING", detail:`ETD=${etd} ETA=${eta}` });
   req.updatedAt = nowISO();
   saveBack(req);
@@ -1423,12 +1441,11 @@ function filterRequests(reqs, q){
 
     if(hay.includes(qq)) return true;
 
-    // items
     for(const it of r.items||[]){
       const ih = [it.name, it.model, it.code, it.detail, it.remark].filter(Boolean).join(" ").toLowerCase();
       if(ih.includes(qq)) return true;
     }
-    // files names
+
     const fileNames = []
       .concat((r.files?.quotation||[]).map(f=>f.name))
       .concat((r.files?.po||[]).map(f=>f.name))
@@ -1445,18 +1462,28 @@ function filterRequests(reqs, q){
 function caseSearch(req, q){
   if(!q) return 0;
   let hits = 0;
-  const h = [req.docNo, req.project, req.requester, req.phone, req.note].filter(Boolean).join(" ").toLowerCase();
+
+  const h = [
+    req.docNo,
+    req.project,
+    req.subject,
+    req.requester,
+    req.phone,
+    req.note,
+    req.remark
+  ].filter(Boolean).join(" ").toLowerCase();
+
   if(h.includes(q)) hits++;
 
   (req.items||[]).forEach(it=>{
-    const ih = [it.name, it.model, it.code, it.detail, it.remark].filter(Boolean).join(" ").toLowerCase();
+    const ih = [it.name, it.model, it.code, it.detail, it.remark, it.unit].filter(Boolean).join(" ").toLowerCase();
     if(ih.includes(q)) hits++;
     (it.photos||[]).forEach(p=>{
       if((p.name||"").toLowerCase().includes(q)) hits++;
     });
   });
 
-  ["quotation","po","shipping"].forEach(k=>{
+  ["quotation","po","shipping","receipts"].forEach(k=>{
     (req.files?.[k]||[]).forEach(f=>{
       if((f.name||"").toLowerCase().includes(q)) hits++;
     });
@@ -1471,22 +1498,43 @@ function setupKebabs(){
     btn.onclick = ()=>{
       const docNo = btn.dataset.kebab;
       const admin = isAdmin();
+
       const actions = admin
         ? "1) Open\n2) Add Quotation\n3) Add PO\n4) Update Shipping\n5) Close"
         : "1) Open\n2) Request Edit";
+
       const pick = prompt(`Actions for ${docNo}\n${actions}\n\nพิมพ์เลข:`);
       if(!pick) return;
+
       if(pick==="1") location.hash = `#/detail/${encodeURIComponent(docNo)}`;
+
       if(!admin && pick==="2") location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-      if(admin && pick==="2"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="quote"; toast("ไปแท็บ Quotation"); renderRoute(); }
-      if(admin && pick==="3"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="po"; toast("ไปแท็บ PO"); renderRoute(); }
-      if(admin && pick==="4"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="ship"; toast("ไปแท็บ Shipping"); renderRoute(); }
+
+      if(admin && pick==="2"){
+        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
+        window.__tab="quote";
+        toast("ไปแท็บ Quotation");
+        renderRoute();
+      }
+      if(admin && pick==="3"){
+        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
+        window.__tab="po";
+        toast("ไปแท็บ PO");
+        renderRoute();
+      }
+      if(admin && pick==="4"){
+        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
+        window.__tab="ship";
+        toast("ไปแท็บ Shipping");
+        renderRoute();
+      }
       if(admin && pick==="5"){
         const db = loadDB();
-        const r = db.qr.find(x=>x.docNo===docNo);
+        const r = (db.qr||[]).find(x=>x.docNo===docNo);
         if(r){
           r.status="Closed";
           r.updatedAt=nowISO();
+          r.activity = r.activity || [];
           r.activity.unshift({ at: nowISO(), actor:"admin", action:"CLOSE", detail:"" });
           saveDB(db);
           toast("ปิดงานแล้ว");
@@ -1509,22 +1557,38 @@ function escapeHtml(str){
 
 /* Init bindings */
 function bindGlobal(){
-  $("#btnCreateTop").onclick = ()=> location.hash = "#/create";
-  $("#globalSearch").addEventListener("input", ()=>{
-    const { r } = route();
-    if(r === "summary") renderRoute(); // live update
-  });
+  const btnCreateTop = $("#btnCreateTop");
+  if(btnCreateTop){
+    // ✅ Create on top goes to Create QR
+    btnCreateTop.onclick = ()=> location.hash = "#/request-qr";
+  }
 
-  $("#btnToggleSidebar").onclick = ()=>{
-    const sb = $(".sidebar");
-    sb.classList.toggle("hidden");
-  };
+  const gs = $("#globalSearch");
+  if(gs){
+    gs.addEventListener("input", ()=>{
+      const { r } = route();
+      if(r === "summary-qr" || r === "summary-pr") renderRoute();
+    });
+  }
 
-  $("#btnAdminSet").onclick = ()=>{
-    const pass = $("#adminPass").value.trim();
-    setAdminMode(!!pass);
-  };
-  $("#roleLabel").textContent = isAdmin() ? "Admin" : "Requester";
+  const btnToggleSidebar = $("#btnToggleSidebar");
+  if(btnToggleSidebar){
+    btnToggleSidebar.onclick = ()=>{
+      const sb = $(".sidebar");
+      if(sb) sb.classList.toggle("hidden");
+    };
+  }
+
+  const btnAdminSet = $("#btnAdminSet");
+  if(btnAdminSet){
+    btnAdminSet.onclick = ()=>{
+      const pass = $("#adminPass")?.value?.trim() || "";
+      setAdminMode(!!pass);
+    };
+  }
+
+  const role = $("#roleLabel");
+  if(role) role.textContent = isAdmin() ? "Admin" : "Requester";
 }
 
 window.addEventListener("hashchange", renderRoute);
