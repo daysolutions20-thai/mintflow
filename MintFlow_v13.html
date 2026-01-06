@@ -1,57 +1,132 @@
-<nav class="nav">
-  <a class="nav-item" href="#home" data-route="home">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.8V21h13V9.8"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Home</span></span>
-  </a>
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QR System (MVP Prototype)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
 
-  <a class="nav-item" href="#request-qr" data-route="request-qr">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h3"/><path d="M14 17h6"/><path d="M17 14v6"/><path d="M20 20v0"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Request QR</span></span>
-  </a>
+      <div class="brand brand-clean">
+        <div class="sidecard logo-only">
+          <img src="logo.png" alt="DAY Solutions" />
+        </div>
+      </div>
 
-  <a class="nav-item" href="#summary-qr" data-route="summary-qr">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Summary QR</span></span>
-  </a>
+      <nav class="nav">
+        <a class="nav-item" href="#/home" data-route="home">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.8V21h13V9.8"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Home</span>
+            <span class="nav-th">หน้าแรก</span>
+          </span>
+        </a>
 
-  <a class="nav-item" href="#request-pr" data-route="request-pr">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 3h10v18l-2-1-2 1-2-1-2 1-2-1-2 1V3z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Request PR</span></span>
-  </a>
+        <a class="nav-item" href="#/request-qr" data-route="request-qr">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h3"/><path d="M14 17h6"/><path d="M17 14v6"/><path d="M20 20v0"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Request QR</span>
+            <span class="nav-th">ขอราคา + แนบรูปต่อรายการ</span>
+          </span>
+        </a>
 
-  <a class="nav-item" href="#summary-pr" data-route="summary-pr">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Summary PR</span></span>
-  </a>
+        <a class="nav-item" href="#/summary-qr" data-route="summary-qr">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Summary QR</span>
+            <span class="nav-th">ค้นหา QR ได้ทุกมิติ</span>
+          </span>
+        </a>
 
-  <div class="nav-divider"></div>
+        <a class="nav-item" href="#/request-pr" data-route="request-pr">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 3h10v18l-2-1-2 1-2-1-2 1-2-1-2 1V3z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Request PR</span>
+            <span class="nav-th">ขอเบิก/ขอซื้อ + แนบรูปต่อรายการ</span>
+          </span>
+        </a>
 
-  <a class="nav-item subtle" href="#help" data-route="help">
-    <span class="nav-ico">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"/><path d="M12 17h.01"/><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"/>
-      </svg>
-    </span>
-    <span class="nav-text"><span class="nav-en">Help</span></span>
-  </a>
-</nav>
+        <a class="nav-item" href="#/summary-pr" data-route="summary-pr">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Summary PR</span>
+            <span class="nav-th">ค้นหา PR ได้ทุกมิติ</span>
+          </span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a class="nav-item subtle" href="#/help" data-route="help">
+          <span class="nav-ico">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"/><path d="M12 17h.01"/><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"/>
+            </svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-en">Help</span>
+            <span class="nav-th">วิธีใช้งาน</span>
+          </span>
+        </a>
+      </nav>
+
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-gradient"></div>
+        <div class="topbar-inner">
+          <div class="topbar-left">
+            <button class="icon-btn" id="btnToggleSidebar" aria-label="Toggle sidebar">☰</button>
+            <div class="topbar-titlewrap">
+              <div class="topbar-title" id="pageTitle">Home</div>
+              <div class="topbar-sub" id="pageSub">หน้าแรก / รวมเมนูหลักของระบบ</div>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="search">
+              <span class="search-ico">🔎</span>
+              <input id="globalSearch" placeholder="ค้นหา: QR/PR, ชื่อตัวเอง, เบอร์, ชื่อสินค้า, model, code..." />
+            </div>
+            <button class="btn btn-primary" id="btnCreateTop">➕ Create New</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="view"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
