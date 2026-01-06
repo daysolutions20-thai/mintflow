@@ -532,3 +532,43 @@ height: calc(100vh - 88px); /* 88px = topbar โดยประมาณ */
 overflow: auto;
 -webkit-overflow-scrolling: touch;
 }
+/* ===== MintFlow FIX: prevent topbar overlap + allow long-form scroll (no magic px) ===== */
+
+/* Ensure full-height layout */
+html, body { height: 100%; }
+
+/* Keep page from double-scrolling; scroll happens in .content */
+body { overflow: hidden !important; }
+
+/* App shell */
+.app {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+/* Main area becomes a flex column so content naturally sits under topbar */
+.main {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Topbar stays on top without covering content */
+.topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Content takes remaining height and scrolls (overrides any calc(100vh - xx)) */
+.content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
