@@ -142,14 +142,18 @@ function escapeHtml(str){
 
 /* Bilingual Label helper (EN + TH) */
 function biLabel(en, th){
-  return `<span class="lb-en">${escapeHtml(en)}</span><span class="lb-th">${escapeHtml(th)}</span>`;
+  return `
+    <span class="lb-en">${escapeHtml(en)}</span>
+    <span class="lb-th">${escapeHtml(th)}</span>
+  `;
 }
 
-/* Inject CSS for bilingual labels (so you don't need to touch styles.css) */
+/* Inject CSS for bilingual labels (FOR FORMS ONLY because used inside <label> in form pages) */
 (function injectBilingualLabelCSS(){
+  if(document.querySelector('style[data-mintflow="bilingual-labels"]')) return;
   const css = `
     label .lb-en{ display:block; font-weight:600; line-height:1.1; }
-    label .lb-th{ display:block; font-size:12px; font-weight:400; opacity:.75; margin-top:2px; line-height:1.1; }
+    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
   `;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
@@ -1025,6 +1029,10 @@ function filterPR(reqs, q){
   });
 }
 
+/* ---------- (ส่วนที่เหลือของไฟล์มึง ไม่เกี่ยวกับ “label หน้าแบบฟอร์ม”) ---------- */
+/*  - renderDetail / renderHelp / search / kebab / bindGlobal ฯลฯ
+    กูไม่ได้ยุ่ง logic อื่นนะ (แต่ถ้ามึงต้องการให้ Activity/Detail ก็ 2 ภาษา เดี๋ยวค่อยสั่ง) */
+
 function renderDetail(el, docNo){
   const db = loadDB();
 
@@ -1253,7 +1261,6 @@ function renderDetail(el, docNo){
     tc.innerHTML = renderShipTab(req, admin);
   }
   if(tabState === "act"){
-    // Activity = ประวัติการทำรายการ / ไทม์ไลน์การเปลี่ยนแปลง
     tc.innerHTML = `
       <div class="subtext">Activity log (เดโม): ประวัติการทำรายการ / การเปลี่ยนแปลงในเอกสาร</div>
       <div class="hr"></div>
