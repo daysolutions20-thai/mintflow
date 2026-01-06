@@ -41,7 +41,6 @@ function nanoid(len=16){
 
 function toast(msg){
   const el = $("#toast");
-  if(!el) return;
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(window.__toast_t);
@@ -126,11 +125,37 @@ function isAdmin(){
 }
 function setAdminMode(flag){
   localStorage.setItem(LS_ADMIN, flag ? "1" : "0");
-  const rl = $("#roleLabel");
-  if(rl) rl.textContent = flag ? "Admin" : "Requester";
+  $("#roleLabel").textContent = flag ? "Admin" : "Requester";
   toast(flag ? "เข้าสู่โหมดแอดมินแล้ว" : "กลับเป็นโหมดพนักงานแล้ว");
   renderRoute();
 }
+
+/* Escape */
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* Bilingual Label helper (EN + TH) */
+function biLabel(en, th){
+  return `<span class="lb-en">${escapeHtml(en)}</span><span class="lb-th">${escapeHtml(th)}</span>`;
+}
+
+/* Inject CSS for bilingual labels (so you don't need to touch styles.css) */
+(function injectBilingualLabelCSS(){
+  const css = `
+    label .lb-en{ display:block; font-weight:600; line-height:1.1; }
+    label .lb-th{ display:block; font-size:12px; font-weight:400; opacity:.75; margin-top:2px; line-height:1.1; }
+  `;
+  const style = document.createElement("style");
+  style.setAttribute("data-mintflow", "bilingual-labels");
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
 
 /* Routing */
 function route(){
@@ -140,38 +165,21 @@ function route(){
 }
 
 function setPageTitle(title, sub){
-  const t = $("#pageTitle");
-  const s = $("#pageSub");
-  if(t) t.textContent = title;
-  if(s) s.textContent = sub || "";
+  $("#pageTitle").textContent = title;
+  $("#pageSub").textContent = sub || "";
 }
 
 function renderRoute(){
   const { r, param } = route();
-
-  // highlight sidebar nav items (if present)
   $$(".nav-item").forEach(a => a.classList.toggle("active", a.dataset.route === r));
-
   const view = $("#view");
-  if(!view) return;
-
   if(r === "home") renderHome(view);
-
-  // QR
   else if(r === "request-qr") renderCreateQR(view);
   else if(r === "summary-qr") renderSummaryQR(view);
-
-  // PR
   else if(r === "request-pr") renderCreatePR(view);
   else if(r === "summary-pr") renderSummaryPR(view);
-
-  // Detail / Help
-  else if(r === "detail") renderDetail(view, decodeURIComponent(param || ""));
+  else if(r === "detail") renderDetail(view, param);
   else if(r === "help") renderHelp(view);
-
-  // ✅ support legacy route used by some buttons
-  else if(r === "create") renderCreateQR(view);
-
   else renderHome(view);
 }
 
@@ -298,15 +306,15 @@ function badge(status){
 }
 
 function renderSummaryQR(el){
-  setPageTitle("Summary", "ค้นหาได้ทุกมิติ: QR / ชื่อคน / เบอร์ / ชื่อสินค้า / model / code");
+  setPageTitle("Summary QR", "ค้นหาได้ทุกมิติ: QR / ชื่อคน / เบอร์ / ชื่อสินค้า / model / code");
   const db = loadDB();
-  const q = ($("#globalSearch")?.value || "").trim().toLowerCase();
+  const q = ($("#globalSearch").value || "").trim().toLowerCase();
   const rows = filterRequests(db.qr||[], q);
 
   el.innerHTML = `
     <div class="card">
       <div class="section-title">
-        <h2>รายการคำขอ</h2>
+        <h2>รายการคำขอ (QR)</h2>
         <div class="row tight">
           <button class="btn btn-primary" id="btnCreate2">➕ Create New</button>
           <button class="btn btn-ghost" id="btnReset">Reset demo</button>
@@ -366,9 +374,7 @@ function renderSummaryQR(el){
     </div>
   `;
 
-  // ✅ fixed route
   $("#btnCreate2").onclick = ()=> location.hash = "#/request-qr";
-
   $("#btnReset").onclick = ()=>{
     localStorage.removeItem(LS_KEY);
     toast("รีเซ็ตข้อมูลเดโมแล้ว");
@@ -381,8 +387,7 @@ function renderSummaryQR(el){
 
   $$("[data-filter]").forEach(b=>{
     b.onclick = ()=>{
-      const gs = $("#globalSearch");
-      if(gs) gs.value = b.dataset.filter;
+      $("#globalSearch").value = b.dataset.filter;
       toast("กรองแบบเดโมด้วยคำค้น: " + b.dataset.filter);
       renderRoute();
     };
@@ -392,24 +397,24 @@ function renderSummaryQR(el){
 }
 
 function renderCreateQR(el){
-  setPageTitle("Create New", "กรอกให้ครบ แนบรูปต่อรายการ แล้วระบบออก QR อัตโนมัติ");
+  setPageTitle("Request QR", "กรอกให้ครบ แนบรูปต่อรายการ แล้วระบบออกเลข QR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
 
   el.innerHTML = `
     <div class="grid cols-2">
       <div class="card">
-        <h2 style="margin:0 0 10px">Create Quotation Request</h2>
+        <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
         <form class="form" id="frmCreate">
           <div class="row">
             <div class="field">
-              <label>วันที่</label>
+              <label>${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label>Urgency</label>
+              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
               <select name="urgency">
                 <option>Normal</option>
                 <option>Urgent</option>
@@ -419,23 +424,23 @@ function renderCreateQR(el){
           </div>
 
           <div class="field">
-            <label>Project / Subject</label>
+            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
             <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
 
           <div class="row">
             <div class="field">
-              <label>ชื่อผู้ขอ (Required)</label>
+              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
-              <label>เบอร์โทร (Required)</label>
+              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" placeholder="0812345678" required />
             </div>
           </div>
 
           <div class="field">
-            <label>Note</label>
+            <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
             <textarea name="note" placeholder="ข้อความเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
 
@@ -482,25 +487,25 @@ function renderCreateQR(el){
       </div>
       <div class="row">
         <div class="field">
-          <label>Name (Required)</label>
+          <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
           <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
-          <label>Model</label>
+          <label>${biLabel("Model", "รุ่น")}</label>
           <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
       <div class="row">
         <div class="field">
-          <label>Code</label>
+          <label>${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
         <div class="field">
-          <label>QTY (Required)</label>
+          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>Unit (Required)</label>
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
           <select name="unit" required>
             <option value="">เลือก</option>
             <option>pcs</option>
@@ -514,17 +519,17 @@ function renderCreateQR(el){
 
       <div class="row">
         <div class="field" style="flex:2">
-          <label>Detail</label>
+          <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
           <input class="input" name="detail" placeholder="สเปก/รายละเอียด เช่น Original/OEM, size, length..." />
         </div>
         <div class="field" style="flex:1">
-          <label>Remark</label>
+          <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
           <input class="input" name="remark" placeholder="Export by sea / air plus..." />
         </div>
       </div>
 
       <div class="field">
-        <label>แนบรูปต่อรายการ (เดโม)</label>
+        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -653,11 +658,11 @@ function renderCreatePR(el){
         <form class="form" id="frmCreatePR">
           <div class="row">
             <div class="field">
-              <label>วันที่</label>
+              <label>${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label>Subject / Project Name</label>
+              <label>${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
               <select class="input" name="subject" required>
                 <option value="">-- Select --</option>
                 <option value="Petty cash">Petty cash</option>
@@ -666,7 +671,7 @@ function renderCreatePR(el){
             </div>
 
             <div class="field">
-              <label>For job</label>
+              <label>${biLabel("For job", "ใช้กับงาน")}</label>
               <select class="input" name="forJob" required>
                 <option value="">-- Select --</option>
                 <option value="HDD">HDD</option>
@@ -679,17 +684,17 @@ function renderCreatePR(el){
 
           <div class="row">
             <div class="field">
-              <label>ชื่อผู้ขอ (Required)</label>
+              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
-              <label>เบอร์โทร (Required)</label>
+              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" placeholder="0812345678" required />
             </div>
           </div>
 
           <div class="field">
-            <label>Remark</label>
+            <label>${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
             <textarea name="remark" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
 
@@ -705,15 +710,15 @@ function renderCreatePR(el){
           <div class="hr"></div>
           <div class="grid cols-3" style="gap:10px">
             <div class="field">
-              <label>Prepared by (optional)</label>
+              <label>${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
               <input class="input" name="preparedBy" placeholder="ชื่อผู้เตรียมเอกสาร" />
             </div>
             <div class="field">
-              <label>Order by (optional)</label>
+              <label>${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
               <input class="input" name="orderedBy" placeholder="ชื่อผู้สั่งซื้อ" />
             </div>
             <div class="field">
-              <label>Approve by (optional)</label>
+              <label>${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
               <input class="input" name="approvedBy" placeholder="ชื่อผู้อนุมัติ" />
             </div>
           </div>
@@ -774,22 +779,22 @@ function renderCreatePR(el){
 
       <div class="row">
         <div class="field">
-          <label>Code</label>
+          <label>${biLabel("Code", "รหัส")}</label>
           <input class="input" name="code" placeholder="ถ้ามี" />
         </div>
         <div class="field" style="flex:2">
-          <label>Detail (Required)</label>
+          <label>${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
           <input class="input" name="detail" placeholder="เช่น DIESEL FOR TEST MACHINE" required />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>QTY (Required)</label>
+          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>Unit (Required)</label>
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
           <select name="unit" required>
             <option value="">เลือก</option>
             <option>pcs</option>
@@ -800,17 +805,17 @@ function renderCreatePR(el){
           </select>
         </div>
         <div class="field">
-          <label>Price/Unit (THB)</label>
+          <label>${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
           <input class="input" name="price" type="number" min="0" step="0.01" value="0" />
         </div>
         <div class="field">
-          <label>Total</label>
+          <label>${biLabel("Total", "รวม")}</label>
           <div class="input" style="background:#fff7ed80" data-line-total>0.00</div>
         </div>
       </div>
 
       <div class="field">
-        <label>แนบรูปต่อรายการ (แนะนำ)</label>
+        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -893,6 +898,7 @@ function renderCreatePR(el){
       docNo,
       docDate,
       subject: form.subject.value.trim(),
+      forJob: form.forJob.value.trim(),
       requester,
       phone,
       remark: form.remark.value.trim(),
@@ -932,7 +938,7 @@ function renderCreatePR(el){
 function renderSummaryPR(el){
   setPageTitle("Summary PR", "ค้นหาได้ทุกมิติ: PR / ชื่อคน / เบอร์ / รายการ / code / detail");
   const db = loadDB();
-  const q = ($("#globalSearch")?.value || "").trim().toLowerCase();
+  const q = ($("#globalSearch").value || "").trim().toLowerCase();
   const rows = filterPR(db.pr||[], q);
 
   el.innerHTML = `
@@ -1022,12 +1028,12 @@ function filterPR(reqs, q){
 function renderDetail(el, docNo){
   const db = loadDB();
 
-  // ✅ find in qr or pr
-  let req = (db.qr || []).find(r => r.docNo === docNo);
+  let req = (db.qr||[]).find(r => r.docNo === docNo);
   let isPR = false;
+
   if(!req){
-    req = (db.pr || []).find(r => r.docNo === docNo);
-    isPR = true;
+    req = (db.pr||[]).find(r => r.docNo === docNo);
+    isPR = !!req;
   }
 
   if(!req){
@@ -1035,7 +1041,7 @@ function renderDetail(el, docNo){
     return;
   }
 
-  setPageTitle(req.docNo, isPR ? "รายละเอียด PR" : "ทุกอย่างผูกกับ QR ใบนี้ (Quotation / PO / Shipping)");
+  setPageTitle(req.docNo, isPR ? "รายละเอียด PR ใบนี้ (แนบ Receipt / Activity)" : "ทุกอย่างผูกกับ QR ใบนี้ (Quotation / PO / Shipping)");
 
   const admin = isAdmin();
   const tabState = window.__tab || (isPR ? "pr" : "qr");
@@ -1046,7 +1052,10 @@ function renderDetail(el, docNo){
         <div>
           <h2 style="margin:0">${req.docNo}</h2>
           <div class="subtext">Doc date: <span class="mono">${req.docDate}</span> • Requester: <b>${escapeHtml(req.requester)}</b> (${escapeHtml(req.phone)})</div>
-          ${!isPR ? `<div class="subtext">Project: ${escapeHtml(req.project||"-")}</div>` : `<div class="subtext">Subject: ${escapeHtml(req.subject||"-")}</div>`}
+          ${isPR
+            ? `<div class="subtext">Subject: ${escapeHtml(req.subject||"-")} • For job: ${escapeHtml(req.forJob||"-")}</div>`
+            : `<div class="subtext">Project: ${escapeHtml(req.project||"-")}</div>`
+          }
         </div>
         <div class="row tight">
           ${badge(req.status)}
@@ -1166,6 +1175,7 @@ function renderDetail(el, docNo){
       <div class="grid cols-2">
         <div>
           <div class="subtext"><b>Subject:</b> ${escapeHtml(req.subject||"-")}</div>
+          <div class="subtext"><b>For job:</b> ${escapeHtml(req.forJob||"-")}</div>
           <div class="subtext"><b>Remark:</b> ${escapeHtml(req.remark||"-")}</div>
           <div class="hr"></div>
 
@@ -1234,17 +1244,18 @@ function renderDetail(el, docNo){
   }
 
   if(!isPR && tabState === "quote"){
-    tc.innerHTML = renderFileTab("Quotation", req.files?.quotation, admin, "quotation");
+    tc.innerHTML = renderFileTab("Quotation", req.files.quotation, admin, "quotation");
   }
   if(!isPR && tabState === "po"){
-    tc.innerHTML = renderFileTab("Purchase Orders", req.files?.po, admin, "po");
+    tc.innerHTML = renderFileTab("Purchase Orders", req.files.po, admin, "po");
   }
   if(!isPR && tabState === "ship"){
     tc.innerHTML = renderShipTab(req, admin);
   }
   if(tabState === "act"){
+    // Activity = ประวัติการทำรายการ / ไทม์ไลน์การเปลี่ยนแปลง
     tc.innerHTML = `
-      <div class="subtext">Audit log (เดโม)</div>
+      <div class="subtext">Activity log (เดโม): ประวัติการทำรายการ / การเปลี่ยนแปลงในเอกสาร</div>
       <div class="hr"></div>
       ${(req.activity||[]).map(a=>`
         <div class="file">
@@ -1259,7 +1270,6 @@ function renderDetail(el, docNo){
     `;
   }
 
-  // Admin actions
   if(admin){
     if(isPR){
       $("#btnAddReceipt").onclick = ()=> openUploadModal(req, "receipts");
@@ -1273,7 +1283,6 @@ function renderDetail(el, docNo){
       const reason = prompt("เหตุผลขอแก้ไข (สั้นๆ):") || "";
       if(!reason.trim()) return;
       req.status = "EditRequested";
-      req.activity = req.activity || [];
       req.activity.unshift({ at: nowISO(), actor: `${req.requester} (${req.phone})`, action:"REQUEST_EDIT", detail: reason });
       req.updatedAt = nowISO();
       saveBack(req);
@@ -1330,7 +1339,7 @@ function renderShipTab(req, admin){
       </div>
       <div class="card" style="box-shadow:none">
         <h3>Shipping Documents</h3>
-        ${(req.files?.shipping||[]).length ? (req.files.shipping||[]).map(f=>`
+        ${(req.files.shipping||[]).length ? (req.files.shipping||[]).map(f=>`
           <div class="file">
             <div class="meta">
               <div class="name">${escapeHtml(f.name)}</div>
@@ -1351,16 +1360,17 @@ function openUploadModal(req, bucket){
     : bucket === "po" ? "Add Purchase Order"
     : bucket === "receipts" ? "Add Receipt"
     : "Upload";
+
   const name = prompt(`${title}: ใส่ชื่อไฟล์ (เดโม)`,
     bucket === "quotation" ? "VendorA_Quote.pdf"
     : bucket === "po" ? "PO2601-xxx.pdf"
-    : "Receipt.jpg");
+    : "Receipt.jpg"
+  );
   if(!name) return;
 
   req.files = req.files || {};
   req.files[bucket] = req.files[bucket] || [];
   req.files[bucket].unshift({ id:nanoid(10), name, by:"admin", at: nowISO() });
-
   req.activity = req.activity || [];
   req.activity.unshift({ at: nowISO(), actor:"admin", action:`ADD_${bucket.toUpperCase()}`, detail: name });
   req.updatedAt = nowISO();
@@ -1387,7 +1397,6 @@ function openShippingModal(req){
 
   req.shipping = { etd, eta, tracking, notes };
   req.status = "Shipping";
-  req.activity = req.activity || [];
   req.activity.unshift({ at: nowISO(), actor:"admin", action:"UPDATE_SHIPPING", detail:`ETD=${etd} ETA=${eta}` });
   req.updatedAt = nowISO();
   saveBack(req);
@@ -1419,9 +1428,9 @@ function renderHelp(el){
       <div class="subtext">
         <ol>
           <li>พนักงานสร้างคำขอจากหน้าแรก → กรอกข้อมูล + แนบรูปต่อรายการ</li>
-          <li>กด Submit → ระบบออกเลข <span class="mono">QRYY-MM.NNN</span> อัตโนมัติ</li>
-          <li>แอดมินเข้าเคส → กด <b>Add Quotation</b> / <b>Add PO</b> / <b>Update Shipping</b></li>
-          <li>ทุกอย่างผูกกับ QR ใบนั้น และ (ของจริง) อัปโหลดลง Drive อัตโนมัติ</li>
+          <li>กด Submit → ระบบออกเลข <span class="mono">QRYY-MM.NNN</span> หรือ <span class="mono">PRYY-MM.NNN</span> อัตโนมัติ</li>
+          <li>แอดมินเข้าเคส → กด <b>Add Quotation</b> / <b>Add PO</b> / <b>Update Shipping</b> หรือแนบ <b>Receipt</b></li>
+          <li>ทุกอย่างผูกกับเคสนั้น และ (ของจริง) อัปโหลดลง Drive อัตโนมัติ</li>
           <li>ใครถามสถานะ → ให้ค้นใน Summary จากชื่อตัวเอง/ชื่อสินค้าได้เลย</li>
         </ol>
       </div>
@@ -1462,21 +1471,11 @@ function filterRequests(reqs, q){
 function caseSearch(req, q){
   if(!q) return 0;
   let hits = 0;
-
-  const h = [
-    req.docNo,
-    req.project,
-    req.subject,
-    req.requester,
-    req.phone,
-    req.note,
-    req.remark
-  ].filter(Boolean).join(" ").toLowerCase();
-
+  const h = [req.docNo, req.project, req.subject, req.requester, req.phone, req.note, req.remark].filter(Boolean).join(" ").toLowerCase();
   if(h.includes(q)) hits++;
 
   (req.items||[]).forEach(it=>{
-    const ih = [it.name, it.model, it.code, it.detail, it.remark, it.unit].filter(Boolean).join(" ").toLowerCase();
+    const ih = [it.name, it.model, it.code, it.detail, it.remark].filter(Boolean).join(" ").toLowerCase();
     if(ih.includes(q)) hits++;
     (it.photos||[]).forEach(p=>{
       if((p.name||"").toLowerCase().includes(q)) hits++;
@@ -1498,11 +1497,13 @@ function setupKebabs(){
     btn.onclick = ()=>{
       const docNo = btn.dataset.kebab;
       const admin = isAdmin();
-
+      const isPR = String(docNo||"").startsWith("PR");
       const actions = admin
-        ? "1) Open\n2) Add Quotation\n3) Add PO\n4) Update Shipping\n5) Close"
+        ? (isPR
+            ? "1) Open\n2) Add Receipt\n3) Close"
+            : "1) Open\n2) Add Quotation\n3) Add PO\n4) Update Shipping\n5) Close"
+          )
         : "1) Open\n2) Request Edit";
-
       const pick = prompt(`Actions for ${docNo}\n${actions}\n\nพิมพ์เลข:`);
       if(!pick) return;
 
@@ -1510,27 +1511,17 @@ function setupKebabs(){
 
       if(!admin && pick==="2") location.hash = `#/detail/${encodeURIComponent(docNo)}`;
 
-      if(admin && pick==="2"){
-        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-        window.__tab="quote";
-        toast("ไปแท็บ Quotation");
-        renderRoute();
-      }
-      if(admin && pick==="3"){
-        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-        window.__tab="po";
-        toast("ไปแท็บ PO");
-        renderRoute();
-      }
-      if(admin && pick==="4"){
-        location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-        window.__tab="ship";
-        toast("ไปแท็บ Shipping");
-        renderRoute();
-      }
-      if(admin && pick==="5"){
+      if(admin && !isPR && pick==="2"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="quote"; toast("ไปแท็บ Quotation"); renderRoute(); }
+      if(admin && !isPR && pick==="3"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="po"; toast("ไปแท็บ PO"); renderRoute(); }
+      if(admin && !isPR && pick==="4"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="ship"; toast("ไปแท็บ Shipping"); renderRoute(); }
+
+      if(admin && isPR && pick==="2"){ location.hash = `#/detail/${encodeURIComponent(docNo)}`; window.__tab="act"; toast("ไปแท็บ Activity"); renderRoute(); }
+
+      const closePick = admin && ((isPR && pick==="3") || (!isPR && pick==="5"));
+      if(closePick){
         const db = loadDB();
-        const r = (db.qr||[]).find(x=>x.docNo===docNo);
+        const arr = isPR ? (db.pr||[]) : (db.qr||[]);
+        const r = arr.find(x=>x.docNo===docNo);
         if(r){
           r.status="Closed";
           r.updatedAt=nowISO();
@@ -1545,44 +1536,26 @@ function setupKebabs(){
   });
 }
 
-/* Escape */
-function escapeHtml(str){
-  return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
 /* Init bindings */
 function bindGlobal(){
-  const btnCreateTop = $("#btnCreateTop");
-  if(btnCreateTop){
-    // ✅ Create on top goes to Create QR
-    btnCreateTop.onclick = ()=> location.hash = "#/request-qr";
-  }
+  // FIX: route ไม่มี "#/create" ให้ไป request-qr แทน
+  $("#btnCreateTop").onclick = ()=> location.hash = "#/request-qr";
 
-  const gs = $("#globalSearch");
-  if(gs){
-    gs.addEventListener("input", ()=>{
-      const { r } = route();
-      if(r === "summary-qr" || r === "summary-pr") renderRoute();
-    });
-  }
+  $("#globalSearch").addEventListener("input", ()=>{
+    const { r } = route();
+    if(r === "summary-qr" || r === "summary-pr") renderRoute();
+  });
 
-  const btnToggleSidebar = $("#btnToggleSidebar");
-  if(btnToggleSidebar){
-    btnToggleSidebar.onclick = ()=>{
-      const sb = $(".sidebar");
-      if(sb) sb.classList.toggle("hidden");
-    };
-  }
+  $("#btnToggleSidebar").onclick = ()=>{
+    const sb = $(".sidebar");
+    sb.classList.toggle("hidden");
+  };
 
-  const btnAdminSet = $("#btnAdminSet");
-  if(btnAdminSet){
-    btnAdminSet.onclick = ()=>{
-      const pass = $("#adminPass")?.value?.trim() || "";
+  // admin mode demo
+  const adminBtn = $("#btnAdminSet");
+  if(adminBtn){
+    adminBtn.onclick = ()=>{
+      const pass = $("#adminPass").value.trim();
       setAdminMode(!!pass);
     };
   }
