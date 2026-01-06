@@ -515,3 +515,20 @@ input, textarea, select{
 .topbar .btn, .topbar .btn-small, .topbar .create-btn{
   border-radius: 12px !important;
 }
+/* FIX: allow main content to scroll (Request QR/PR long form) /
+html, body { height: 100%; }
+body { overflow: hidden; } / ให้สกอลล์อยู่ใน .content แทน */
+
+.app { height: 100vh; overflow: hidden; } /* กัน body สกอลล์ซ้อน */
+
+.main {
+height: 100%;
+min-height: 0; /* สำคัญมากสำหรับ flex */
+overflow: hidden;
+}
+
+.content {
+height: calc(100vh - 88px); /* 88px = topbar โดยประมาณ */
+overflow: auto;
+-webkit-overflow-scrolling: touch;
+}
