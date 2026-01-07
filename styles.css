@@ -641,3 +641,29 @@ body { overflow: hidden; }
 .field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
+/* ===== FIX: align section headers + make Note box match FOR block height ===== */
+
+/* Make all 2-col grids align and stretch equally */
+.grid.grid-2{
+  align-items: stretch !important;
+}
+
+/* Ensure each field is a vertical flex stack (label -> control) */
+.grid.grid-2 > .field{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Normalize label height/spacing so headers line up */
+.field > label{
+  display: block !important;
+  margin: 0 0 6px 0 !important;
+  line-height: 1.15 !important;
+  min-height: 34px !important; /* 2-line label (EN+TH) baseline */
+}
+
+/* Make textarea fill the stretched column height */
+.field textarea{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
