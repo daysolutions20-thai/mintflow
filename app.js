@@ -404,39 +404,42 @@ function renderCreateQR(el){
   setPageTitle("Request QR", "กรอกให้ครบ แนบรูปต่อรายการ แล้วระบบออกเลข QR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
 
-  // unit options (suggested, but user can type their own)
-  const UNIT_OPTS = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz."];
-
   el.innerHTML = `
-    <div class="layout-2col">
-      <section class="panel">
-        <h1 class="h1">Create Quotation Request (QR)</h1>
-        <div class="subtext">* โปรโตไทป์นี้บันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
+    <div class="grid cols-2">
+      <div class="card">
+        <style>
+          .for-list{display:flex;flex-direction:column;gap:10px}
+          .for-line{display:flex;align-items:center;gap:10px}
+          .chk{display:flex;align-items:center;gap:10px;white-space:nowrap}
+          .for-line .input{flex:1}
+          textarea[name="note"]{min-height:96px}
+        </style>
+
+        <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
+        <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
-        <form id="qrForm">
-
+        <form class="form" id="frmCreate">
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" type="date" name="docDate" value="${today}" required />
+              <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
               <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
               <select name="urgency">
                 <option>Normal</option>
                 <option>Urgent</option>
-                <option>Critical</option>
+                <option>Very Urgent</option>
               </select>
             </div>
           </div>
 
           <div class="field">
             <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-            <input class="input" name="project" />
+            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
 
-          <!-- Requester + Phone (same row) -->
           <div class="row">
             <div class="field">
               <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
@@ -448,54 +451,35 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <!-- FOR (left) + NOTE (right) -->
           <div class="row">
-            <div class="field" style="flex:1">
+            <div class="field">
               <label>${biLabel("FOR", "สำหรับ")}</label>
-
-              <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
-                <label style="display:flex; align-items:center; gap:10px;">
-                  <input type="checkbox" name="for_stock" />
-                  <span>Stock</span>
-                </label>
-
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <label style="display:flex; align-items:center; gap:10px; min-width:92px;">
-                    <input type="checkbox" name="for_repair" />
-                    <span>Repair</span>
-                  </label>
-                  <input class="input" name="for_repair_text" placeholder="For Sale / For Customer" disabled />
+              <div class="for-list">
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
                 </div>
-
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <label style="display:flex; align-items:center; gap:10px; min-width:92px;">
-                    <input type="checkbox" name="for_sale" />
-                    <span>Sale</span>
-                  </label>
-                  <input class="input" name="for_sale_text" placeholder="Name Customer" disabled />
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
                 </div>
               </div>
             </div>
 
-            <div class="field" style="flex:1">
+            <div class="field">
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
-              <textarea name="note" rows="6"></textarea>
+              <textarea name="note"></textarea>
             </div>
           </div>
 
           <div class="hr"></div>
-
           <div class="section-title">
             <h2 style="margin:0; font-size: 14px">Items</h2>
             <div class="row tight">
               <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
             </div>
           </div>
-
-          <datalist id="unitList">
-            ${UNIT_OPTS.map(u=>`<option value="${u}"></option>`).join("")}
-          </datalist>
-
           <div id="items"></div>
 
           <div class="row">
@@ -503,160 +487,148 @@ function renderCreateQR(el){
             <button class="btn btn-ghost" type="button" id="btnCancel">Cancel</button>
           </div>
 
-          <div class="subtext" style="margin-top:10px;">
-            ** Please add product spec detail , picture and show export rate
-          </div>
+          <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+        
+          <datalist id="unitList">
+            <option value="Trip"></option>
+            <option value="Unit"></option>
+            <option value="Kg."></option>
+            <option value="Km."></option>
+            <option value="Box"></option>
+            <option value="Set"></option>
+            <option value="Pcs."></option>
+            <option value="Hr."></option>
+            <option value="Mth."></option>
+            <option value="Sqm."></option>
+            <option value="Year"></option>
+            <option value="Pack"></option>
+            <option value="Metr"></option>
+            <option value="Doz."></option>
+          </datalist>
+</form>
+      </div>
 
-        </form>
-      </section>
-
-      <aside class="panel">
-        <div class="h2">Preview (เดโม)</div>
-        <div class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
+      <div class="card">
+        <div class="section-title">
+          <h2 style="margin:0; font-size: 16px">Preview (เดโม)</h2>
+          <div class="subtext">ดูว่าเวลาส่งแล้วจะหน้าตาประมาณไหน</div>
+        </div>
         <div class="hr"></div>
-        <div id="preview" class="subtext">ดูตัวอย่างแล้วจะขึ้นด้านขวาตามประเภทงาน</div>
-      </aside>
+        <div id="preview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
+      </div>
     </div>
   `;
 
-  const form = $("#qrForm", el);
-  const itemsEl = $("#items", el);
-  const btnAddItem = $("#btnAddItem", el);
-
-  const chkRepair = form.for_repair;
-  const chkSale = form.for_sale;
-  const inRepair = form.for_repair_text;
-  const inSale = form.for_sale_text;
-
-  function syncFor(){
-    inRepair.disabled = !chkRepair.checked;
-    inSale.disabled = !chkSale.checked;
-
-    if(!chkRepair.checked){ inRepair.value = ""; inRepair.required = false; }
-    else { inRepair.required = true; }
-
-    if(!chkSale.checked){ inSale.value = ""; inSale.required = false; }
-    else { inSale.required = true; }
-  }
-  chkRepair.addEventListener("change", syncFor);
-  chkSale.addEventListener("change", syncFor);
-  syncFor();
-
-  function itemBlockHTML(idx){
-    return `
-      <div class="item-block" data-item>
-        <div class="item-head">
-          <div class="item-title">Item #${idx}</div>
-          <button class="btn btn-danger btn-sm" type="button" data-remove>ลบ</button>
-        </div>
-
-        <div class="row">
-          <div class="field" style="flex:2">
-            <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
-            <input class="input" name="item_name" required />
-          </div>
-          <div class="field" style="flex:1">
-            <label>${biLabel("Model", "รุ่น")}</label>
-            <input class="input" name="item_model" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field" style="flex:2">
-            <label>${biLabel("Code", "รหัสสินค้า")}</label>
-            <input class="input" name="item_code" />
-          </div>
-          <div class="field">
-            <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
-            <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
-          </div>
-          <div class="field">
-            <label>${biLabel("Unit", "หน่วย")}</label>
-            <input class="input" name="unit" list="unitList" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field" style="flex:2">
-            <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-            <input class="input" name="detail" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="field" style="flex:1">
-            <label>${biLabel("Export By.", "ส่งออกทาง")}</label>
-            <div style="display:flex; flex-wrap:wrap; gap:12px; padding-top:6px;">
-              <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="export_sea" /> By Sea</label>
-              <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="export_land" /> By Land</label>
-              <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" name="export_air" /> By Air</label>
-            </div>
-          </div>
-          <div class="field" style="flex:1">
-            <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
-            <input class="input" name="remark" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
-          <input class="input" name="photos" type="file" accept="image/*" multiple />
-          <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
-          <div class="subtext" data-ph-list></div>
-        </div>
-      </div>
-    `;
-  }
-
-  function addItem(){
+  const itemsEl = $("#items");
+  const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
-    block.innerHTML = itemBlockHTML(idx);
-    const real = block.firstElementChild;
-    itemsEl.appendChild(real);
+    block.className = "card";
+    block.style.boxShadow = "none";
+    block.style.marginBottom = "10px";
+    block.innerHTML = `
+      <div class="section-title">
+        <h3 style="margin:0">Item #${idx}</h3>
+        <button class="btn btn-danger btn-small" type="button" data-remove>ลบ</button>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
+          <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
+        </div>
+        <div class="field">
+          <label>${biLabel("Model", "รุ่น")}</label>
+          <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>${biLabel("Code", "รหัสสินค้า")}</label>
+          <input class="input" name="item_code" placeholder="ถ้ามี" />
+        </div>
+        <div class="field">
+          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
+        </div>
+        <div class="field">
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <input class="input" name="unit" list="unitList" />
+        </div>
+      </div>
 
-    real.querySelector("[data-remove]").onclick = ()=>{
-      real.remove();
+      <div class="row">
+        <div class="field" style="flex:2">
+          <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
+          <input class="input" name="detail" placeholder="สเปก/รายละเอียด เช่น Original/OEM, size, length..." />
+        </div>
+        <div class="field" style="flex:1">
+          <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
+          <input class="input" name="remark" placeholder="Export by sea / air plus..." />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <input class="input" name="photos" type="file" accept="image/*" multiple />
+        <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
+        <div class="subtext" data-ph-list></div>
+      </div>
+    `;
+    block.querySelector("[data-remove]").onclick = ()=>{
+      block.remove();
       renumberItems();
     };
+    const fileInput = block.querySelector('input[name="photos"]');
+    const phList = block.querySelector("[data-ph-list]");
+    fileInput.onchange = ()=>{
+      const names = Array.from(fileInput.files||[]).map(f=>f.name);
+      phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
+    };
+    itemsEl.appendChild(block);
+  };
 
-    const fileInput = real.querySelector('input[name="photos"]');
-    const phList = real.querySelector("[data-ph-list]");
-    fileInput.addEventListener("change", ()=>{
-      const names = Array.from(fileInput.files || []).map(f=>f.name);
-      phList.textContent = names.length ? names.join(", ") : "";
+  const renumberItems = ()=>{
+    Array.from(itemsEl.children).forEach((c, i)=>{
+      const h3 = c.querySelector("h3");
+      if(h3) h3.textContent = `Item #${i+1}`;
     });
-  }
+  };
 
-  function renumberItems(){
-    Array.from(itemsEl.children).forEach((blk, i)=>{
-      const t = blk.querySelector(".item-title");
-      if(t) t.textContent = `Item #${i+1}`;
-    });
-  }
+  $("#btnAddItem").onclick = addItem;
 
-  btnAddItem.onclick = addItem;
+  // FOR: enable detail inputs only when checked
+  const repairChk = $("#forRepairChk");
+  const saleChk = $("#forSaleChk");
+  const repairTxt = $("#forRepairTxt");
+  const saleTxt = $("#forSaleTxt");
+  const syncFor = () => {
+    if(repairChk && repairTxt){
+      repairTxt.disabled = !repairChk.checked;
+      repairTxt.required = !!repairChk.checked;
+      if(!repairChk.checked) repairTxt.value = "";
+    }
+    if(saleChk && saleTxt){
+      saleTxt.disabled = !saleChk.checked;
+      saleTxt.required = !!saleChk.checked;
+      if(!saleChk.checked) saleTxt.value = "";
+    }
+  };
+  if(repairChk) repairChk.addEventListener("change", syncFor);
+  if(saleChk) saleChk.addEventListener("change", syncFor);
+  syncFor();
+
+  $("#btnCancel").onclick = ()=> location.hash = "#/home";
+
   addItem();
 
-  $("#btnCancel", el).onclick = ()=> location.hash = "#/home";
-
-  form.onsubmit = (e)=>{
+  $("#frmCreate").onsubmit = (e)=>{
     e.preventDefault();
+    const form = e.target;
 
     const requester = form.requester.value.trim();
     const phone = form.phone.value.trim();
     if(!requester || !phone){
       toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
-      return;
-    }
-
-    // FOR validation when selected
-    if(form.for_repair.checked && !form.for_repair_text.value.trim()){
-      toast("ติ๊ก Repair แล้วต้องกรอกช่อง Repair");
-      return;
-    }
-    if(form.for_sale.checked && !form.for_sale_text.value.trim()){
-      toast("ติ๊ก Sale แล้วต้องกรอกช่อง Sale");
       return;
     }
 
@@ -666,27 +638,25 @@ function renderCreateQR(el){
       return;
     }
 
-    let items;
+    const items = itemBlocks.map((blk, idx)=>{
+      const name = blk.querySelector('input[name="item_name"]').value.trim();
+      const model = blk.querySelector('input[name="item_model"]').value.trim();
+      const code = blk.querySelector('input[name="item_code"]').value.trim();
+      const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
+      const unit = blk.querySelector('input[name="unit"]').value.trim();
+      const detail = blk.querySelector('input[name="detail"]').value.trim();
+      const remark = blk.querySelector('input[name="remark"]').value.trim();
+      const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
+
+      if(!name || !(qty > 0)){
+        throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
+      }
+      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
+    });
+
     try{
-      items = itemBlocks.map((blk, idx)=>{
-        const name = blk.querySelector('input[name="item_name"]').value.trim();
-        const model = blk.querySelector('input[name="item_model"]').value.trim();
-        const code = blk.querySelector('input[name="item_code"]').value.trim();
-        const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-        const unit = blk.querySelector('input[name="unit"]').value.trim();
-        const detail = blk.querySelector('input[name="detail"]').value.trim();
-        const remark = blk.querySelector('input[name="remark"]').value.trim();
-        const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
-
-        const exportBy = [];
-        if(blk.querySelector('input[name="export_sea"]').checked) exportBy.push("By Sea");
-        if(blk.querySelector('input[name="export_land"]').checked) exportBy.push("By Land");
-        if(blk.querySelector('input[name="export_air"]').checked) exportBy.push("By Air");
-
-        if(!name || !(qty > 0)){
-          throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
-        }
-        return { lineNo: idx+1, code, name, model, qty, unit, detail, exportBy, remark, photos };
+      items.forEach((it, i)=>{
+        if(!it.name || !(it.qty>0) || !it.unit) throw new Error(`รายการที่ ${i+1} ไม่ครบ`);
       });
     }catch(err){
       toast(err.message);
@@ -706,12 +676,12 @@ function renderCreateQR(el){
       project: form.project.value.trim(),
       requester,
       phone,
+      forStock: !!form.forStock?.checked,
+      forRepair: !!form.forRepair?.checked,
+      forRepairTxt: (form.forRepairTxt?.value || "").trim(),
+      forSale: !!form.forSale?.checked,
+      forSaleTxt: (form.forSaleTxt?.value || "").trim(),
       urgency: form.urgency.value,
-      for: {
-        stock: !!form.for_stock.checked,
-        repair: form.for_repair.checked ? form.for_repair_text.value.trim() : "",
-        sale: form.for_sale.checked ? form.for_sale_text.value.trim() : ""
-      },
       note: form.note.value.trim(),
       status: "Submitted",
       editToken: nanoid(24),
@@ -725,24 +695,18 @@ function renderCreateQR(el){
     db.qr.unshift(reqObj);
     saveDB(db);
 
-    $("#preview", el).innerHTML = `
+    $("#preview").innerHTML = `
       <div class="pill">สร้างคำขอสำเร็จ: <b class="mono">${docNo}</b></div>
       <div class="hr"></div>
       <div><b>Project:</b> ${escapeHtml(reqObj.project||"-")}</div>
       <div><b>Requester:</b> ${escapeHtml(reqObj.requester)} (${escapeHtml(reqObj.phone)})</div>
-      <div><b>FOR:</b> ${
-        [
-          reqObj.for.stock ? "Stock" : "",
-          reqObj.for.repair ? `Repair: ${escapeHtml(reqObj.for.repair)}` : "",
-          reqObj.for.sale ? `Sale: ${escapeHtml(reqObj.for.sale)}` : ""
-        ].filter(Boolean).join(" | ") || "-"
-      }</div>
+      <div><b>Items:</b> ${reqObj.items.length}</div>
       <div class="hr"></div>
-      <div class="subtext">** Please add product spec detail , picture and show export rate</div>
+      <button class="btn btn-primary" id="btnGoDetail">เปิดเคสนี้</button>
     `;
 
-    toast("Submit สำเร็จ");
-    location.hash = `#/detail/${encodeURIComponent(reqObj.docNo)}`;
+    $("#btnGoDetail").onclick = ()=> location.hash = `#/detail/${encodeURIComponent(docNo)}`;
+    toast("สร้าง QR สำเร็จ: " + docNo);
   };
 }
 
