@@ -509,25 +509,15 @@ function renderCreateQR(el){
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>${biLabel("Unit", "หน่วย")}</label>
-          <input class="input" name="unit" list="unitList_${idx}" />
-          <datalist id="unitList_${idx}">
-            <option value="Trip"></option>
-            <option value="Unit"></option>
-            <option value="Kg."></option>
-            <option value="Km."></option>
-            <option value="Box"></option>
-            <option value="Set"></option>
-            <option value="Pcs."></option>
-            <option value="Hr."></option>
-            <option value="Mth."></option>
-            <option value="Sqm."></option>
-            <option value="Year"></option>
-            <option value="Pack"></option>
-            <option value="Metr"></option>
-            <option value="Doz."></option>
-          </datalist>
-
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <select name="unit" required>
+            <option value="">เลือก</option>
+            <option>pcs</option>
+            <option>set</option>
+            <option>m</option>
+            <option>box</option>
+            <option>lot</option>
+          </select>
         </div>
       </div>
 
@@ -596,7 +586,7 @@ function renderCreateQR(el){
       const model = blk.querySelector('input[name="item_model"]').value.trim();
       const code = blk.querySelector('input[name="item_code"]').value.trim();
       const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-      const unit = blk.querySelector('[name="unit"]').value.trim();
+      const unit = blk.querySelector('select[name="unit"]').value.trim();
       const detail = blk.querySelector('input[name="detail"]').value.trim();
       const remark = blk.querySelector('input[name="remark"]').value.trim();
       const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
@@ -808,25 +798,15 @@ function renderCreatePR(el){
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>${biLabel("Unit", "หน่วย")}</label>
-          <input class="input" name="unit" list="unitList_${idx}" />
-          <datalist id="unitList_${idx}">
-            <option value="Trip"></option>
-            <option value="Unit"></option>
-            <option value="Kg."></option>
-            <option value="Km."></option>
-            <option value="Box"></option>
-            <option value="Set"></option>
-            <option value="Pcs."></option>
-            <option value="Hr."></option>
-            <option value="Mth."></option>
-            <option value="Sqm."></option>
-            <option value="Year"></option>
-            <option value="Pack"></option>
-            <option value="Metr"></option>
-            <option value="Doz."></option>
-          </datalist>
-
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <select name="unit" required>
+            <option value="">เลือก</option>
+            <option>pcs</option>
+            <option>set</option>
+            <option>lot</option>
+            <option>m</option>
+            <option>box</option>
+          </select>
         </div>
         <div class="field">
           <label>${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
@@ -900,7 +880,7 @@ function renderCreatePR(el){
         const code = blk.querySelector('input[name="code"]').value.trim();
         const detail = blk.querySelector('input[name="detail"]').value.trim();
         const qty = Number(blk.querySelector('input[name="qty"]').value||0);
-        const unit = blk.querySelector('[name="unit"]').value.trim();
+        const unit = blk.querySelector('select[name="unit"]').value.trim();
         const price = Number(blk.querySelector('input[name="price"]').value||0);
         const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
