@@ -157,7 +157,9 @@ function biLabel(en, th){
 
     /* mintflow-patch: form spacing + checkbox rows */
     .field{ gap:0; }
-    .field > label{ display:block; margin:0 0 12px; }
+    .field > .field > label, .field label{ display:block; margin:0 0 12px !important; line-height:1.15 !important; }
+.field label .sub{ display:block; margin-top:2px; }
+
     .row{ align-items:flex-start; }
     .for-list{ display:flex; flex-direction:column; gap:10px; margin-top:2px; }
     .chk{ display:flex; align-items:center; gap:10px; font-weight:500; }
