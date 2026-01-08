@@ -153,11 +153,11 @@ function biLabel(en, th){
   if(document.querySelector('style[data-mintflow="bilingual-labels"]')) return;
   const css = `
     label .lb-en{ display:block; font-weight:600; line-height:1.1; }
-    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
+    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:3px; line-height:1.15; }
 
     /* mintflow-patch: form spacing + checkbox rows */
     .field{ gap:0; }
-    .field > label{ display:block; margin:0 0 6px; }
+    .field > label{ display:block; margin:0 0 12px; }
     .row{ align-items:flex-start; }
     .for-list{ display:flex; flex-direction:column; gap:10px; margin-top:2px; }
     .chk{ display:flex; align-items:center; gap:10px; font-weight:500; }
