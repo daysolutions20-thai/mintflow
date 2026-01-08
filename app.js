@@ -153,17 +153,29 @@ function biLabel(en, th){
   if(document.querySelector('style[data-mintflow="bilingual-labels"]')) return;
   const css = `
     label .lb-en{ display:block; font-weight:600; line-height:1.1; }
-    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
-  
-/* --- Form label/input spacing & alignment fixes --- */
-.field > label{ display:block; margin:0 0 6px 0; line-height:1.15; }
-.field .hint{ margin-top:6px; font-size:12px; opacity:.75; }
-.row{ gap:16px; }
-.export-remark{ align-items:flex-start; }
-.export-remark .checks{ display:flex; gap:14px; flex-wrap:wrap; padding-top:2px; }
-.export-remark .chk{ display:flex; gap:8px; align-items:center; font-size:13px; opacity:.9; }
-.export-remark .remark-field{ max-width:380px; }
-`;
+    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:3px; line-height:1.15; }
+
+    /* mintflow-patch: form spacing + checkbox rows */
+    .field{ gap:0; }
+    .field > .field > label, .field label{ display:block; margin:0 0 12px !important; line-height:1.15 !important; }
+.field label .sub{ display:block; margin-top:2px; }
+
+    .row{ align-items:flex-start; }
+    .for-list{ display:flex; flex-direction:column; gap:10px; margin-top:2px; }
+    .chk{ display:flex; align-items:center; gap:10px; font-weight:500; }
+    .chk input{ width:16px; height:16px; }
+    .chkline{ display:flex; align-items:center; gap:12px; }
+    .chkline .input{ flex:1; min-width:220px; }
+    .checks-inline{ display:flex; flex-wrap:wrap; gap:14px; margin-top:2px; }
+    
+    .checks-inline .chk{ margin:0 18px 0 0 !important; padding:0 !important; }
+    .checks-inline .chk input{ margin:0 8px 0 0; }
+.checks-inline .chk{ font-weight:400; }
+    .for-note-row{ align-items:stretch; }
+    .for-note-row textarea{ min-height:96px; height:100%; resize:vertical; }
+    
+
+  `;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
   style.textContent = css;
@@ -423,11 +435,11 @@ function renderCreateQR(el){
         <form class="form" id="frmCreate">
           <div class="row">
             <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Urgency", "ความเร่งด่วน")}</label>
               <select name="urgency">
                 <option>Normal</option>
                 <option>Urgent</option>
@@ -437,24 +449,53 @@ function renderCreateQR(el){
           </div>
 
           <div class="field">
-            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+            <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+            <input class="input" name="project" />
           </div>
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
-              <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <input class="input" name="requester" required />
             </div>
             <div class="field">
-              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" placeholder="0812345678" required />
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <input class="input" name="phone" required />
             </div>
           </div>
 
-          <div class="field">
-            <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
-            <textarea name="note" placeholder="ข้อความเพิ่มเติม (ถ้ามี)"></textarea>
+          <div class="row for-note-row">
+            <div class="field" style="flex:1">
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("FOR", "สำหรับ")}</label>
+
+              <div class="for-list">
+                <label class="chk">
+                  <input type="checkbox" name="forStock" />
+                  <span>Stock</span>
+                </label>
+
+                <div class="chkline">
+                  <label class="chk" style="margin:0">
+                    <input type="checkbox" name="forRepair" />
+                    <span>Repair</span>
+                  </label>
+                  <input class="input" name="forRepairDetail" placeholder="For Sale / For Customer" disabled />
+                </div>
+
+                <div class="chkline">
+                  <label class="chk" style="margin:0">
+                    <input type="checkbox" name="forSale" />
+                    <span>Sale</span>
+                  </label>
+                  <input class="input" name="forSaleCustomer" placeholder="Name Customer" disabled />
+                </div>
+              </div>
+            </div>
+
+            <div class="field" style="flex:1">
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
+              <textarea name="note"></textarea>
+            </div>
           </div>
 
           <div class="hr"></div>
@@ -473,6 +514,23 @@ function renderCreateQR(el){
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
         </form>
+        <datalist id="unitList">
+          <option value="Trip"></option>
+          <option value="Unit"></option>
+          <option value="Kg."></option>
+          <option value="Km."></option>
+          <option value="Box"></option>
+          <option value="Set"></option>
+          <option value="Pcs."></option>
+          <option value="Hr."></option>
+          <option value="Mth."></option>
+          <option value="Sqm."></option>
+          <option value="Year"></option>
+          <option value="Pack"></option>
+          <option value="Metr"></option>
+          <option value="Doz."></option>
+        </datalist>
+
       </div>
 
       <div class="card">
@@ -500,68 +558,54 @@ function renderCreateQR(el){
       </div>
       <div class="row">
         <div class="field">
-          <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
           <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
-          <label>${biLabel("Model", "รุ่น")}</label>
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Model", "รุ่น")}</label>
           <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
       <div class="row">
         <div class="field">
-          <label>${biLabel("Code", "รหัสสินค้า")}</label>
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
         <div class="field">
-          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
-                <div class="field">
-          <label>${biLabel("Unit", "หน่วย")}</label>
-          <input class="input" name="unit" list="unitList-${id}" />
-          <datalist id="unitList-${id}">
-            <option value="Trip"></option>
-            <option value="Unit"></option>
-            <option value="Kg."></option>
-            <option value="Km."></option>
-            <option value="Box"></option>
-            <option value="Set"></option>
-            <option value="Pcs."></option>
-            <option value="Hr."></option>
-            <option value="Mth."></option>
-            <option value="Sqm."></option>
-            <option value="Year"></option>
-            <option value="Pack"></option>
-            <option value="Metr"></option>
-            <option value="Doz."></option>
-          </datalist>
-          <div class="hint">+ เพิ่มเองได้</div>
+        <div class="field">
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
+          <input class="input" name="unit" list="unitList" />
+        <div class="subtext">+ เพิ่มเองได้</div>
+</div>
+      </div>
+
+      <div class="row">
+        <div class="field" style="flex:2">
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Detail", "รายละเอียด/สเปก")}</label>
+          <input class="input" name="detail" />
         </div>
       </div>
 
-            <div class="field">
-        <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-        <input class="input" name="detail" />
-      </div>
-
-      <div class="row export-remark">
-        <div class="field" style="flex:2">
-          <label>${biLabel("Export By.", "ส่งออกทาง")}</label>
-          <div class="checks">
-            <label class="chk"><input type="checkbox" name="exportBy" value="By Sea" /> By Sea</label>
-            <label class="chk"><input type="checkbox" name="exportBy" value="By Land" /> By Land</label>
-            <label class="chk"><input type="checkbox" name="exportBy" value="By Air" /> By Air</label>
+      <div class="row export-remark-row">
+        <div class="field" style="flex:1.10">
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Export By.", "ส่งออกทาง")}</label>
+          <div class="checks-inline">
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Sea" /> <span>By Sea</span></label>
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Land" /> <span>By Land</span></label>
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Air" /> <span>By Air</span></label>
           </div>
         </div>
-        <div class="field remark-field" style="flex:1">
-          <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
+        <div class="field" style="flex:1.90">
+          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Remark", "หมายเหตุย่อย")}</label>
           <input class="input" name="remark" />
         </div>
       </div>
 
       <div class="field">
-        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -591,6 +635,52 @@ function renderCreateQR(el){
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
   addItem();
+
+
+  // Unit list (datalist) — allows custom values too
+  if(!document.getElementById("unitList")){
+    const dl = document.createElement("datalist");
+    dl.id = "unitList";
+    dl.innerHTML = `
+      <option value="Trip"></option>
+      <option value="Unit"></option>
+      <option value="Kg."></option>
+      <option value="Km."></option>
+      <option value="Box"></option>
+      <option value="Set"></option>
+      <option value="Pcs."></option>
+      <option value="Hr."></option>
+      <option value="Mth."></option>
+      <option value="Sqm."></option>
+      <option value="Year"></option>
+      <option value="Pack"></option>
+      <option value="Metr"></option>
+      <option value="Doz."></option>
+    `;
+    document.body.appendChild(dl);
+  }
+
+  // FOR checkboxes logic
+  const frm = $("#frmCreate");
+  const cbRepair = frm.querySelector('[name="forRepair"]');
+  const cbSale   = frm.querySelector('[name="forSale"]');
+  const inRepair = frm.querySelector('[name="forRepairDetail"]');
+  const inSale   = frm.querySelector('[name="forSaleCustomer"]');
+
+  const syncFOR = ()=>{
+    if(inRepair){
+      inRepair.disabled = !(cbRepair && cbRepair.checked);
+      if(inRepair.disabled) inRepair.value = "";
+    }
+    if(inSale){
+      inSale.disabled = !(cbSale && cbSale.checked);
+      if(inSale.disabled) inSale.value = "";
+    }
+  };
+  if(cbRepair) cbRepair.addEventListener("change", syncFOR);
+  if(cbSale) cbSale.addEventListener("change", syncFOR);
+  syncFOR();
+
 
   $("#frmCreate").onsubmit = (e)=>{
     e.preventDefault();
@@ -649,6 +739,11 @@ function renderCreateQR(el){
       phone,
       urgency: form.urgency.value,
       note: form.note.value.trim(),
+      forStock,
+      forRepair,
+      forSale,
+      forRepairDetail,
+      forSaleCustomer,
       status: "Submitted",
       editToken: nanoid(24),
       createdAt: nowISO(),
@@ -690,11 +785,11 @@ function renderCreatePR(el){
         <form class="form" id="frmCreatePR">
           <div class="row">
             <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label>${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
               <select class="input" name="subject" required>
                 <option value="">-- Select --</option>
                 <option value="Petty cash">Petty cash</option>
@@ -703,7 +798,7 @@ function renderCreatePR(el){
             </div>
 
             <div class="field">
-              <label>${biLabel("For job", "ใช้กับงาน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("For job", "ใช้กับงาน")}</label>
               <select class="input" name="forJob" required>
                 <option value="">-- Select --</option>
                 <option value="HDD">HDD</option>
@@ -716,18 +811,18 @@ function renderCreatePR(el){
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
-              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" placeholder="0812345678" required />
             </div>
           </div>
 
           <div class="field">
-            <label>${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
-            <textarea name="remark"></textarea>
+            <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
+            <textarea name="remark" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
 
           <div class="hr"></div>
@@ -742,15 +837,15 @@ function renderCreatePR(el){
           <div class="hr"></div>
           <div class="grid cols-3" style="gap:10px">
             <div class="field">
-              <label>${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
               <input class="input" name="preparedBy" placeholder="ชื่อผู้เตรียมเอกสาร" />
             </div>
             <div class="field">
-              <label>${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
               <input class="input" name="orderedBy" placeholder="ชื่อผู้สั่งซื้อ" />
             </div>
             <div class="field">
-              <label>${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
               <input class="input" name="approvedBy" placeholder="ชื่อผู้อนุมัติ" />
             </div>
           </div>
@@ -762,6 +857,23 @@ function renderCreatePR(el){
 
           <div class="pill">เลขเอกสารจะรันเป็น <span class="mono">PRYY-MM.NNN</span> (ต่างจาก QR แค่ Prefix)</div>
         </form>
+        <datalist id="unitList">
+          <option value="Trip"></option>
+          <option value="Unit"></option>
+          <option value="Kg."></option>
+          <option value="Km."></option>
+          <option value="Box"></option>
+          <option value="Set"></option>
+          <option value="Pcs."></option>
+          <option value="Hr."></option>
+          <option value="Mth."></option>
+          <option value="Sqm."></option>
+          <option value="Year"></option>
+          <option value="Pack"></option>
+          <option value="Metr"></option>
+          <option value="Doz."></option>
+        </datalist>
+
       </div>
 
       <div class="card">
@@ -811,53 +923,37 @@ function renderCreatePR(el){
 
       <div class="row">
         <div class="field">
-          <label>${biLabel("Code", "รหัส")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Code", "รหัส")}</label>
           <input class="input" name="code" />
         </div>
         <div class="field" style="flex:2">
-          <label>${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
           <input class="input" name="detail" required />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
-                <div class="field">
-          <label>${biLabel("Unit", "หน่วย")}</label>
-          <input class="input" name="unit" list="unitListPR-${id}" required />
-          <datalist id="unitListPR-${id}">
-            <option value="Trip"></option>
-            <option value="Unit"></option>
-            <option value="Kg."></option>
-            <option value="Km."></option>
-            <option value="Box"></option>
-            <option value="Set"></option>
-            <option value="Pcs."></option>
-            <option value="Hr."></option>
-            <option value="Mth."></option>
-            <option value="Sqm."></option>
-            <option value="Year"></option>
-            <option value="Pack"></option>
-            <option value="Metr"></option>
-            <option value="Doz."></option>
-          </datalist>
-          <div class="hint">+ เพิ่มเองได้</div>
-        </div>
         <div class="field">
-          <label>${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
+          <input class="input" name="unit" list="unitList" />
+        <div class="subtext">+ เพิ่มเองได้</div>
+</div>
+        <div class="field">
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
           <input class="input" name="price" type="number" min="0" step="0.01" value="0" />
         </div>
         <div class="field">
-          <label>${biLabel("Total", "รวม")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Total", "รวม")}</label>
           <div class="input" style="background:#fff7ed80" data-line-total>0.00</div>
         </div>
       </div>
 
       <div class="field">
-        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -895,6 +991,31 @@ function renderCreatePR(el){
 
   addItem();
 
+
+  // Unit list (datalist) — allows custom values too
+  if(!document.getElementById("unitList")){
+    const dl = document.createElement("datalist");
+    dl.id = "unitList";
+    dl.innerHTML = `
+      <option value="Trip"></option>
+      <option value="Unit"></option>
+      <option value="Kg."></option>
+      <option value="Km."></option>
+      <option value="Box"></option>
+      <option value="Set"></option>
+      <option value="Pcs."></option>
+      <option value="Hr."></option>
+      <option value="Mth."></option>
+      <option value="Sqm."></option>
+      <option value="Year"></option>
+      <option value="Pack"></option>
+      <option value="Metr"></option>
+      <option value="Doz."></option>
+    `;
+    document.body.appendChild(dl);
+  }
+
+
   $("#frmCreatePR").onsubmit = (e)=>{
     e.preventDefault();
     const form = e.target;
@@ -918,7 +1039,7 @@ function renderCreatePR(el){
         const code = blk.querySelector('input[name="code"]').value.trim();
         const detail = blk.querySelector('input[name="detail"]').value.trim();
         const qty = Number(blk.querySelector('input[name="qty"]').value||0);
-        const unit = blk.querySelector('select[name="unit"]').value.trim();
+        const unit = blk.querySelector('input[name="unit"]').value.trim();
         const price = Number(blk.querySelector('input[name="price"]').value||0);
         const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
@@ -1631,8 +1752,30 @@ function normalizeSidebarNavLabels(){
 }
 
 
+
+function injectMintFlowFixes(){
+  if (document.getElementById("mf-fixes")) return;
+  const style = document.createElement("style");
+  style.id = "mf-fixes";
+  style.textContent = `
+  /* Keep top form compact (the top labels use inline styles, but this is a safety net) */
+  #view .field > label{ margin-bottom:6px; }
+
+  /* Only item blocks need more breathing room */
+  #items .field > label{ margin-bottom:10px !important; }
+  #items .field{ padding-top:6px; }
+  #items .subtext{ margin-top:6px; font-size:12px; color:#9aa3ad; }
+
+  /* Export row: reduce "dead space" and align with Remark */
+  #items .export-remark-row{ display:grid !important; grid-template-columns: 1.35fr 1fr; column-gap:12px; align-items:start; }
+  #items .export-remark-row .field{ width:100% !important; flex:initial !important; }
+  `;
+  document.head.appendChild(style);
+}
+
 function bindGlobal(){
-  normalizeSidebarNavLabels();
+  injectMintFlowFixes();
+normalizeSidebarNavLabels();
 
   // FIX: route ไม่มี "#/create" ให้ไป request-qr แทน
   $("#btnCreateTop").onclick = ()=> location.hash = "#/request-qr";
