@@ -157,7 +157,7 @@ function biLabel(en, th){
 
     /* mintflow-patch: form spacing + checkbox rows */
     .field{ gap:0; }
-    .field > .field > label, .field label{ display:block; margin:0 0 12px !important; line-height:1.15 !important; }
+    .field > .field > label, .field label{ display:block; margin:0 0 6px !important; line-height:1.15 !important; }
 .field label .sub{ display:block; margin-top:2px; }
 
     .row{ align-items:flex-start; }
@@ -558,40 +558,40 @@ function renderCreateQR(el){
       </div>
       <div class="row">
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
           <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Model", "รุ่น")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Model", "รุ่น")}</label>
           <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
       <div class="row">
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Code", "รหัสสินค้า")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
           <input class="input" name="unit" list="unitList" />
-        <div class="subtext">+ เพิ่มเองได้</div>
+        <div class="subtext unit-hint">+ เพิ่มเองได้</div>
 </div>
       </div>
 
       <div class="row">
         <div class="field" style="flex:2">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Detail", "รายละเอียด/สเปก")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Detail", "รายละเอียด/สเปก")}</label>
           <input class="input" name="detail" />
         </div>
       </div>
 
       <div class="row export-remark-row">
         <div class="field" style="flex:1.10">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Export By.", "ส่งออกทาง")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Export By.", "ส่งออกทาง")}</label>
           <div class="checks-inline">
             <label class="chk"><input type="checkbox" class="exportBy" value="By Sea" /> <span>By Sea</span></label>
             <label class="chk"><input type="checkbox" class="exportBy" value="By Land" /> <span>By Land</span></label>
@@ -599,13 +599,13 @@ function renderCreateQR(el){
           </div>
         </div>
         <div class="field" style="flex:1.90">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Remark", "หมายเหตุย่อย")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Remark", "หมายเหตุย่อย")}</label>
           <input class="input" name="remark" />
         </div>
       </div>
 
       <div class="field">
-        <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -940,7 +940,7 @@ function renderCreatePR(el){
         <div class="field">
           <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
           <input class="input" name="unit" list="unitList" />
-        <div class="subtext">+ เพิ่มเองได้</div>
+        <div class="subtext unit-hint">+ เพิ่มเองได้</div>
 </div>
         <div class="field">
           <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
@@ -1757,7 +1757,7 @@ function injectMintFlowFixes(){
   if (document.getElementById("mf-fixes")) return;
   const style = document.createElement("style");
   style.id = "mf-fixes";
-  style.textContent = `
+  style.textC
   /* Keep top form compact (the top labels use inline styles, but this is a safety net) */
   #view .field > label{ margin-bottom:6px; }
 
@@ -1767,8 +1767,11 @@ function injectMintFlowFixes(){
   #items .subtext{ margin-top:6px; font-size:12px; color:#9aa3ad; }
 
   /* Export row: reduce "dead space" and align with Remark */
-  #items .export-remark-row{ display:grid !important; grid-template-columns: 1.35fr 1fr; column-gap:12px; align-items:start; }
+  #items .export-remark-row{ display:grid !important; grid-template-columns:max-content 1fr; column-gap:12px; align-items:start; }
   #items .export-remark-row .field{ width:100% !important; flex:initial !important; }
+  
+  .unit-hint{margin-top:4px;font-size:12px;color:var(--muted);} 
+tant; }
   `;
   document.head.appendChild(style);
 }
@@ -1807,4 +1810,3 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
- 
