@@ -435,11 +435,11 @@ function renderCreateQR(el){
         <form class="form" id="frmCreate">
           <div class="row">
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Urgency", "ความเร่งด่วน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Urgency", "ความเร่งด่วน")}</label>
               <select name="urgency">
                 <option>Normal</option>
                 <option>Urgent</option>
@@ -449,24 +449,24 @@ function renderCreateQR(el){
           </div>
 
           <div class="field">
-            <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+            <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
             <input class="input" name="project" />
           </div>
 
           <div class="row">
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" required />
             </div>
           </div>
 
           <div class="row for-note-row">
             <div class="field" style="flex:1">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("FOR", "สำหรับ")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("FOR", "สำหรับ")}</label>
 
               <div class="for-list">
                 <label class="chk">
@@ -493,7 +493,7 @@ function renderCreateQR(el){
             </div>
 
             <div class="field" style="flex:1">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
           </div>
@@ -589,7 +589,7 @@ function renderCreateQR(el){
         </div>
       </div>
 
-      <div class="row">
+      <div class="row export-remark-row">
         <div class="field" style="flex:1.10">
           <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Export By.", "ส่งออกทาง")}</label>
           <div class="checks-inline">
@@ -785,11 +785,11 @@ function renderCreatePR(el){
         <form class="form" id="frmCreatePR">
           <div class="row">
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
               <select class="input" name="subject" required>
                 <option value="">-- Select --</option>
                 <option value="Petty cash">Petty cash</option>
@@ -798,7 +798,7 @@ function renderCreatePR(el){
             </div>
 
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("For job", "ใช้กับงาน")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("For job", "ใช้กับงาน")}</label>
               <select class="input" name="forJob" required>
                 <option value="">-- Select --</option>
                 <option value="HDD">HDD</option>
@@ -811,17 +811,17 @@ function renderCreatePR(el){
 
           <div class="row">
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" placeholder="0812345678" required />
             </div>
           </div>
 
           <div class="field">
-            <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
+            <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
             <textarea name="remark" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
 
@@ -837,15 +837,15 @@ function renderCreatePR(el){
           <div class="hr"></div>
           <div class="grid cols-3" style="gap:10px">
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
               <input class="input" name="preparedBy" placeholder="ชื่อผู้เตรียมเอกสาร" />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
               <input class="input" name="orderedBy" placeholder="ชื่อผู้สั่งซื้อ" />
             </div>
             <div class="field">
-              <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
+              <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
               <input class="input" name="approvedBy" placeholder="ชื่อผู้อนุมัติ" />
             </div>
           </div>
@@ -923,37 +923,37 @@ function renderCreatePR(el){
 
       <div class="row">
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Code", "รหัส")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Code", "รหัส")}</label>
           <input class="input" name="code" />
         </div>
         <div class="field" style="flex:2">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
           <input class="input" name="detail" required />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Unit", "หน่วย")}</label>
           <input class="input" name="unit" list="unitList" />
         <div class="subtext">+ เพิ่มเองได้</div>
 </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Price/Unit (THB)", "ราคา/หน่วย (บาท)")}</label>
           <input class="input" name="price" type="number" min="0" step="0.01" value="0" />
         </div>
         <div class="field">
-          <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Total", "รวม")}</label>
+          <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Total", "รวม")}</label>
           <div class="input" style="background:#fff7ed80" data-line-total>0.00</div>
         </div>
       </div>
 
       <div class="field">
-        <label style="display:block;margin:0 0 12px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -1752,8 +1752,30 @@ function normalizeSidebarNavLabels(){
 }
 
 
+
+function injectMintFlowFixes(){
+  if (document.getElementById("mf-fixes")) return;
+  const style = document.createElement("style");
+  style.id = "mf-fixes";
+  style.textContent = `
+  /* Keep top form compact (the top labels use inline styles, but this is a safety net) */
+  #view .field > label{ margin-bottom:6px; }
+
+  /* Only item blocks need more breathing room */
+  #items .field > label{ margin-bottom:10px !important; }
+  #items .field{ padding-top:6px; }
+  #items .subtext{ margin-top:6px; font-size:12px; color:#9aa3ad; }
+
+  /* Export row: reduce "dead space" and align with Remark */
+  #items .export-remark-row{ display:grid !important; grid-template-columns: 1.35fr 1fr; column-gap:12px; align-items:start; }
+  #items .export-remark-row .field{ width:100% !important; flex:initial !important; }
+  `;
+  document.head.appendChild(style);
+}
+
 function bindGlobal(){
-  normalizeSidebarNavLabels();
+  injectMintFlowFixes();
+normalizeSidebarNavLabels();
 
   // FIX: route ไม่มี "#/create" ให้ไป request-qr แทน
   $("#btnCreateTop").onclick = ()=> location.hash = "#/request-qr";
