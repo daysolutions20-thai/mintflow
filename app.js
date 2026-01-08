@@ -12,31 +12,6 @@ const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 const LS_KEY = "qr_proto_db_v1";
 const LS_ADMIN = "qr_proto_admin";
 
-
-const LS_UNIT = "qr_unit_options_v1";
-const DEFAULT_UNITS = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz."];
-
-function loadUnitOptions(){
-  try{
-    const raw = localStorage.getItem(LS_UNIT);
-    const arr = raw ? JSON.parse(raw) : [];
-    const merged = [...DEFAULT_UNITS];
-    for(const u of arr){
-      if(!u) continue;
-      const v = String(u).trim();
-      if(v && !merged.includes(v)) merged.push(v);
-    }
-    return merged;
-  }catch(e){
-    return [...DEFAULT_UNITS];
-  }
-}
-function saveUnitOptions(units){
-  try{ localStorage.setItem(LS_UNIT, JSON.stringify(units)); }catch(e){}
-}
-function renderUnitOptions(){
-  return loadUnitOptions().map(u=>`<option value="${escapeHtml(u)}"></option>`).join("");
-}
 function nowISO(){ return new Date().toISOString(); }
 
 function pad3(n){ return String(n).padStart(3,"0"); }
@@ -166,13 +141,12 @@ function escapeHtml(str){
 }
 
 /* Bilingual Label helper (EN + TH) */
-function biLabel(en, th, extra){
-  if(extra){
-    return `<div class="lbl-en">${en}</div><div class="lbl-th">${th}<span class="lbl-extra">${extra}</span></div>`;
-  }
-  return `<div class="lbl-en">${en}</div><div class="lbl-th">${th}</div>`;
+function biLabel(en, th){
+  return `
+    <span class="lb-en">${escapeHtml(en)}</span>
+    <span class="lb-th">${escapeHtml(th)}</span>
+  `;
 }
-
 
 /* Inject CSS for bilingual labels (FOR FORMS ONLY because used inside <label> in form pages) */
 (function injectBilingualLabelCSS(){
@@ -181,12 +155,16 @@ function biLabel(en, th, extra){
     label .lb-en{font-weight:600;color:var(--accent);}
     label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:3px; line-height:1.15; }
 
-    /* mintflow-patch: form spacing + checkbox rows */
-    .field{ gap:0; }
-    .field > .field > label, .field label{ display:block; margin:0 0 12px !important; line-height:1.15 !important; }
+    /* mintflow-patch: form spacing + placeholders */
+.field{ gap:0; margin-bottom:14px; }
+.field label{ display:block; margin:0 0 6px !important; line-height:1.15 !important; }
 .field label .sub{ display:block; margin-top:2px; }
-
-    .row{ align-items:flex-start; }
+input::placeholder, textarea::placeholder{
+  font-size:12px;
+  opacity:.55;
+  font-weight:400;
+}
+.row{ align-items:flex-start; }
     .for-list{ display:flex; flex-direction:column; gap:10px; margin-top:2px; }
     .chk{ display:flex; align-items:center; gap:10px; font-weight:500; }
     .chk input{ width:16px; height:16px; }
@@ -199,40 +177,6 @@ function biLabel(en, th, extra){
 .checks-inline .chk{ font-weight:400; }
     .for-note-row{ align-items:stretch; }
     .for-note-row textarea{ min-height:96px; height:100%; resize:vertical; }
-    /* === QR/PR label + placeholder readability (DLT-like) === */
-    .lbl-en{ color: var(--accent, #ff7a00); font-weight:700; }
-    .lbl-th{ color: #9aa3af; font-weight:500; }
-    .lbl-extra{ color:#9aa3af; font-weight:500; margin-left:6px; white-space:nowrap; }
-    .field .lbl, .field label{ display:flex; flex-direction:column; gap:2px; margin-bottom:6px; }
-    .field .lbl.inline{ flex-direction:row; align-items:baseline; gap:6px; }
-    input::placeholder, textarea::placeholder{
-      color:#9aa3af;
-      font-size:12px;
-      font-weight:400;
-    }
-    /* keep row spacing clean */
-    .row{ gap:16px; }
-    .section{ padding-top:14px; }
-    /* Unit add button inside input */
-    .unit-combo{ position:relative; display:block; }
-    .unit-combo .input{ padding-right:40px; }
-    .unit-combo .unit-plus{
-      position:absolute; right:8px; top:50%; transform:translateY(-50%);
-      height:26px; width:26px; border-radius:8px;
-      border:1px solid #e5e7eb; background:#fff; cursor:pointer;
-      font-weight:800; line-height:24px;
-    }
-    .unit-combo .unit-plus:hover{ background:#fff7ed; border-color:#fdba74; }
-    /* Export/Remark layout like FOR/Note */
-    .export-remark-row{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; align-items:stretch; }
-    .export-box{ display:flex; flex-direction:column; gap:8px; }
-    .checks-vert{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
-    .checks-vert .chk{ display:flex; align-items:center; gap:8px; font-weight:400; }
-    .remark-box{ display:flex; flex-direction:column; gap:8px; }
-    .remark-box input{ width:100%; }
-    /* highlight instruction line */
-    .hint-strong{ color: var(--accent, #ff7a00); font-weight:700; }
-
     
 
   `;
@@ -510,17 +454,17 @@ function renderCreateQR(el){
 
           <div class="field">
             <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-            <input class="input" name="project" />
+            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
 
           <div class="row">
             <div class="field">
               <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
-              <input class="input" name="requester" required />
+              <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
               <label style="display:block;margin:0 0 6px;line-height:1.15;">${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" required />
+              <input class="input" name="phone" placeholder="เช่น 0812345678" required />
             </div>
           </div>
 
@@ -573,7 +517,7 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
-          <div class="subtext"><span class="hint-strong">** Please add product spec detail , picture and show export rate</span></div>
+          <div class="subtext notice">** Please add product spec detail , picture and show export rate</div>
         </form>
         <datalist id="unitList">
           <option value="Trip"></option>
@@ -606,7 +550,31 @@ function renderCreateQR(el){
   `;
 
   const itemsEl = $("#items");
-  const addItem = ()=>{
+  
+  // Units (editable): base list + localStorage extension
+  const UNIT_LS_KEY = "mintflow_units_v1";
+  const UNIT_BASE = ["PCS","SET","PAIR","BOX","EA","LOT","M","MM","CM","INCH","KG","TON","L"];
+  function getUnitOptions(){
+    let saved = [];
+    try{ saved = JSON.parse(localStorage.getItem(UNIT_LS_KEY)||"[]"); }catch(e){ saved=[]; }
+    const merged = Array.from(new Set([...UNIT_BASE, ...saved].map(x=>String(x||"").trim()).filter(Boolean)));
+    return merged;
+  }
+  function addUnitOption(newUnit){
+    const u = String(newUnit||"").trim();
+    if(!u) return;
+    let saved = [];
+    try{ saved = JSON.parse(localStorage.getItem(UNIT_LS_KEY)||"[]"); }catch(e){ saved=[]; }
+    if(!Array.isArray(saved)) saved=[];
+    if(!saved.includes(u)){
+      saved.push(u);
+      localStorage.setItem(UNIT_LS_KEY, JSON.stringify(saved));
+    }
+  }
+const addItem = (item={}) => {
+    item = item || {};
+    const exportBy = Array.isArray(item.exportBy) ? item.exportBy : [];
+    const unitOpts = getUnitOptions();
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
@@ -627,49 +595,49 @@ function renderCreateQR(el){
           <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
+      
       <div class="row">
         <div class="field">
           <label class="lbl">${biLabel("Code", "รหัสสินค้า")}</label>
-          <input class="input" name="item_code" placeholder="ถ้ามี" />
+          <input class="input code" name="code" value="${esc(item.code||"")}" placeholder="ถ้ามี" />
         </div>
         <div class="field">
           <label class="lbl">${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
-          <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
+          <input class="input qty" type="number" min="1" step="1" name="qty" value="${esc(item.qty||1)}" placeholder="1" required />
         </div>
         <div class="field">
-          <label class="lbl inline">${biLabel("Unit","หน่วย","+เพิ่มหน่วยเองได้")}</label>
-          <div class="unit-combo">
-            <input class="input" name="unit" list="unitList_${itemId}" placeholder="เช่น Pcs." />
-            <button type="button" class="unit-plus" data-unit-plus="1" title="เพิ่มหน่วย">+</button>
-          </div>
-          <datalist id="unitList_${itemId}">${renderUnitOptions()}</datalist>
+          <label class="lbl">${biLabel("Unit", "หน่วย (+เพิ่มเองได้)")}</label>
+          <select class="input unit" name="unit" required>
+            <option value="">เลือก</option>
+            ${UNIT_OPTS.map(u=>`<option value="${u}" ${item.unit===u?"selected":""}>${u}</option>`).join("")}
+            <option value="__add__">+ เพิ่มหน่วยเอง...</option>
+          </select>
         </div>
       </div>
 
       <div class="row">
-        <div class="field" style="flex:2">
+        <div class="field" style="flex:1">
           <label class="lbl">${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-          <input class="input" name="detail" />
+          <textarea class="input detail" name="detail" rows="2" placeholder="เช่น Original/OEM, size, length...">${esc(item.detail||"")}</textarea>
         </div>
       </div>
 
       <div class="row export-remark-row">
-        <div class="field" style="flex:1.10">
+        <div class="field export-col">
           <label class="lbl">${biLabel("Export By.", "ส่งออกทาง")}</label>
-          <div class="checks-inline">
-            <label class="chk"><input type="checkbox" class="exportBy" value="By Sea" /> <span>By Sea</span></label>
-            <label class="chk"><input type="checkbox" class="exportBy" value="By Land" /> <span>By Land</span></label>
-            <label class="chk"><input type="checkbox" class="exportBy" value="By Air" /> <span>By Air</span></label>
+          <div class="checks checks-vert">
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Sea" ${exportBy.includes("By Sea")?"checked":""}/> By Sea</label>
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Land" ${exportBy.includes("By Land")?"checked":""}/> By Land</label>
+            <label class="chk"><input type="checkbox" class="exportBy" value="By Air" ${exportBy.includes("By Air")?"checked":""}/> By Air</label>
           </div>
         </div>
-        <div class="field" style="flex:1.90">
+        <div class="field remark-col">
           <label class="lbl">${biLabel("Remark", "หมายเหตุย่อย")}</label>
-          <input class="input" name="remark" />
+          <textarea class="input remark" name="remark" rows="3" placeholder="เช่น Export by sea / air plus...">${esc(item.remark||"")}</textarea>
         </div>
       </div>
 
-      <div class="field">
-        <label class="lbl">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+<label class="lbl">${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
@@ -769,8 +737,8 @@ function renderCreateQR(el){
       const code = blk.querySelector('input[name="item_code"]').value.trim();
       const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
       const unit = blk.querySelector('input[name="unit"]').value.trim();
-      const detail = blk.querySelector('input[name="detail"]').value.trim();
-      const remark = blk.querySelector('input[name="remark"]').value.trim();
+      const detail = blk.querySelector('[name="detail"]').value.trim();
+      const remark = blk.querySelector('[name="remark"]').value.trim();
       const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
       if(!name || !(qty > 0) || !unit){
@@ -1871,3 +1839,4 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
+ 
