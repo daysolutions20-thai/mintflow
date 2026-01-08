@@ -667,3 +667,37 @@ body { overflow: hidden; }
   flex: 1 1 auto !important;
   min-height: 0 !important;
 }
+/* ===== QR Form: label/input balance ===== */
+/* ครอบด้วย #create-qr ถ้ามึงมี id นี้ในหน้าฟอร์ม (แนะนำให้ใส่) */
+#create-qr .field,
+#create-qr .form-field,
+#create-qr .form-row,
+#create-qr .grid-field {
+  margin-bottom: 16px; /* ระยะระหว่าง "แถว" */
+}
+
+/* หัวข้อ 2 บรรทัด (title + sub) ให้ชิดช่องกรอก */
+#create-qr label,
+#create-qr .label,
+#create-qr .field-label {
+  display: block;
+  margin: 0 0 6px 0; /* ระยะหัวข้อ -> ช่อง */
+  line-height: 1.15;
+}
+
+/* บรรทัดย่อยใต้หัวข้อ (ไทย/คำอธิบาย) ให้ชิดหัวข้อ */
+#create-qr small,
+#create-qr .sub,
+#create-qr .hint,
+#create-qr .field-sub {
+  display: block;
+  margin-top: 2px;
+  line-height: 1.15;
+}
+
+/* ช่องกรอกไม่ต้องมี margin-top แปลกๆ */
+#create-qr input,
+#create-qr select,
+#create-qr textarea {
+  margin-top: 0 !important;
+}
