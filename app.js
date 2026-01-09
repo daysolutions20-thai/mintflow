@@ -701,6 +701,28 @@ function renderCreateQR(el){
   // v9: keep NOTE textarea bottom aligned with FOR block
   setTimeout(()=>{ requestAnimationFrame(()=>{ balanceForNoteRow(); }); }, 0);
   window.addEventListener('resize', balanceForNoteRow);
+  // Custom unit options (free, no backend)
+  const MF_UNITS_KEY = "mf_units_custom_v1";
+  const getCustomUnits = () => {
+    try { return JSON.parse(localStorage.getItem(MF_UNITS_KEY) || "[]"); } catch(e){ return []; }
+  };
+  const saveCustomUnits = (arr) => localStorage.setItem(MF_UNITS_KEY, JSON.stringify(arr));
+  const ensureUnitList = () => {
+    const dl = document.getElementById("unitList");
+    if(!dl) return;
+    const existing = new Set(Array.from(dl.querySelectorAll("option")).map(o => (o.value||"").trim()).filter(Boolean));
+    const custom = getCustomUnits();
+    custom.forEach(u => {
+      const v = String(u||"").trim();
+      if(!v || existing.has(v)) return;
+      const opt = document.createElement("option");
+      opt.value = v;
+      dl.appendChild(opt);
+      existing.add(v);
+    });
+  };
+  ensureUnitList();
+
 const itemsEl = $("#items");
   const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
@@ -734,18 +756,24 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
-          <input class="input" name="unit" list="unitList" />
+          <div class="inputPlus" style="display:flex; gap:8px; align-items:center;">
+            <input class="input" name="unit" list="unitList" style="flex:1" />
+            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="field" style="flex:2">
-          <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-          <input class="input" name="detail" placeholder="สเปก/รายละเอียด เช่น Original/OEM, size, length..." />
-        </div>
-        <div class="field" style="flex:1">
-          <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
-          <input class="input" name="remark" placeholder="Export by sea / air plus..." />
+      <div class="field">
+        <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
+        <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
+      </div>
+
+      <div class="field">
+        <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+        <div class="checkStack" style="display:flex; flex-direction:column; gap:10px; padding:4px 0;">
+          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
         </div>
       </div>
 
@@ -766,6 +794,21 @@ const itemsEl = $("#items");
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
+    // "+" add unit (append to datalist + persist in localStorage)
+    const addUnitBtn = block.querySelector('[data-add-unit]');
+    if(addUnitBtn){
+      addUnitBtn.addEventListener("click", () => {
+        const v = prompt("Add new unit", "");
+        const unit = (v || "").trim();
+        if(!unit) return;
+        const custom = getCustomUnits();
+        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
+        ensureUnitList();
+        const unitInput = block.querySelector('input[name="unit"]');
+        if(unitInput) unitInput.value = unit;
+      });
+    }
+
     itemsEl.appendChild(block);
   };
 
@@ -826,8 +869,20 @@ const itemsEl = $("#items");
       const code = blk.querySelector('input[name="item_code"]').value.trim();
       const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
       const unit = blk.querySelector('input[name="unit"]').value.trim();
-      const detail = blk.querySelector('input[name="detail"]').value.trim();
-      const remark = blk.querySelector('input[name="remark"]').value.trim();
+      const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
+      const detail = (detailEl ? detailEl.value : "").trim();
+
+      // Export By (checkboxes) -> store into remark (backward compatible)
+      const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
+      const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
+      const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
+      const exportParts = [];
+      if(sea) exportParts.push("By Sea");
+      if(land) exportParts.push("By Land");
+      if(air) exportParts.push("By Air");
+
+      const remarkInput = blk.querySelector('input[name="remark"]');
+      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
       const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
       if(!name || !(qty > 0)){
@@ -1080,6 +1135,21 @@ function renderCreatePR(el){
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
+    // "+" add unit (append to datalist + persist in localStorage)
+    const addUnitBtn = block.querySelector('[data-add-unit]');
+    if(addUnitBtn){
+      addUnitBtn.addEventListener("click", () => {
+        const v = prompt("Add new unit", "");
+        const unit = (v || "").trim();
+        if(!unit) return;
+        const custom = getCustomUnits();
+        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
+        ensureUnitList();
+        const unitInput = block.querySelector('input[name="unit"]');
+        if(unitInput) unitInput.value = unit;
+      });
+    }
+
 
     ["qty","price"].forEach(k=>{
       block.querySelector(`input[name="${k}"]`).addEventListener("input", calcTotal);
