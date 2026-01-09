@@ -239,17 +239,30 @@ function biLabel(en, th){
 
     /* v14: Items row spacing = 1cm between rows (ONLY inside item cards) */
     #items .card > .row + .row{
-      margin-top: 10mm !important;
+      margin-top: 8mm !important;
     }
     /* spacing between last .row and the attach-photos field (which is a direct .field) */
     #items .card > .row + .field{
-      margin-top: 10mm !important;
+      margin-top: 8mm !important;
     }
     /* if there are multiple direct .field blocks after rows, keep same rhythm */
     #items .card > .field + .field{
-      margin-top: 10mm !important;
+      margin-top: 8mm !important;
     }
 
+
+
+    /* v15: tighten rows inside item cards (use top-margin rhythm only) */
+    #items .card > .row{ margin-bottom: 0 !important; }
+
+    /* v15: Items code/qty/unit widths: Code = 1/2 (same as Name), QTY+Unit share the other 1/2 */
+    #items .card .row.row-codeqty{
+      display: grid !important;
+      grid-template-columns: 1fr 0.5fr 0.5fr;
+      gap: 12px;
+      align-items: end;
+    }
+    #items .card .row.row-codeqty > .field{ min-width: 0; }
 `;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
@@ -710,7 +723,7 @@ const itemsEl = $("#items");
           <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
-      <div class="row">
+      <div class="row row-codeqty">
         <div class="field">
           <label>${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
