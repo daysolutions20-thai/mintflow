@@ -164,38 +164,46 @@ function biLabel(en, th){
 /* Sidebar balance patch (v1) - make left menu slimmer & less cramped */
 (function(){
   const css = `
-    /* v7: fix 3 issues
-       A) label closer to its own input
-       B) row gaps: 1-2 clearer, 3-4 not too large
-       C) Note bottom aligned with FOR block (Sale input bottom)
+    /* v8: correct block spacing for the real structure:
+       row1 (.row) -> project (.field) -> row3 (.row) -> row4 (.row)
+       Make gaps consistent like the 3/4 gap that is already OK.
     */
 
-    /* A) label-to-field tighter */
+    /* A) label-to-field tighter (everywhere) */
     #frmCreate .field > label{
       display:block;
-      margin: 0 0 2px 0 !important; /* close to field */
+      margin: 0 0 2px 0 !important;
       line-height: 1.15;
     }
     #frmCreate .field .hint,
-    #frmCreate .field small{
-      margin-top: 0 !important;
-    }
+    #frmCreate .field small{ margin-top: 0 !important; }
 
-    /* B) row spacing (only first 4 rows in the top section) */
+    /* B) CONSISTENT gaps between top blocks (use 20px baseline ~1cm) */
     #frmCreate > .row{ margin-top: 0 !important; }
-    /* default baseline (≈ 1cm) */
+    #frmCreate > .field{ margin-top: 0 !important; }
+
+    /* gap: row -> field (DocDate row -> Project field) */
+    #frmCreate > .row + .field{ margin-top: 20px !important; }
+    /* gap: field -> row (Project field -> Requester row) */
+    #frmCreate > .field + .row{ margin-top: 20px !important; }
+    /* gap: row -> row (Requester row -> FOR row) */
     #frmCreate > .row + .row{ margin-top: 20px !important; }
-    /* 1→2 needs clearer separation */
-    #frmCreate > .row:nth-of-type(2){ margin-top: 28px !important; }
-    /* 2→3 also a bit clearer (but not huge) */
-    #frmCreate > .row:nth-of-type(3){ margin-top: 26px !important; }
-    /* 3→4 must NOT be 1.5cm: keep baseline */
-    #frmCreate > .row:nth-of-type(4){ margin-top: 20px !important; }
 
     /* C) FOR + NOTE bottom alignment */
-    /* make the 4th row stretch so both columns share bottom edge */
-    #frmCreate > .row:nth-of-type(4){ align-items: stretch !important; }
-    /* the note field container should stretch and let textarea fill */
+    #frmCreate > .row:nth-of-type(3){ /* this is the FOR/NOTE row in this form */
+      align-items: stretch !important;
+    }
+    #frmCreate > .row:nth-of-type(3) .field{
+      display:flex;
+      flex-direction:column;
+    }
+    #frmCreate > .row:nth-of-type(3) .field textarea[name="note"]{
+      flex:1 1 auto;
+      height: 100% !important;
+      min-height: 132px;
+    }
+
+    /* keep note look */
     #frmCreate textarea[name="note"]{
       width:100%;
       padding:10px 12px;
@@ -205,68 +213,13 @@ function biLabel(en, th){
       font:inherit;
       line-height:1.35;
       resize:vertical;
-
-      /* fill remaining height to align bottom with FOR block */
-      height: 100% !important;
-      min-height: 132px;
-    }
-    #frmCreate textarea[name="note"]::placeholder{ opacity:.7; }
-
-    /* try to ensure its parent becomes a column flex so height:100% works */
-    #frmCreate textarea[name="note"]{
-      display:block;
-    }
-    #frmCreate textarea[name="note"]{ box-sizing:border-box; }
-
-    /* parent wrappers (best-effort, safe) */
-    #frmCreate textarea[name="note"]{
-      align-self: stretch;
-    }
-    #frmCreate textarea[name="note"]{
-      max-height: none;
-    }
-    #frmCreate textarea[name="note"]{
-      flex: 1 1 auto;
-    }
-    #frmCreate textarea[name="note"]{
-      min-width: 0;
+      box-sizing:border-box;
     }
 
-    /* if note is inside a .field, make it flex-column */
-    #frmCreate textarea[name="note"]{
-      /* no-op placeholder to keep selector grouped */
-    }
-    #frmCreate textarea[name="note"]{
-      /* handled by parent rule below */
-    }
-    #frmCreate textarea[name="note"]{
-      /* handled by parent rule below */
-    }
-    #frmCreate textarea[name="note"]{
-      /* handled by parent rule below */
-    }
-    #frmCreate textarea[name="note"]{
-      /* handled by parent rule below */
-    }
-    #frmCreate textarea[name="note"]{
-      /* handled by parent rule below */
-    }
-
-    #frmCreate textarea[name="note"]{
-      /* end */
-    }
-
-    /* parent flex rule (broad but limited to the 4th row) */
-    #frmCreate > .row:nth-of-type(4) .field{
-      display:flex;
-      flex-direction:column;
-    }
-    #frmCreate > .row:nth-of-type(4) .field textarea[name="note"]{
-      flex:1 1 auto;
-    }
+    #frmCreate .for-list{ margin:0; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v7");
+  style.setAttribute("data-mintflow", "qr-section1-align-v8");
   style.textContent = css;
   document.head.appendChild(style);
 })();
