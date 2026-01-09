@@ -268,7 +268,7 @@ function biLabel(en, th){
     .inputPlus .miniBtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;font-size:12px;line-height:1;}
     .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
-    .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgba(255,125,70,.55);background:rgba(255,125,70,.08);border-radius:12px;font-weight:700;color:#b9381a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-sizing:border-box;width:100%;font-size:clamp(11px,1.05vw,13px);line-height:1.3;}
+    .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
     #items .card .row.row-codeqty > .field{ min-width: 0; }
 `;
   const style = document.createElement("style");
