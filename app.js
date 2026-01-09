@@ -187,15 +187,22 @@ function biLabel(en, th){
 })();
 
 
-/* Create QR section-1 spacing + FOR/NOTE alignment patch (v1) */
+/* Create QR section-1 spacing + FOR/NOTE alignment patch (v2) */
 (function(){
   const css = `
-    /* tighten label-to-field spacing only (keep section spacing intact) */
-    #frmCreate .field > label{ display:block; margin: 0 0 4px 0; }
+    /* 1) tighten label-to-field spacing a bit more */
+    #frmCreate .field > label{
+      display:block;
+      margin: 0 0 2px 0; /* closer to its own input */
+    }
+    /* 1) BUT keep clear separation between rows/blocks */
+    #frmCreate .row + .row{ margin-top: 14px; }
     #frmCreate .field{ gap: 0; }
-    /* align items in same row on the top edge */
+
+    /* 2) align FOR and NOTE in same baseline/top edge */
     #frmCreate .row{ align-items:flex-start; }
-    /* ensure Note textarea looks/aligns like inputs */
+
+    /* 2) Note textarea: make bottom align with FOR side by giving a solid default height */
     #frmCreate textarea[name="note"]{
       width:100%;
       box-sizing:border-box;
@@ -206,18 +213,19 @@ function biLabel(en, th){
       background:#fff;
       font:inherit;
       line-height:1.35;
-      min-height:96px; /* keep existing intent */
+      min-height:132px; /* taller so bottom balances with FOR block */
+      height:132px;
       resize:vertical;
     }
-    /* keep FOR list top aligned and remove accidental extra spacing */
+
+    /* keep FOR list clean */
     #frmCreate .for-list{ margin:0; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v1");
+  style.setAttribute("data-mintflow", "qr-section1-align-v2");
   style.textContent = css;
   document.head.appendChild(style);
 })();
-
 
 /* Routing */
 function route(){
