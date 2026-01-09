@@ -164,26 +164,24 @@ function biLabel(en, th){
 /* Sidebar balance patch (v1) - make left menu slimmer & less cramped */
 (function(){
   const css = `
-    /* v4: keep label close to its own field */
+    /* v5: CONSISTENT row spacing based on the row4 spacing that is already OK */
+
+    /* 1) keep label close to its own field */
     #frmCreate .field > label{
       display:block;
-      margin: 0 0 0px 0; /* tighter */
+      margin: 0 0 0px 0; /* tight label-to-input */
       line-height: 1.15;
     }
     #frmCreate .field{ gap: 0; }
 
-    /* v4: spacing BETWEEN rows 1-3 should be clearer */
-    #frmCreate .row + .row{ margin-top: 20px; } /* default */
-    #frmCreate > .row:nth-of-type(2),
-    #frmCreate > .row:nth-of-type(3){ margin-top: 30px; } /* clearer separation for Project & Requester blocks */
+    /* 2) make ALL gaps between rows identical (use 20px as baseline ~1cm) */
+    #frmCreate > .row{ margin-top: 0 !important; }
+    #frmCreate > .row + .row{ margin-top: 20px !important; }
 
-    /* keep FOR+NOTE row as-is (already OK) */
-    #frmCreate > .row:nth-of-type(4){ margin-top: 20px; }
-
-    /* align FOR and NOTE in same baseline/top edge */
+    /* 3) keep FOR/NOTE top aligned */
     #frmCreate .row{ align-items:flex-start; }
 
-    /* Note textarea: balanced height */
+    /* Note textarea balanced height (already OK) */
     #frmCreate textarea[name="note"]{
       width:100%;
       padding:10px 12px;
@@ -197,11 +195,10 @@ function biLabel(en, th){
       resize:vertical;
     }
 
-    /* keep FOR list clean */
     #frmCreate .for-list{ margin:0; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v4");
+  style.setAttribute("data-mintflow", "qr-section1-align-v5");
   style.textContent = css;
   document.head.appendChild(style);
 })();
