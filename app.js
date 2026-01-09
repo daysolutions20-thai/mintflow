@@ -237,6 +237,19 @@ function biLabel(en, th){
       margin-top: 0 !important;
     }
 
+    /* v14: Items row spacing = 1cm between rows (ONLY inside item cards) */
+    #items .card > .row + .row{
+      margin-top: 10mm !important;
+    }
+    /* spacing between last .row and the attach-photos field (which is a direct .field) */
+    #items .card > .row + .field{
+      margin-top: 10mm !important;
+    }
+    /* if there are multiple direct .field blocks after rows, keep same rhythm */
+    #items .card > .field + .field{
+      margin-top: 10mm !important;
+    }
+
 `;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
