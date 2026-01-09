@@ -149,261 +149,14 @@ function biLabel(en, th){
 }
 
 /* Inject CSS for bilingual labels (FOR FORMS ONLY because used inside <label> in form pages) */
-
 (function injectBilingualLabelCSS(){
   if(document.querySelector('style[data-mintflow="bilingual-labels"]')) return;
-
   const css = `
-:root{
-  --mf-accent:#FF7A2F;        /* match header */
-  --mf-accent-strong:#E46A1A; /* deeper */
-  --mf-muted:#9AA3AD;
-}
-
-/* English heading line */
-.lb-en{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:var(--mf-accent-strong);
-  line-height:1.15;
-  margin:0 0 2px 0;
-}
-
-/* Thai translation line */
- .lb-th{
-  display:block;
-  font-size:11px;
-  color:var(--mf-muted);
-  line-height:1.15;
-  margin:0;
-}
-
-/* Common field spacing */
-.field label{
-  display:block;
-  margin:0 0 4px 0; /* label closer to its own input */
-}
-.field{ margin-bottom:14px; }
-.grid2, .row2, .mf-row{ row-gap:14px; }
-.mf-row{
-  display:flex;
-  gap:12px;
-  align-items:flex-end;
-  flex-wrap:nowrap;
-}
-.mf-row > .field{ flex:1; min-width:0; }
-
-/* Inputs */
-.input, textarea, select{
-  margin-top:0 !important;
-}
-.input::placeholder,
-textarea::placeholder{
-  font-size:12px;
-  opacity:.55;
-}
-
-/* FOR box: do NOT style text inputs as checkboxes */
-.for-box .mf-check{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  margin:8px 0;
-}
-.for-box .mf-check input[type="checkbox"],
-.for-box .mf-check input[type="radio"]{
-  width:18px;
-  height:18px;
-  margin-top:2px;
-  accent-color:var(--mf-accent-strong);
-  flex:0 0 auto;
-}
-.for-box .mf-check .input{
-  width:100%;
-}
-
-/* Export By box */
-.export-box{
-  border:1px solid #E9EDF2;
-  border-radius:14px;
-  padding:12px;
-}
-.export-box .mf-check{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:8px 0;
-}
-.export-box .mf-check input[type="checkbox"],
-.export-box .mf-check input[type="radio"]{
-  width:18px;
-  height:18px;
-  accent-color:var(--mf-accent-strong);
-}
-
-/* Export + Remark align like FOR/Note */
-.er-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:14px;
-  align-items:start;
-}
-.er-grid .field{ margin-bottom:0; }
-.remark-box textarea{
-  min-height:96px;
-  resize:vertical;
-}
-
-/* Product reminder note */
-.mf-reminder{
-  border:1px dashed rgba(216,91,0,.35);
-  background:rgba(216,91,0,.06);
-  color:#7B3B00;
-  border-radius:12px;
-  padding:10px 12px;
-  font-size:12px;
-  font-weight:600;
-  line-height:1.35;
-  white-space:normal;
-}
-
-/* Make headings (English) not smaller than Thai */
-label .lb-en{ font-size:12px; }
-label .lb-th{ font-size:11px; }
-  
-/* Placeholder */
-.input::placeholder{
-  font-size:12px;
-  color:var(--mf-muted);
-  font-weight:400;
-}
-.input::-webkit-input-placeholder{ font-size:12px; color:var(--mf-muted); font-weight:400; }
-
-/* 3-column row for Code/QTY/Unit */
-.row.row-3{
-  display:grid;
-  grid-template-columns: 1.15fr 0.75fr 1fr;
-  gap:14px;
-  align-items:end;
-}
-@media (max-width: 720px){
-  .row.row-3{ grid-template-columns: 1fr; }
-}
-`;
-
-  const style = document.createElement('style');
-  style.setAttribute('data-mintflow','bilingual-labels');
-  style.textContent = css;
-  document.head.appendChild(style);
-})();
-(() => {
-  // QR/PR visual tokens (scoped) - keep sidebar/layout untouched
-  const css = `
-    /* bilingual label hierarchy (QR only) */
-    .form{
-      --mf-accent:#ff7a00;           /* match top bar family */
-      --mf-muted:rgba(17,24,39,.55); /* soft gray like DLT */
-    }
-    label .lb-en{
-      display:block;
-      font-weight:700;
-      font-size:13px;
-      line-height:1.2;
-      color:var(--mf-accent);
-      margin-bottom:2px;
-    }
-    label .lb-th{
-      display:block;
-      font-size:12px;
-      line-height:1.2;
-      color:var(--mf-muted);
-    }
-    label .lb-hint{
-      font-size:12px;
-      line-height:1.2;
-      color:var(--mf-muted);
-      font-weight:500;
-      margin-left:6px;
-      white-space:nowrap;
-    }
-
-    /* placeholder = small + calm (not shouting) */
-    .form .input::placeholder,
-    .form textarea::placeholder{
-      font-size:12px;
-      font-weight:400;
-      color:var(--mf-muted);
-      opacity:.75;
-    }
-
-    /* spacing: keep input close to its own label, but separate rows */
-    .form .field > label{ margin-bottom:4px; }
-    .form .field .input,
-    .form .field select,
-    .form .field textarea{
-      margin-top:0;
-      margin-bottom:12px;  /* creates separation before next label */
-    }
-
-    /* keep QTY + Unit on same row */
-    .mf-row{ display:flex; gap:14px; flex-wrap:nowrap; align-items:flex-start; }
-    .mf-row > .field{ flex:1; min-width:0; }
-
-/* unit input group with + inside box */
-    .mf-inputgroup{ position:relative; display:block; }
-    .mf-inputgroup select{
-      width:100%;
-      padding-right:42px;
-      box-sizing:border-box;
-    }
-    .mf-inbox-plus{
-      position:absolute;
-      right:8px;
-      top:50%;
-      transform:translateY(-50%);
-      width:28px;
-      height:28px;
-      border-radius:8px;
-      border:1px solid rgba(0,0,0,.12);
-      background:#fff;
-      font-weight:700;
-      cursor:pointer;
-      line-height:26px;
-      padding:0;
-    }
-    .mf-inbox-plus:hover{ background:rgba(245,124,0,.06); border-color:rgba(245,124,0,.35); }
-
-    /* QR warning */
-    .mf-warn{ font-size:12px; font-weight:600; margin:8px 0 0; padding:8px 10px; border-radius:12px; background:rgba(255,122,0,.10); border:1px dashed rgba(255,122,0,.35); color:#c45a00; word-break:break-word; }
-
-    /* Export By block aligns like FOR/Note */
-    .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
-    .mf-check{ display:flex; align-items:center; gap:10px; font-size:14px; }
-    .mf-check input[type="checkbox"], .mf-check input[type="radio"]{ width:18px; height:18px; }
-
-    .mf-two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    r:pointer;
-      line-height:26px;
-      padding:0;
-    }
-    .mf-inbox-plus:hover{ background:rgba(245,124,0,.06); border-color:rgba(245,124,0,.35); }
-
-    /* QR warning */
-    .mf-warn{ font-size:12px; font-weight:600; margin:8px 0 0; padding:8px 10px; border-radius:12px; background:rgba(255,122,0,.10); border:1px dashed rgba(255,122,0,.35); color:#c45a00; word-break:break-word; }
-
-    /* Export By block aligns like FOR/Note */
-    .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
-    .mf-check{ display:flex; align-items:center; gap:10px; font-size:14px; }
-    .mf-check input[type="checkbox"], .mf-check input[type="radio"]{ width:18px; height:18px; }
-
-    .mf-two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    .mf-row{ display:flex; gap:12px; }
-    .mf-row > .field{ flex:1; }
-    .mf-row .field{ margin:0; }
+    label .lb-en{ display:block; font-weight:600; line-height:1.1; }
+    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow","qr-fixes");
+  style.setAttribute("data-mintflow", "bilingual-labels");
   style.textContent = css;
   document.head.appendChild(style);
 })();
@@ -654,12 +407,19 @@ function renderCreateQR(el){
   el.innerHTML = `
     <div class="grid cols-2">
       <div class="card">
+        <style>
+          .for-list{display:flex;flex-direction:column;gap:10px}
+          .for-line{display:flex;align-items:center;gap:10px}
+          .chk{display:flex;align-items:center;gap:10px;white-space:nowrap}
+          .for-line .input{flex:1}
+          textarea[name="note"]{min-height:96px}
+        </style>
+
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
         <form class="form" id="frmCreate">
-          <!-- SECTION 1 -->
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
@@ -667,183 +427,143 @@ function renderCreateQR(el){
             </div>
             <div class="field">
               <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select class="input" name="urgency">
-                <option value="Normal" selected>Normal</option>
-                <option value="Urgent">Urgent</option>
+              <select name="urgency">
+                <option>Normal</option>
+                <option>Urgent</option>
+                <option>Very Urgent</option>
               </select>
             </div>
           </div>
-          <div class="row">
-            <div class="field wide">
-              <label>${biLabel("Project / Subject", "โปรเจกต์ / หัวข้อ")}</label>
-              <input class="input" name="project" type="text" placeholder="เช่น: XR320E hydraulic pump quotation" />
-            </div>
-          </div>
-<div class="field">
-              <label>${biLabel("Project / Subject", "โปรเจกต์ / หัวข้อ")}</label>
-              <input class="input" name="project" placeholder="เช่น: XR320E hydraulic pump quotation" />
-            </div>
+
+          <div class="field">
+            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Requester (Required)", "ผู้ขอราคา (จำเป็น)")}</label>
-              <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
+              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <input class="input" name="requester" required />
             </div>
             <div class="field">
               <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" placeholder="0812345678" required />
+              <input class="input" name="phone" required />
             </div>
           </div>
 
-          <!-- FOR + NOTE (keep stable pattern) -->
           <div class="row">
-            <div class="field" style="flex:1">
-              <label>${biLabel("FOR", "เพื่อ")}</label>
-              <div class="card" style="box-shadow:none;border:1px solid rgba(0,0,0,.08);padding:10px 12px;border-radius:12px">
-                <div class="mf-check">
-                  <input type="checkbox" name="for_stock" />
-                  <span>Stock</span>
+            <div class="field">
+              <label>${biLabel("FOR", "สำหรับ")}</label>
+              <div class="for-list">
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
                 </div>
-                <div class="mf-check" style="align-items:flex-start">
-                  <input type="checkbox" name="for_repair" />
-                  <div style="flex:1">
-                    <div>Repair</div>
-                    <input class="input" name="for_repair_note" placeholder="For Sale / For Customer" style="margin-top:6px" />
-                  </div>
-                </div>
-                <div class="mf-check" style="align-items:flex-start">
-                  <input type="checkbox" name="for_sale" />
-                  <div style="flex:1">
-                    <div>Sale</div>
-                    <input class="input" name="for_sale_note" placeholder="Name Customer" style="margin-top:6px" />
-                  </div>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
                 </div>
               </div>
             </div>
 
-            <div class="field" style="flex:1">
+            <div class="field">
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
-              <textarea name="note" placeholder="ข้อความเพิ่มเติม (ถ้ามี)" style="min-height:118px"></textarea>
+              <textarea name="note"></textarea>
             </div>
           </div>
 
           <div class="hr"></div>
-
-          <!-- SECTION 2 : ITEMS -->
-          <div class="section-title" style="margin-top:0">
-            <h3 style="margin:0">Items</h3>
-            <button class="btn btn-small" type="button" id="btnAddItem">+ Add item</button>
+          <div class="section-title">
+            <h2 style="margin:0; font-size: 14px">Items</h2>
+            <div class="row tight">
+              <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+            </div>
           </div>
-
-          <div class="subtext mf-warn">
-            ** Please add product spec detail , picture and show export rate
-          </div>
-
           <div id="items"></div>
 
-          <div class="row" style="margin-top:10px">
-            <button class="btn btn-primary" type="submit">Save QR</button>
-            <button class="btn" type="button" id="btnCancel">Cancel</button>
+          <div class="row">
+            <button class="btn btn-primary" type="submit">Submit & Generate QR</button>
+            <button class="btn btn-ghost" type="button" id="btnCancel">Cancel</button>
           </div>
-        </form>
+
+          <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+        
+          <datalist id="unitList">
+            <option value="Trip"></option>
+            <option value="Unit"></option>
+            <option value="Kg."></option>
+            <option value="Km."></option>
+            <option value="Box"></option>
+            <option value="Set"></option>
+            <option value="Pcs."></option>
+            <option value="Hr."></option>
+            <option value="Mth."></option>
+            <option value="Sqm."></option>
+            <option value="Year"></option>
+            <option value="Pack"></option>
+            <option value="Metr"></option>
+            <option value="Doz."></option>
+          </datalist>
+</form>
       </div>
 
       <div class="card">
-        <h3 style="margin:0 0 10px">Preview</h3>
-        <div class="subtext">หลังบันทึก ระบบจะออกเลขเอกสารอัตโนมัติ</div>
+        <div class="section-title">
+          <h2 style="margin:0; font-size: 16px">Preview (เดโม)</h2>
+          <div class="subtext">ดูว่าเวลาส่งแล้วจะหน้าตาประมาณไหน</div>
+        </div>
         <div class="hr"></div>
-        <div id="preview" class="subtext">ยังไม่มีข้อมูล</div>
+        <div id="preview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
       </div>
     </div>
   `;
 
   const itemsEl = $("#items");
-  const renumberItems = ()=>{
-    Array.from(itemsEl.children).forEach((c, i)=>{
-      const h = c.querySelector("[data-item-title]");
-      if(h) h.textContent = `Item #${i+1}`;
-    });
-  };
-
-  const UNIT_OPTIONS = [
-    "Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz."
-  ];
-
   const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
     block.style.boxShadow = "none";
     block.style.marginBottom = "10px";
-
-    const unitOpts = UNIT_OPTIONS.map(u=>`<option>${escapeHtml(u)}</option>`).join("");
-
     block.innerHTML = `
       <div class="section-title">
-        <h3 style="margin:0" data-item-title>Item #${idx}</h3>
+        <h3 style="margin:0">Item #${idx}</h3>
         <button class="btn btn-danger btn-small" type="button" data-remove>ลบ</button>
       </div>
-
       <div class="row">
         <div class="field">
           <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
-          <input class="input" name="item_name" placeholder="เช่น: Hydraulic pump" required />
+          <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
           <label>${biLabel("Model", "รุ่น")}</label>
-          <input class="input" name="item_model" placeholder="เช่น: XR320E" />
+          <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
         </div>
       </div>
-
-      <div class="row row-3">
-            <div class="field">
-              <label>${biLabel("Code", "รหัสสินค้า")}</label>
+      <div class="row">
+        <div class="field">
+          <label>${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
+        <div class="field">
+          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
+        </div>
+        <div class="field">
+          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <input class="input" name="unit" list="unitList" />
+        </div>
+      </div>
 
+      <div class="row">
         <div class="field" style="flex:2">
-          <div class="mf-row">
-            <div class="field">
-              <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
-              <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
-            </div>
-            <div class="field">
-              <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)  +เพิ่มหน่วยเองได้")}</label>
-              <div class="mf-inputgroup">
-                <select name="unit" required>
-                  <option value="">เลือก</option>
-                  ${unitOpts}
-                </select>
-                <button class="mf-inbox-plus" type="button" data-add-unit title="เพิ่มหน่วย">+</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field" style="flex:1">
           <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-          <input class="input" name="detail" placeholder="เช่น: Original/OEM, size, length, material..." />
+          <input class="input" name="detail" placeholder="สเปก/รายละเอียด เช่น Original/OEM, size, length..." />
         </div>
-      </div>
-
-      <div class="row">
         <div class="field" style="flex:1">
-          <label>${biLabel("Export By.", "วิธีส่งออก")}</label>
-          <div class="card" style="box-shadow:none;border:1px solid rgba(0,0,0,.08);padding:10px 12px;border-radius:12px">
-            <div class="mf-checklist">
-              <label class="mf-check"><input type="checkbox" name="exp_sea" /> <span>By Sea</span></label>
-              <label class="mf-check"><input type="checkbox" name="exp_land" /> <span>By Land</span></label>
-              <label class="mf-check"><input type="checkbox" name="exp_air" /> <span>By Air</span></label>
-            </div>
-          </div>
-        </div>
-
-        <div class="field" style="flex:1">
-          <label>${biLabel("Remark", "หมายเหตุ")}</label>
-          <input class="input" name="remark" placeholder="เช่น: ต้องการ rate / lead time / เงื่อนไขอื่นๆ" />
+          <label>${biLabel("Remark", "หมายเหตุย่อย")}</label>
+          <input class="input" name="remark" placeholder="Export by sea / air plus..." />
         </div>
       </div>
 
@@ -854,41 +574,49 @@ function renderCreateQR(el){
         <div class="subtext" data-ph-list></div>
       </div>
     `;
-
-    // add unit
-    const btnAddUnit = block.querySelector("[data-add-unit]");
-    btnAddUnit.onclick = ()=>{
-      const cur = block.querySelector('select[name="unit"]').value.trim();
-      const u = prompt("เพิ่มหน่วยใหม่ (เช่น: Pallet, Bag, Roll):", cur || "");
-      if(!u) return;
-      const sel = block.querySelector('select[name="unit"]');
-      const exists = Array.from(sel.options).some(o=>o.value.toLowerCase()===u.toLowerCase());
-      if(!exists){
-        const opt = document.createElement("option");
-        opt.textContent = u;
-        opt.value = u;
-        sel.appendChild(opt);
-      }
-      sel.value = u;
-    };
-
     block.querySelector("[data-remove]").onclick = ()=>{
       block.remove();
       renumberItems();
     };
-
     const fileInput = block.querySelector('input[name="photos"]');
     const phList = block.querySelector("[data-ph-list]");
     fileInput.onchange = ()=>{
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
-
     itemsEl.appendChild(block);
-    renumberItems();
+  };
+
+  const renumberItems = ()=>{
+    Array.from(itemsEl.children).forEach((c, i)=>{
+      const h3 = c.querySelector("h3");
+      if(h3) h3.textContent = `Item #${i+1}`;
+    });
   };
 
   $("#btnAddItem").onclick = addItem;
+
+  // FOR: enable detail inputs only when checked
+  const repairChk = $("#forRepairChk");
+  const saleChk = $("#forSaleChk");
+  const repairTxt = $("#forRepairTxt");
+  const saleTxt = $("#forSaleTxt");
+  const syncFor = () => {
+    if(repairChk && repairTxt){
+      repairTxt.disabled = !repairChk.checked;
+      repairTxt.required = !!repairChk.checked;
+      if(!repairChk.checked) repairTxt.value = "";
+    }
+    if(saleChk && saleTxt){
+      saleTxt.disabled = !saleChk.checked;
+      saleTxt.required = !!saleChk.checked;
+      if(!saleChk.checked) saleTxt.value = "";
+    }
+  };
+  if(repairChk) repairChk.addEventListener("change", syncFor);
+  if(saleChk) saleChk.addEventListener("change", syncFor);
+  syncFor();
+
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
   addItem();
@@ -910,32 +638,20 @@ function renderCreateQR(el){
       return;
     }
 
-    // build FOR
-    const forArr = [];
-    if(form.for_stock.checked) forArr.push({type:"Stock", note:""});
-    if(form.for_repair.checked) forArr.push({type:"Repair", note: form.for_repair_note.value.trim()});
-    if(form.for_sale.checked) forArr.push({type:"Sale", note: form.for_sale_note.value.trim()});
-
     const items = itemBlocks.map((blk, idx)=>{
       const name = blk.querySelector('input[name="item_name"]').value.trim();
       const model = blk.querySelector('input[name="item_model"]').value.trim();
       const code = blk.querySelector('input[name="item_code"]').value.trim();
       const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-      const unit = blk.querySelector('select[name="unit"]').value.trim();
+      const unit = blk.querySelector('input[name="unit"]').value.trim();
       const detail = blk.querySelector('input[name="detail"]').value.trim();
       const remark = blk.querySelector('input[name="remark"]').value.trim();
-
-      const exportBy = [];
-      if(blk.querySelector('input[name="exp_sea"]').checked) exportBy.push("By Sea");
-      if(blk.querySelector('input[name="exp_land"]').checked) exportBy.push("By Land");
-      if(blk.querySelector('input[name="exp_air"]').checked) exportBy.push("By Air");
-
       const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
-      if(!name || !(qty > 0) || !unit){
-        throw new Error(`รายการที่ ${idx+1} ต้องมี Name, QTY>0 และ Unit`);
+      if(!name || !(qty > 0)){
+        throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
       }
-      return { lineNo: idx+1, code, name, model, qty, unit, detail, exportBy, remark, photos };
+      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
     });
 
     try{
@@ -947,21 +663,36 @@ function renderCreateQR(el){
       return;
     }
 
+    const docDate = form.docDate.value;
+    const docNo = newDocNo("QR", docDate);
     const db = loadDB();
-    const docNo = newDocNo("QR", form.docDate.value || today);
+    db.qr = db.qr || [];
+
     const reqObj = {
-      type: "QR",
+      kind: "QR",
+      id: nanoid(12),
       docNo,
-      docDate: form.docDate.value || today,
+      docDate,
       project: form.project.value.trim(),
       requester,
       phone,
+      forStock: !!form.forStock?.checked,
+      forRepair: !!form.forRepair?.checked,
+      forRepairTxt: (form.forRepairTxt?.value || "").trim(),
+      forSale: !!form.forSale?.checked,
+      forSaleTxt: (form.forSaleTxt?.value || "").trim(),
+      urgency: form.urgency.value,
       note: form.note.value.trim(),
-      forUse: forArr,
-      items,
-      createdAt: nowISO()
+      status: "Submitted",
+      editToken: nanoid(24),
+      createdAt: nowISO(),
+      updatedAt: nowISO(),
+      items: items.map(it=> ({...it, photos: it.photos.map(n=> ({ name:n, addedAt: nowISO() }))})),
+      files: { quotation: [], po: [], shipping: [] },
+      activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
     };
-    db.unshift(reqObj);
+
+    db.qr.unshift(reqObj);
     saveDB(db);
 
     $("#preview").innerHTML = `
