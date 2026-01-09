@@ -164,26 +164,38 @@ function biLabel(en, th){
 /* Sidebar balance patch (v1) - make left menu slimmer & less cramped */
 (function(){
   const css = `
-    /* v6: keep label close, but make row 1-3 separation clearer using row4 as visual baseline */
+    /* v7: fix 3 issues
+       A) label closer to its own input
+       B) row gaps: 1-2 clearer, 3-4 not too large
+       C) Note bottom aligned with FOR block (Sale input bottom)
+    */
 
-    /* label close to its own field */
+    /* A) label-to-field tighter */
     #frmCreate .field > label{
       display:block;
-      margin: 0 0 0px 0;
+      margin: 0 0 2px 0 !important; /* close to field */
       line-height: 1.15;
     }
-
-    /* IMPORTANT: only adjust spacing between the first 4 rows (the header section) */
-    #frmCreate > .row:nth-of-type(2),
-    #frmCreate > .row:nth-of-type(3),
-    #frmCreate > .row:nth-of-type(4){
-      margin-top: 30px !important; /* clearer separation */
+    #frmCreate .field .hint,
+    #frmCreate .field small{
+      margin-top: 0 !important;
     }
 
-    /* keep FOR/NOTE top aligned */
-    #frmCreate .row{ align-items:flex-start; }
+    /* B) row spacing (only first 4 rows in the top section) */
+    #frmCreate > .row{ margin-top: 0 !important; }
+    /* default baseline (≈ 1cm) */
+    #frmCreate > .row + .row{ margin-top: 20px !important; }
+    /* 1→2 needs clearer separation */
+    #frmCreate > .row:nth-of-type(2){ margin-top: 28px !important; }
+    /* 2→3 also a bit clearer (but not huge) */
+    #frmCreate > .row:nth-of-type(3){ margin-top: 26px !important; }
+    /* 3→4 must NOT be 1.5cm: keep baseline */
+    #frmCreate > .row:nth-of-type(4){ margin-top: 20px !important; }
 
-    /* Note textarea balanced height (leave as-is but ensure consistent) */
+    /* C) FOR + NOTE bottom alignment */
+    /* make the 4th row stretch so both columns share bottom edge */
+    #frmCreate > .row:nth-of-type(4){ align-items: stretch !important; }
+    /* the note field container should stretch and let textarea fill */
     #frmCreate textarea[name="note"]{
       width:100%;
       padding:10px 12px;
@@ -192,13 +204,69 @@ function biLabel(en, th){
       background:#fff;
       font:inherit;
       line-height:1.35;
-      min-height:132px;
-      height:132px;
       resize:vertical;
+
+      /* fill remaining height to align bottom with FOR block */
+      height: 100% !important;
+      min-height: 132px;
+    }
+    #frmCreate textarea[name="note"]::placeholder{ opacity:.7; }
+
+    /* try to ensure its parent becomes a column flex so height:100% works */
+    #frmCreate textarea[name="note"]{
+      display:block;
+    }
+    #frmCreate textarea[name="note"]{ box-sizing:border-box; }
+
+    /* parent wrappers (best-effort, safe) */
+    #frmCreate textarea[name="note"]{
+      align-self: stretch;
+    }
+    #frmCreate textarea[name="note"]{
+      max-height: none;
+    }
+    #frmCreate textarea[name="note"]{
+      flex: 1 1 auto;
+    }
+    #frmCreate textarea[name="note"]{
+      min-width: 0;
+    }
+
+    /* if note is inside a .field, make it flex-column */
+    #frmCreate textarea[name="note"]{
+      /* no-op placeholder to keep selector grouped */
+    }
+    #frmCreate textarea[name="note"]{
+      /* handled by parent rule below */
+    }
+    #frmCreate textarea[name="note"]{
+      /* handled by parent rule below */
+    }
+    #frmCreate textarea[name="note"]{
+      /* handled by parent rule below */
+    }
+    #frmCreate textarea[name="note"]{
+      /* handled by parent rule below */
+    }
+    #frmCreate textarea[name="note"]{
+      /* handled by parent rule below */
+    }
+
+    #frmCreate textarea[name="note"]{
+      /* end */
+    }
+
+    /* parent flex rule (broad but limited to the 4th row) */
+    #frmCreate > .row:nth-of-type(4) .field{
+      display:flex;
+      flex-direction:column;
+    }
+    #frmCreate > .row:nth-of-type(4) .field textarea[name="note"]{
+      flex:1 1 auto;
     }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v6");
+  style.setAttribute("data-mintflow", "qr-section1-align-v7");
   style.textContent = css;
   document.head.appendChild(style);
 })();
