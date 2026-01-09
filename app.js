@@ -262,6 +262,13 @@ function biLabel(en, th){
       gap: 12px;
       align-items: end;
     }
+
+    .inputPlus{display:flex;gap:8px;align-items:center;width:100%;}
+    .inputPlus .input{flex:1;min-width:0;}
+    .inputPlus .miniBtn{flex:0 0 auto;min-width:36px;height:36px;border-radius:10px;border:1px solid #e7e7e7;background:#fff;cursor:pointer;font-weight:800;line-height:1;}
+    .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
+    .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
+    .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed #ffb6a4;background:#fff7f3;border-radius:12px;font-weight:700;color:#b9381a;}
     #items .card .row.row-codeqty > .field{ min-width: 0; }
 `;
   const style = document.createElement("style");
@@ -666,6 +673,7 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+          <div class="warnBox">** Please add product spec detail , picture and show export rate</div>
         
           <datalist id="unitList">
             <option value="Trip"></option>
@@ -770,10 +778,10 @@ const itemsEl = $("#items");
 
       <div class="field">
         <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-        <div class="checkStack" style="display:flex; flex-direction:column; gap:10px; padding:4px 0;">
-          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-          <label class="chkLine" style="display:flex; align-items:center; gap:10px;"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+        <div class="exportByRow">
+          <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+          <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+          <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
         </div>
       </div>
 
