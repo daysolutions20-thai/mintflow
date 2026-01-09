@@ -186,6 +186,39 @@ function biLabel(en, th){
   document.head.appendChild(style);
 })();
 
+
+/* Create QR section-1 spacing + FOR/NOTE alignment patch (v1) */
+(function(){
+  const css = `
+    /* tighten label-to-field spacing only (keep section spacing intact) */
+    #frmCreate .field > label{ display:block; margin: 0 0 4px 0; }
+    #frmCreate .field{ gap: 0; }
+    /* align items in same row on the top edge */
+    #frmCreate .row{ align-items:flex-start; }
+    /* ensure Note textarea looks/aligns like inputs */
+    #frmCreate textarea[name="note"]{
+      width:100%;
+      box-sizing:border-box;
+      margin:0;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      font:inherit;
+      line-height:1.35;
+      min-height:96px; /* keep existing intent */
+      resize:vertical;
+    }
+    /* keep FOR list top aligned and remove accidental extra spacing */
+    #frmCreate .for-list{ margin:0; }
+  `;
+  const style = document.createElement("style");
+  style.setAttribute("data-mintflow", "qr-section1-align-v1");
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
+
+
 /* Routing */
 function route(){
   const hash = location.hash || "#/home";
