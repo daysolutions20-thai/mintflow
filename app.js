@@ -1689,3 +1689,21 @@ window.addEventListener("hashchange", renderRoute);
 bindGlobal();
 renderRoute();
  
+
+
+/* --- PATCH v5: replace skull icon with provided image --- */
+(function(){
+  const card = document.querySelector('[data-home-policy-card]') 
+            || document.querySelector('.home-policy-card')
+            || document.querySelector('#homePolicyCard');
+  if(!card) return;
+  const iconWrap = card.querySelector('.icon') || card.querySelector('.card-icon') || card.querySelector('[data-role="icon"]');
+  if(!iconWrap) return;
+  iconWrap.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = 'assets/img/skull_warning.png'; // PLACE IMAGE HERE
+  img.alt = 'warning';
+  img.style.width = '48px';
+  img.style.height = '48px';
+  iconWrap.appendChild(img);
+})();
