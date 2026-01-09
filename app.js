@@ -155,15 +155,15 @@ function biLabel(en, th){
 
   const css = `
 :root{
-  --mf-accent:#E46A1A;        /* softer orange */
-  --mf-accent-strong:#D85B00; /* a bit deeper */
+  --mf-accent:#FF7A2F;        /* match header */
+  --mf-accent-strong:#E46A1A; /* deeper */
   --mf-muted:#9AA3AD;
 }
 
 /* English heading line */
 .lb-en{
   display:block;
-  font-size:12px;
+  font-size:13px;
   font-weight:700;
   color:var(--mf-accent-strong);
   line-height:1.15;
@@ -171,7 +171,7 @@ function biLabel(en, th){
 }
 
 /* Thai translation line */
-.lb-th{
+ .lb-th{
   display:block;
   font-size:11px;
   color:var(--mf-muted);
@@ -182,7 +182,7 @@ function biLabel(en, th){
 /* Common field spacing */
 .field label{
   display:block;
-  margin:0 0 6px 0; /* label closer to its own input */
+  margin:0 0 4px 0; /* label closer to its own input */
 }
 .field{ margin-bottom:14px; }
 .grid2, .row2, .mf-row{ row-gap:14px; }
@@ -271,7 +271,26 @@ textarea::placeholder{
 /* Make headings (English) not smaller than Thai */
 label .lb-en{ font-size:12px; }
 label .lb-th{ font-size:11px; }
-  `;
+  
+/* Placeholder */
+.input::placeholder{
+  font-size:12px;
+  color:var(--mf-muted);
+  font-weight:400;
+}
+.input::-webkit-input-placeholder{ font-size:12px; color:var(--mf-muted); font-weight:400; }
+
+/* 3-column row for Code/QTY/Unit */
+.row.row-3{
+  display:grid;
+  grid-template-columns: 1.15fr 0.75fr 1fr;
+  gap:14px;
+  align-items:end;
+}
+@media (max-width: 720px){
+  .row.row-3{ grid-template-columns: 1fr; }
+}
+`;
 
   const style = document.createElement('style');
   style.setAttribute('data-mintflow','bilingual-labels');
@@ -647,6 +666,20 @@ function renderCreateQR(el){
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
+              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+              <select class="input" name="urgency">
+                <option value="Normal" selected>Normal</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field wide">
+              <label>${biLabel("Project / Subject", "โปรเจกต์ / หัวข้อ")}</label>
+              <input class="input" name="project" type="text" placeholder="เช่น: XR320E hydraulic pump quotation" />
+            </div>
+          </div>
+<div class="field">
               <label>${biLabel("Project / Subject", "โปรเจกต์ / หัวข้อ")}</label>
               <input class="input" name="project" placeholder="เช่น: XR320E hydraulic pump quotation" />
             </div>
@@ -763,9 +796,9 @@ function renderCreateQR(el){
         </div>
       </div>
 
-      <div class="row">
-        <div class="field">
-          <label>${biLabel("Code", "รหัสสินค้า")}</label>
+      <div class="row row-3">
+            <div class="field">
+              <label>${biLabel("Code", "รหัสสินค้า")}</label>
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
 
