@@ -20,30 +20,41 @@ function balanceForNoteRow(){
   try{
     const frm = document.querySelector('#frmCreate');
     if(!frm) return;
+
     const noteTa = frm.querySelector('textarea[name="note"]');
     if(!noteTa) return;
-    const noteField = noteTa.closest('.field') || noteTa.parentElement;
-    const row = noteTa.closest('.row') || noteField?.parentElement;
+
+    const row = noteTa.closest('.row');
     if(!row) return;
 
-    // left field: first checkbox in the same row (FOR block)
-    const cb = row.querySelector('input[type="checkbox"]');
-    const leftField = cb ? (cb.closest('.field') || cb.closest('.col') || cb.parentElement) : null;
-    if(!leftField || !noteField) return;
+    // Find the "Sale" input in FOR column (use the last text input/select in the left side)
+    const leftCol = row.querySelector('input[type="checkbox"]')?.closest('.field')?.parentElement || row.querySelector('.col') || row;
+    const forSide = leftCol.querySelector('.for-list')?.parentElement || leftCol;
 
-    // ensure note field is column-flex so textarea can size nicely
-    noteField.style.display = 'flex';
-    noteField.style.flexDirection = 'column';
+    // pick the last usable input/select inside FOR side (Sale customer name field)
+    const candidates = Array.from(forSide.querySelectorAll('input,select,textarea'))
+      .filter(el => el !== noteTa && el.offsetParent !== null);
+    const saleEl = candidates.length ? candidates[candidates.length-1] : null;
+    if(!saleEl) return;
 
-    // overhead = noteField height excluding textarea (labels etc.)
-    const noteFieldRect = noteField.getBoundingClientRect();
-    const taRect = noteTa.getBoundingClientRect();
-    const overhead = Math.max(0, noteFieldRect.height - taRect.height);
+    // Ensure note field can stretch
+    const noteField = noteTa.closest('.field') || noteTa.parentElement;
+    if(noteField){
+      noteField.style.display = 'flex';
+      noteField.style.flexDirection = 'column';
+    }
 
-    const leftH = leftField.getBoundingClientRect().height;
-    const targetH = Math.max(132, Math.round(leftH - overhead));
+    // Iteratively nudge height so NOTE bottom == Sale input bottom
+    for(let i=0;i<3;i++){
+      const saleBottom = saleEl.getBoundingClientRect().bottom;
+      const taRect = noteTa.getBoundingClientRect();
+      const delta = Math.round(saleBottom - taRect.bottom); // + means need taller
+      if(Math.abs(delta) <= 1) break;
 
-    noteTa.style.height = targetH + 'px';
+      const current = noteTa.getBoundingClientRect().height;
+      const next = Math.max(132, current + delta);
+      noteTa.style.height = next + 'px';
+    }
   }catch(e){}
 }
 
@@ -187,7 +198,30 @@ function biLabel(en, th){
   const css = `
     label .lb-en{ display:block; font-weight:600; line-height:1.1; }
     label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
-  `;
+  
+
+    /* v10: English heading bigger than Thai translation */
+    #frmCreate .field > label{
+      font-size: 14px !important;   /* English */
+      font-weight: 700 !important;
+      color: rgba(0,0,0,.72);
+    }
+    #frmCreate .field > label small,
+    #frmCreate .field > label .th{
+      font-size: 12px !important;   /* Thai translation */
+      font-weight: 500 !important;
+      color: rgba(0,0,0,.38) !important;
+    }
+
+    /* v10: placeholder (example) smaller + lighter like translation */
+    #frmCreate input::placeholder,
+    #frmCreate textarea::placeholder{
+      font-size: 12px !important;
+      color: rgba(0,0,0,.35) !important;
+      font-weight: 400 !important;
+    }
+
+`;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
   style.textContent = css;
