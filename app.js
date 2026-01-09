@@ -207,12 +207,68 @@ function renderHome(el){
       <div class="tiles">
         <div class="tile">
           <div class="row tight" style="gap:12px; align-items:center">
-            <div class="ico">☠️❌</div>
+            <div class="ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h3"/><path d="M14 17h6"/><path d="M17 14v6"/><path d="M20 20v0"/></svg></div>
             <div>
-              <div class="t-sub">ไม่อยู่ในระบบ = ยังไม่ส่ง<br>กรุณาค้นหาเองก่อนถาม</div>
+              <div class="t-title">Request QR</div>
+              <div class="t-sub">ขอราคา + แนบรูปต่อรายการ</div>
             </div>
           </div>
-</div>
+          <button class="btn btn-primary" id="goRequestQR">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></div>
+            <div>
+              <div class="t-title">Summary QR</div>
+              <div class="t-sub">ค้นหา QR ได้ทุกมิติ (ทั้งหมด ${qrTotal})</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goSummaryQR">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v18l-2-1-2 1-2-1-2 1-2-1-2 1V3z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg></div>
+            <div>
+              <div class="t-title">Request PR</div>
+              <div class="t-sub">ขอเบิก/ขอซื้อ + แนบรูปต่อรายการ</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goRequestPR">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></div>
+            <div>
+              <div class="t-title">Summary PR</div>
+              <div class="t-sub">ค้นหา PR ได้ทุกมิติ (ทั้งหมด ${prTotal})</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goSummaryPR">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"/><path d="M12 17h.01"/><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z"/></svg></div>
+            <div>
+              <div class="t-title">กติกาการใช้งาน</div>
+              <div class="t-sub">มีโน้ตให้อ่านก่อนเริ่ม</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="goHelp">Open</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">☠️ ❌</div>
+            <div>
+              <div class="t-title">ไม่อยู่ในระบบ = ยังไม่ส่ง</div>
+              <div class="t-sub">กรุณาค้นหาเองก่อนถาม</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="hr"></div>
@@ -233,6 +289,8 @@ function renderHome(el){
   $("#goRequestPR").onclick = () => location.hash = "#/request-pr";
   $("#goSummaryPR").onclick = () => location.hash = "#/summary-pr";
   $("#goHelp").onclick = () => location.hash = "#/help";
+  const _goSummaryQR2 = $("#goSummaryQR2");
+  if(_goSummaryQR2) _goSummaryQR2.onclick = () => location.hash = "#/summary-qr";
 }
 
 function badge(status){
