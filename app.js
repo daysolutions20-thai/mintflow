@@ -161,6 +161,31 @@ function biLabel(en, th){
   document.head.appendChild(style);
 })();
 
+/* Sidebar balance patch (v1) - make left menu slimmer & less cramped */
+(function(){
+  const css = `
+    /* narrower sidebar to balance main content */
+    .sidebar{ width: 248px; min-width: 248px; }
+    /* reduce inner padding */
+    .sidebar .sb-inner, .sidebar .inner, .sidebar .wrap{ padding-left: 12px; padding-right: 12px; }
+    /* logo block less tall */
+    .sidebar .logo, .sidebar .logo-box, .sidebar .brand{ padding: 12px; }
+    .sidebar .logo img, .sidebar .brand img{ max-width: 160px; height: auto; }
+    /* menu items: slightly tighter */
+    .sidebar .nav-item{ padding: 10px 12px; gap: 10px; }
+    .sidebar .nav-item .nav-text, .sidebar .nav-item .label{ font-size: 14px; }
+    .sidebar .nav-item svg, .sidebar .nav-item .ico{ width: 18px; height: 18px; }
+    /* active item: keep same shape but not too fat */
+    .sidebar .nav-item.active{ border-radius: 12px; }
+  `;
+  // avoid duplicate
+  if(document.querySelector('style[data-mintflow="sidebar-balance-v1"]')) return;
+  const style = document.createElement('style');
+  style.setAttribute('data-mintflow','sidebar-balance-v1');
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
+
 /* Routing */
 function route(){
   const hash = location.hash || "#/home";
