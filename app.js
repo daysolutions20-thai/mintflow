@@ -263,9 +263,9 @@ function biLabel(en, th){
       align-items: end;
     }
 
-    .inputPlus{display:flex;gap:8px;align-items:center;width:100%;}
-    .inputPlus .input{flex:1;min-width:0;}
-    .inputPlus .miniBtn{flex:0 0 auto;min-width:36px;height:36px;border-radius:10px;border:1px solid #e7e7e7;background:#fff;cursor:pointer;font-weight:800;line-height:1;}
+    .inputPlus{position:relative;width:100%;}
+    .inputPlus .input{width:100%;padding-right:46px;}
+    .inputPlus .miniBtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;border:1px solid #e7e7e7;background:#fff;cursor:pointer;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;}
     .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
     .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed #ffb6a4;background:#fff7f3;border-radius:12px;font-weight:700;color:#b9381a;}
@@ -764,7 +764,7 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus" style="display:flex; gap:8px; align-items:center;">
+          <div class="inputPlus">
             <input class="input" name="unit" list="unitList" style="flex:1" />
             <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
           </div>
