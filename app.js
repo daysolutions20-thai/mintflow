@@ -14,6 +14,39 @@ const LS_ADMIN = "qr_proto_admin";
 
 function nowISO(){ return new Date().toISOString(); }
 
+
+/* QR: balance NOTE textarea height to match FOR block bottom (only affects FOR/NOTE row) */
+function balanceForNoteRow(){
+  try{
+    const frm = document.querySelector('#frmCreate');
+    if(!frm) return;
+    const noteTa = frm.querySelector('textarea[name="note"]');
+    if(!noteTa) return;
+    const noteField = noteTa.closest('.field') || noteTa.parentElement;
+    const row = noteTa.closest('.row') || noteField?.parentElement;
+    if(!row) return;
+
+    // left field: first checkbox in the same row (FOR block)
+    const cb = row.querySelector('input[type="checkbox"]');
+    const leftField = cb ? (cb.closest('.field') || cb.closest('.col') || cb.parentElement) : null;
+    if(!leftField || !noteField) return;
+
+    // ensure note field is column-flex so textarea can size nicely
+    noteField.style.display = 'flex';
+    noteField.style.flexDirection = 'column';
+
+    // overhead = noteField height excluding textarea (labels etc.)
+    const noteFieldRect = noteField.getBoundingClientRect();
+    const taRect = noteTa.getBoundingClientRect();
+    const overhead = Math.max(0, noteFieldRect.height - taRect.height);
+
+    const leftH = leftField.getBoundingClientRect().height;
+    const targetH = Math.max(132, Math.round(leftH - overhead));
+
+    noteTa.style.height = targetH + 'px';
+  }catch(e){}
+}
+
 function pad3(n){ return String(n).padStart(3,"0"); }
 function yymmFromDate(d){
   const yy = String(d.getFullYear()).slice(-2);
@@ -581,7 +614,11 @@ function renderCreateQR(el){
     </div>
   `;
 
-  const itemsEl = $("#items");
+  
+  // v9: keep NOTE textarea bottom aligned with FOR block
+  setTimeout(balanceForNoteRow, 0);
+  window.addEventListener('resize', balanceForNoteRow);
+const itemsEl = $("#items");
   const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
