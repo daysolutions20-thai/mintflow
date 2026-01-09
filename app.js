@@ -600,7 +600,7 @@ function renderCreateQR(el){
           textarea[name="note"]{min-height:96px}
         </style>
 
-        <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
+        <h2 style="margin:0 0 10px">Form Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
