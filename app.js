@@ -27,19 +27,15 @@ function balanceForNoteRow(){
     const row = noteTa.closest('.row');
     if(!row) return;
 
-    // FOR side container (left column in this row)
-    const leftCol = row.querySelector('input[type="checkbox"]')?.closest('.col') || row.querySelector('.col') || row;
-    const forSide = (leftCol.querySelector('.for-list')?.parentElement) || leftCol;
+    // Find the "Sale" input in FOR column (use the last text input/select in the left side)
+    const leftCol = row.querySelector('input[type="checkbox"]')?.closest('.field')?.parentElement || row.querySelector('.col') || row;
+    const forSide = leftCol.querySelector('.for-list')?.parentElement || leftCol;
 
-    // Pick the SALE customer input (last non-checkbox input; prefer text-like)
-    const inputs = Array.from(forSide.querySelectorAll('input,select,textarea'))
-      .filter(el => el.offsetParent !== null && el !== noteTa);
-
-    const textLike = inputs.filter(el => el.tagName === 'SELECT' || (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search' || el.type === 'tel' || el.type === 'number')) || el.tagName === 'TEXTAREA');
-    const saleEl = (textLike.length ? textLike[textLike.length-1] : (inputs.length ? inputs[inputs.length-1] : null));
+    // pick the last usable input/select inside FOR side (Sale customer name field)
+    const candidates = Array.from(forSide.querySelectorAll('input,select,textarea'))
+      .filter(el => el !== noteTa && el.offsetParent !== null);
+    const saleEl = candidates.length ? candidates[candidates.length-1] : null;
     if(!saleEl) return;
-
-    const saleBox = saleEl.closest('.field') || saleEl.closest('label') || saleEl.parentElement || saleEl;
 
     // Ensure note field can stretch
     const noteField = noteTa.closest('.field') || noteTa.parentElement;
@@ -47,20 +43,6 @@ function balanceForNoteRow(){
       noteField.style.display = 'flex';
       noteField.style.flexDirection = 'column';
     }
-
-    // Iteratively nudge height so NOTE box bottom == Sale box bottom
-    for(let i=0;i<4;i++){
-      const saleBottom = saleBox.getBoundingClientRect().bottom;
-      const noteBottom = noteTa.getBoundingClientRect().bottom;
-      const delta = Math.round(saleBottom - noteBottom); // + means need taller
-      if(Math.abs(delta) <= 1) break;
-
-      const current = noteTa.getBoundingClientRect().height;
-      const next = Math.max(132, current + delta);
-      noteTa.style.height = next + 'px';
-    }
-  }catch(e){}
-}
 
     // Iteratively nudge height so NOTE bottom == Sale input bottom
     for(let i=0;i<3;i++){
@@ -237,17 +219,6 @@ function biLabel(en, th){
       font-size: 12px !important;
       color: rgba(0,0,0,.35) !important;
       font-weight: 400 !important;
-    }
-
-
-
-    /* v11: remove extra top gap inside FOR block (the row that contains NOTE) */
-    #frmCreate > .row:has(textarea[name="note"]) .field:first-child{
-      padding-top: 0 !important;
-      margin-top: 0 !important;
-    }
-    #frmCreate > .row:has(textarea[name="note"]) .field:first-child > label{
-      margin-top: 0 !important;
     }
 
 `;
@@ -679,7 +650,7 @@ function renderCreateQR(el){
 
   
   // v9: keep NOTE textarea bottom aligned with FOR block
-  setTimeout(()=>{ requestAnimationFrame(()=>{ balanceForNoteRow(); }); }, 0);
+  setTimeout(balanceForNoteRow, 0);
   window.addEventListener('resize', balanceForNoteRow);
 const itemsEl = $("#items");
   const addItem = ()=>{
