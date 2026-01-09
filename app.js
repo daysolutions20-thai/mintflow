@@ -31,15 +31,17 @@ function balanceForNoteRow(){
     const leftCol = row.querySelector('input[type="checkbox"]')?.closest('.col') || row.querySelector('.col') || row;
     const forSide = (leftCol.querySelector('.for-list')?.parentElement) || leftCol;
 
-    // Pick the SALE customer input (last non-checkbox input; prefer text-like)
+    // Pick the SALE customer input (last text-like input/select in FOR side)
     const inputs = Array.from(forSide.querySelectorAll('input,select,textarea'))
       .filter(el => el.offsetParent !== null && el !== noteTa);
 
-    const textLike = inputs.filter(el => el.tagName === 'SELECT' || (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search' || el.type === 'tel' || el.type === 'number')) || el.tagName === 'TEXTAREA');
+    const textLike = inputs.filter(el =>
+      el.tagName === 'SELECT' ||
+      (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'search' || el.type === 'tel' || el.type === 'number')) ||
+      el.tagName === 'TEXTAREA'
+    );
     const saleEl = (textLike.length ? textLike[textLike.length-1] : (inputs.length ? inputs[inputs.length-1] : null));
     if(!saleEl) return;
-
-    const saleBox = saleEl.closest('.field') || saleEl.closest('label') || saleEl.parentElement || saleEl;
 
     // Ensure note field can stretch
     const noteField = noteTa.closest('.field') || noteTa.parentElement;
@@ -48,11 +50,11 @@ function balanceForNoteRow(){
       noteField.style.flexDirection = 'column';
     }
 
-    // Iteratively nudge height so NOTE box bottom == Sale box bottom
+    // Iteratively nudge height so NOTE bottom == Sale input bottom (tiny +2px to counter borders/padding)
     for(let i=0;i<4;i++){
-      const saleBottom = saleBox.getBoundingClientRect().bottom;
+      const saleBottom = saleEl.getBoundingClientRect().bottom;
       const noteBottom = noteTa.getBoundingClientRect().bottom;
-      const delta = Math.round(saleBottom - noteBottom); // + means need taller
+      const delta = Math.round(saleBottom - noteBottom) + 2;
       if(Math.abs(delta) <= 1) break;
 
       const current = noteTa.getBoundingClientRect().height;
@@ -298,7 +300,14 @@ function biLabel(en, th){
     }
 
     #frmCreate .for-list{ margin:0; }
-  `;
+  
+
+    /* v13: make row 3->4 gap match others (override only FOR/NOTE row) */
+    #frmCreate > .row:has(textarea[name="note"]){
+      margin-top: 16px !important; /* was visually ~1.2cm; pull a hair closer */
+    }
+
+`;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "qr-section1-align-v8");
   style.textContent = css;
