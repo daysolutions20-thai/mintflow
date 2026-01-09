@@ -164,24 +164,26 @@ function biLabel(en, th){
 /* Sidebar balance patch (v1) - make left menu slimmer & less cramped */
 (function(){
   const css = `
-    /* v5: CONSISTENT row spacing based on the row4 spacing that is already OK */
+    /* v6: keep label close, but make row 1-3 separation clearer using row4 as visual baseline */
 
-    /* 1) keep label close to its own field */
+    /* label close to its own field */
     #frmCreate .field > label{
       display:block;
-      margin: 0 0 0px 0; /* tight label-to-input */
+      margin: 0 0 0px 0;
       line-height: 1.15;
     }
-    #frmCreate .field{ gap: 0; }
 
-    /* 2) make ALL gaps between rows identical (use 20px as baseline ~1cm) */
-    #frmCreate > .row{ margin-top: 0 !important; }
-    #frmCreate > .row + .row{ margin-top: 20px !important; }
+    /* IMPORTANT: only adjust spacing between the first 4 rows (the header section) */
+    #frmCreate > .row:nth-of-type(2),
+    #frmCreate > .row:nth-of-type(3),
+    #frmCreate > .row:nth-of-type(4){
+      margin-top: 30px !important; /* clearer separation */
+    }
 
-    /* 3) keep FOR/NOTE top aligned */
+    /* keep FOR/NOTE top aligned */
     #frmCreate .row{ align-items:flex-start; }
 
-    /* Note textarea balanced height (already OK) */
+    /* Note textarea balanced height (leave as-is but ensure consistent) */
     #frmCreate textarea[name="note"]{
       width:100%;
       padding:10px 12px;
@@ -194,11 +196,9 @@ function biLabel(en, th){
       height:132px;
       resize:vertical;
     }
-
-    #frmCreate .for-list{ margin:0; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v5");
+  style.setAttribute("data-mintflow", "qr-section1-align-v6");
   style.textContent = css;
   document.head.appendChild(style);
 })();
