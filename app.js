@@ -165,20 +165,57 @@ function biLabel(en, th){
 (() => {
   // QR/PR visual tokens (scoped) - keep sidebar/layout untouched
   const css = `
-    /* bilingual label hierarchy */
-    label .lb-en{ color:#f57c00; } /* same family as top accent, not neon */
+    /* bilingual label hierarchy (QR only) */
+    .form{
+      --mf-accent:#ff7a00;           /* match top bar family */
+      --mf-muted:rgba(17,24,39,.55); /* soft gray like DLT */
+    }
+    label .lb-en{
+      display:block;
+      font-weight:700;
+      font-size:13px;
+      line-height:1.2;
+      color:var(--mf-accent);
+      margin-bottom:2px;
+    }
+    label .lb-th{
+      display:block;
+      font-size:12px;
+      line-height:1.2;
+      color:var(--mf-muted);
+    }
+    label .lb-hint{
+      font-size:12px;
+      line-height:1.2;
+      color:var(--mf-muted);
+      font-weight:500;
+      margin-left:6px;
+      white-space:nowrap;
+    }
+
+    /* placeholder = small + calm (not shouting) */
     .form .input::placeholder,
     .form textarea::placeholder{
       font-size:12px;
-      opacity:.65;
+      font-weight:400;
+      color:var(--mf-muted);
+      opacity:.75;
     }
-    /* tighten label->field spacing but keep row separation */
-    .form .field > label{ margin-bottom:6px; }
+
+    /* spacing: keep input close to its own label, but separate rows */
+    .form .field > label{ margin-bottom:4px; }
     .form .field .input,
     .form .field select,
-    .form .field textarea{ margin-top:0; }
+    .form .field textarea{
+      margin-top:0;
+      margin-bottom:12px;  /* creates separation before next label */
+    }
 
-    /* unit input group with + inside box */
+    /* keep QTY + Unit on same row */
+    .mf-row{ display:flex; gap:14px; flex-wrap:nowrap; align-items:flex-start; }
+    .mf-row > .field{ flex:1; min-width:0; }
+
+/* unit input group with + inside box */
     .mf-inputgroup{ position:relative; display:block; }
     .mf-inputgroup select{
       width:100%;
@@ -203,18 +240,22 @@ function biLabel(en, th){
     .mf-inbox-plus:hover{ background:rgba(245,124,0,.06); border-color:rgba(245,124,0,.35); }
 
     /* QR warning */
-    .mf-warn{
-      border:1px solid rgba(245,124,0,.35);
-      background:rgba(245,124,0,.06);
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:13px;
-      line-height:1.35;
-      color:#7a3f00;
-      font-weight:600;
-      margin-top:10px;
-      word-break:break-word;
+    .mf-warn{ font-size:12px; font-weight:600; margin:8px 0 0; padding:8px 10px; border-radius:12px; background:rgba(255,122,0,.10); border:1px dashed rgba(255,122,0,.35); color:#c45a00; word-break:break-word; }
+
+    /* Export By block aligns like FOR/Note */
+    .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
+    .mf-check{ display:flex; align-items:center; gap:10px; font-size:14px; }
+    .mf-check input{ width:18px; height:18px; }
+
+    .mf-two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    r:pointer;
+      line-height:26px;
+      padding:0;
     }
+    .mf-inbox-plus:hover{ background:rgba(245,124,0,.06); border-color:rgba(245,124,0,.35); }
+
+    /* QR warning */
+    .mf-warn{ font-size:12px; font-weight:600; margin:8px 0 0; padding:8px 10px; border-radius:12px; background:rgba(255,122,0,.10); border:1px dashed rgba(255,122,0,.35); color:#c45a00; word-break:break-word; }
 
     /* Export By block aligns like FOR/Note */
     .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
