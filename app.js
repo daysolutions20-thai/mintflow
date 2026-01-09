@@ -193,10 +193,10 @@ function biLabel(en, th){
     /* 1) tighten label-to-field spacing a bit more */
     #frmCreate .field > label{
       display:block;
-      margin: 0 0 2px 0; /* closer to its own input */
+      margin: 0 0 1px 0; /* closer to its own input */
     }
     /* 1) BUT keep clear separation between rows/blocks */
-    #frmCreate .row + .row{ margin-top: 14px; }
+    #frmCreate .row + .row{ margin-top: 20px; }
     #frmCreate .field{ gap: 0; }
 
     /* 2) align FOR and NOTE in same baseline/top edge */
@@ -222,7 +222,7 @@ function biLabel(en, th){
     #frmCreate .for-list{ margin:0; }
   `;
   const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "qr-section1-align-v2");
+  style.setAttribute("data-mintflow", "qr-section1-align-v3");
   style.textContent = css;
   document.head.appendChild(style);
 })();
