@@ -149,19 +149,135 @@ function biLabel(en, th){
 }
 
 /* Inject CSS for bilingual labels (FOR FORMS ONLY because used inside <label> in form pages) */
+
 (function injectBilingualLabelCSS(){
   if(document.querySelector('style[data-mintflow="bilingual-labels"]')) return;
+
   const css = `
-    label .lb-en{ display:block; font-weight:600; line-height:1.1; }
-    label .lb-th{ display:block; font-size:12px; font-weight:300; opacity:.72; margin-top:2px; line-height:1.1; }
+:root{
+  --mf-accent:#E46A1A;        /* softer orange */
+  --mf-accent-strong:#D85B00; /* a bit deeper */
+  --mf-muted:#9AA3AD;
+}
+
+/* English heading line */
+.lb-en{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:var(--mf-accent-strong);
+  line-height:1.15;
+  margin:0 0 2px 0;
+}
+
+/* Thai translation line */
+.lb-th{
+  display:block;
+  font-size:11px;
+  color:var(--mf-muted);
+  line-height:1.15;
+  margin:0;
+}
+
+/* Common field spacing */
+.field label{
+  display:block;
+  margin:0 0 6px 0; /* label closer to its own input */
+}
+.field{ margin-bottom:14px; }
+.grid2, .row2, .mf-row{ row-gap:14px; }
+.mf-row{
+  display:flex;
+  gap:12px;
+  align-items:flex-end;
+  flex-wrap:nowrap;
+}
+.mf-row > .field{ flex:1; min-width:0; }
+
+/* Inputs */
+.input, textarea, select{
+  margin-top:0 !important;
+}
+.input::placeholder,
+textarea::placeholder{
+  font-size:12px;
+  opacity:.55;
+}
+
+/* FOR box: do NOT style text inputs as checkboxes */
+.for-box .mf-check{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:8px 0;
+}
+.for-box .mf-check input[type="checkbox"],
+.for-box .mf-check input[type="radio"]{
+  width:18px;
+  height:18px;
+  margin-top:2px;
+  accent-color:var(--mf-accent-strong);
+  flex:0 0 auto;
+}
+.for-box .mf-check .input{
+  width:100%;
+}
+
+/* Export By box */
+.export-box{
+  border:1px solid #E9EDF2;
+  border-radius:14px;
+  padding:12px;
+}
+.export-box .mf-check{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:8px 0;
+}
+.export-box .mf-check input[type="checkbox"],
+.export-box .mf-check input[type="radio"]{
+  width:18px;
+  height:18px;
+  accent-color:var(--mf-accent-strong);
+}
+
+/* Export + Remark align like FOR/Note */
+.er-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+  align-items:start;
+}
+.er-grid .field{ margin-bottom:0; }
+.remark-box textarea{
+  min-height:96px;
+  resize:vertical;
+}
+
+/* Product reminder note */
+.mf-reminder{
+  border:1px dashed rgba(216,91,0,.35);
+  background:rgba(216,91,0,.06);
+  color:#7B3B00;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:12px;
+  font-weight:600;
+  line-height:1.35;
+  white-space:normal;
+}
+
+/* Make headings (English) not smaller than Thai */
+label .lb-en{ font-size:12px; }
+label .lb-th{ font-size:11px; }
   `;
-  const style = document.createElement("style");
-  style.setAttribute("data-mintflow", "bilingual-labels");
+
+  const style = document.createElement('style');
+  style.setAttribute('data-mintflow','bilingual-labels');
   style.textContent = css;
   document.head.appendChild(style);
 })();
-
-
 (() => {
   // QR/PR visual tokens (scoped) - keep sidebar/layout untouched
   const css = `
@@ -245,7 +361,7 @@ function biLabel(en, th){
     /* Export By block aligns like FOR/Note */
     .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
     .mf-check{ display:flex; align-items:center; gap:10px; font-size:14px; }
-    .mf-check input{ width:18px; height:18px; }
+    .mf-check input[type="checkbox"], .mf-check input[type="radio"]{ width:18px; height:18px; }
 
     .mf-two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
     r:pointer;
@@ -260,7 +376,7 @@ function biLabel(en, th){
     /* Export By block aligns like FOR/Note */
     .mf-checklist{ display:flex; flex-direction:column; gap:10px; }
     .mf-check{ display:flex; align-items:center; gap:10px; font-size:14px; }
-    .mf-check input{ width:18px; height:18px; }
+    .mf-check input[type="checkbox"], .mf-check input[type="radio"]{ width:18px; height:18px; }
 
     .mf-two-col{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
     .mf-row{ display:flex; gap:12px; }
