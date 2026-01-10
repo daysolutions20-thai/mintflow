@@ -814,3 +814,8 @@ body { overflow: hidden; }
   position: relative;
   top: 0 !important;
 }
+
+/* v14: First row (Doc Date / Urgency) — add a bit more space between label and input */
+#mfS1 .row:first-child label{
+  margin-bottom: 10px !important;
+}
