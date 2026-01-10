@@ -965,17 +965,29 @@ const itemsEl = $("#items");
   // Helpers: treat a completely blank form as "no preview"
   const isAllEmptyQR = (d)=>{
     if(!d) return true;
+
+    // NOTE: ignore auto/default fields like docDate, urgency, and default qty=1.
+    const anyTop = !!((d.project||"").trim() || (d.requester||"").trim() || (d.phone||"").trim() || (d.note||"").trim());
     const anyFor = Array.isArray(d.forFlags) && d.forFlags.length>0;
-    const anyTop = !!(d.project || d.requester || d.phone || d.note);
+
     const anyItems = Array.isArray(d.items) && d.items.some(it=>{
       if(!it) return false;
-      const anyText = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim() || (it.remark||"").trim() || (it.unit||"").trim());
-      const qty = String(it.qty ?? "").trim();
-      const qtyIsDefault = (qty==="" || qty==="1"); // default is 1
+      const name  = (it.name  || "").trim();
+      const model = (it.model || "").trim();
+      const code  = (it.code  || "").trim();
+      const detail= (it.detail|| "").trim();
+      const remark= (it.remark|| "").trim();
+      const unit  = (it.unit  || "").trim();
+      const anyText = !!(name || model || code || detail || remark || unit);
+
+      const qtyStr = String(it.qty ?? "").trim();
+      const qtyIsDefault = (qtyStr==="" || qtyStr==="1"); // UI default
       return anyText || !qtyIsDefault;
     });
-    return !(anyFor || anyTop || anyItems);
+
+    return !(anyTop || anyFor || anyItems);
   };
+
 
   // Wire Preview button
   const btnPreview = $("#btnPreview");
