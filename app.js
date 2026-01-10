@@ -616,14 +616,18 @@ function renderCreateQR(el){
   const today = new Date().toISOString().slice(0,10);
 
   el.innerHTML = `
-    <div class="grid cols-2">
-      <div class="card">
+    <div class="card">
         <style>
           .for-list{display:flex;flex-direction:column;gap:10px}
           .for-line{display:flex;align-items:center;gap:10px}
           .chk{display:flex;align-items:center;gap:10px;white-space:nowrap}
           .for-line .input{flex:1}
           textarea[name="note"]{min-height:96px}
+
+          /* Layout A: 2 columns inside the form (Section 1 / Items) */
+          .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+          .mfLayoutA .mfCol{min-width:0;}
+          @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         </style>
 
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
@@ -631,6 +635,9 @@ function renderCreateQR(el){
         <div class="hr"></div>
 
         <form class="form" id="frmCreate">
+
+          <div class="mfLayoutA">
+            <div class="mfCol left" id="mfS1">
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
@@ -683,10 +690,12 @@ function renderCreateQR(el){
               <textarea name="note"></textarea>
             </div>
           </div>
+            </div>
+            <div class="mfCol right" id="mfS2">
 
-          <div class="hr"></div>
-          <div class="section-title">
-            <h2 style="margin:0; font-size: 14px">Items</h2>
+            <div class="hr"></div>
+            <div class="section-title">
+              <h2 style="margin:0; font-size: 14px">Items</h2>
             <div class="row tight">
               <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
             </div>
@@ -714,7 +723,20 @@ function renderCreateQR(el){
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
           <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-        
+
+          <!-- Preview modal (FlowAccount style) -->
+          <div class="mfModal" id="previewModal" aria-hidden="true">
+            <div class="mfModal__backdrop" data-close="1"></div>
+            <div class="mfModal__panel" role="dialog" aria-modal="true" aria-labelledby="mfPreviewTitle">
+              <div class="row" style="justify-content:space-between; align-items:center; gap:12px;">
+                <div class="mfModal__title" id="mfPreviewTitle" style="margin:0">Preview</div>
+                <button class="btn btn-ghost" type="button" id="btnClosePreview" data-close="1">Close</button>
+              </div>
+              <div class="hr"></div>
+              <div id="previewBody" class="subtext">กรอกข้อมูลแล้วกด Preview</div>
+            </div>
+          </div>
+
           <datalist id="unitList">
             <option value="Trip"></option>
             <option value="Unit"></option>
@@ -731,17 +753,10 @@ function renderCreateQR(el){
             <option value="Metr"></option>
             <option value="Doz."></option>
           </datalist>
-</form>
-      </div>
+            </div>
+          </div>
 
-      <div class="card">
-        <div class="section-title">
-          <h2 style="margin:0; font-size: 16px">Preview (เดโม)</h2>
-          <div class="subtext">ดูว่าเวลาส่งแล้วจะหน้าตาประมาณไหน</div>
-        </div>
-        <div class="hr"></div>
-        <div id="preview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
-      </div>
+</form>
     </div>
   `;
 
@@ -911,7 +926,9 @@ const itemsEl = $("#items");
 
   // build preview box (same structure as after submit, but no docNo / no save)
   const renderPreviewFromData = (data)=>{
-    $("#preview").innerHTML = `
+    const __pvTarget = $("#previewBody") || $("#preview");
+    if(!__pvTarget) return;
+    __pvTarget.innerHTML = `
       <div class="pill">Preview</div>
       <div class="hr"></div>
       <div><b>Project:</b> ${escapeHtml(data.project||"-")}</div>
@@ -920,6 +937,7 @@ const itemsEl = $("#items");
       <div class="hr"></div>
       <div class="subtext">* ยังไม่ส่ง (กด Submit เพื่อส่งจริง)</div>
     `;
+    $("#previewModal")?.classList.add("is-open");
   };
 
   const collectQRFromForm = ({strict=true}={}) => {
@@ -1042,6 +1060,19 @@ const itemsEl = $("#items");
       if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
     });
   }
+
+  const previewModal = $("#previewModal");
+  const closePreviewModal = ()=> previewModal?.classList.remove("is-open");
+  if(previewModal){
+    previewModal.addEventListener("click",(ev)=>{
+      const t = ev.target;
+      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closePreviewModal(); }
+    });
+  }
+  const btnClosePreview = $("#btnClosePreview");
+  if(btnClosePreview) btnClosePreview.onclick = ()=> closePreviewModal();
+
+
   const btnCancelSubmit = $("#btnCancelSubmit");
   if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
 
