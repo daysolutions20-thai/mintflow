@@ -699,14 +699,14 @@ body { overflow: hidden; }
 }
 
 /* ให้ “กลุ่ม” ในซ้ายห่างกัน ~1cm (row/field สลับกันได้หลายแบบ) */
-#mfS1 .row + .field{ margin-top: 6mm !important; }   /* Doc row -> Project field */
-#mfS1 .field + .row{ margin-top: 6mm !important; }
-#mfS1 .field + .field{ margin-top: 6mm !important; }
-#mfS1 .row + .row{ margin-top: 6mm !important; }
+#mfS1 .row + .field{ margin-top: 10mm !important; }   /* Doc row -> Project field */
+#mfS1 .field + .row{ margin-top: 10mm !important; }
+#mfS1 .field + .field{ margin-top: 10mm !important; }
+#mfS1 .row + .row{ margin-top: 10mm !important; }
 
 /* เผื่อบางจุดใช้ .grid แทน .row */
-#mfS1 .grid + .field{ margin-top: 6mm !important; }
-#mfS1 .field + .grid{ margin-top: 6mm !important; }
+#mfS1 .grid + .field{ margin-top: 10mm !important; }
+#mfS1 .field + .grid{ margin-top: 10mm !important; }
 
 /* ฝั่งขวา: ให้หัวข้อ Items ไม่โดน margin แปลก ๆ จากที่อื่น */
 #mfS2 .section-title,
