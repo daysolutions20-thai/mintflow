@@ -802,5 +802,15 @@ body { overflow: hidden; }
    ดันหัวข้อฝั่งซ้ายแถวแรก (Doc Date / Urgency) ลงให้ตรงกับ Items
    ========================================================= */
 #mfS1 .row:first-child label{
-  margin-top: 6px !important;
+  display:block;
+  position:relative;
+  top: 10px !important;
+}
+
+/* v13: Ensure RIGHT headline has no extra top offset */
+#mfS2 .section-title,
+#mfS2 h3,
+#mfS2 .items-title{
+  position: relative;
+  top: 0 !important;
 }
