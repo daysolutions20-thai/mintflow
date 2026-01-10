@@ -661,6 +661,33 @@ body { overflow: hidden; }
   line-height: 1.15 !important;
   min-height: 34px !important; /* 2-line label (EN+TH) baseline */
 }
+/* PATCH: Fix left/right alignment (remove extra top divider on Items column)
+   Apply AFTER existing CSS
+*/
+
+/* Items section header has extra border/margin */
+#section-items,
+.items-wrapper,
+.items-panel {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure both columns align from same baseline */
+.layout-a {
+  align-items: flex-start;
+}
+
+.layout-a .layout-col {
+  padding-top: 0;
+}
+
+/* If Items has internal title bar */
+#section-items > h3,
+#section-items > .section-title {
+  margin-top: 0 !important;
+}
 
 /* Make textarea fill the stretched column height */
 .field textarea{
