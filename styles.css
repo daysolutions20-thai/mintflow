@@ -819,3 +819,32 @@ body { overflow: hidden; }
 #mfS1 .row:first-child label{
   margin-bottom: 10px !important;
 }
+
+/* =========================================================
+   Layout A — FOR / NOTE alignment fix v15
+   - ลดความสูงกล่อง FOR
+   - ดันหัวข้อ NOTE ให้ baseline ตรงกับแถวบน
+   Scope: เฉพาะ Section ซ้าย
+   ========================================================= */
+
+/* จำกัดความสูงฝั่ง FOR (checkbox stack) */
+#mfS1 .for-list,
+#mfS1 .for-options{
+  max-height: 96px; /* ลดความสูงรวม */
+  margin-bottom: 0 !important;
+}
+
+/* บังคับให้คอลัมน์ FOR ไม่ดัน NOTE ลง */
+#mfS1 .for-col{
+  align-self: flex-start;
+}
+
+/* ดันหัวข้อ NOTE ขึ้นให้ตรง baseline กับแถวบน */
+#mfS1 .note-col{
+  align-self: flex-start;
+}
+
+/* ให้ label NOTE ชิดบนเหมือน label แถวบน */
+#mfS1 .note-col label{
+  margin-top: 0 !important;
+}
