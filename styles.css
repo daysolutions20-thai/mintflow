@@ -796,3 +796,13 @@ body { overflow: hidden; }
   padding:8px 12px !important;
   height:auto !important;
 }
+
+/* =========================================================
+   Layout A — Baseline Nudge v10
+   ฝั่งซ้ายต้อง "ลง" ให้ตรงกับฝั่งขวา (Items)
+   ========================================================= */
+
+/* NUDGE DOWN: ปรับค่า +2px ถึง +10px (ตอนนี้ตั้ง +6px) */
+#mfS1 > *:first-child{
+  margin-top: 6px !important;
+}
