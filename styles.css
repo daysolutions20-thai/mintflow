@@ -821,70 +821,49 @@ body { overflow: hidden; }
 }
 
 /* =========================================================
-   Layout A — FOR / NOTE alignment fix v15
-   - ลดความสูงกล่อง FOR
-   - ดันหัวข้อ NOTE ให้ baseline ตรงกับแถวบน
-   Scope: เฉพาะ Section ซ้าย
+   Layout A — FOR / NOTE alignment v17 (NO :has)
+   Goal:
+   - ลดความสูง/ความยาวของกล่องติ๊ก FOR
+   - ดันหัวข้อ NOTE ให้ baseline ตรงกับหัวข้อแถวบน
+   Constraints:
+   - ไม่แตะแถวอื่น (spacing 1cm เดิมคงอยู่)
    ========================================================= */
 
-/* จำกัดความสูงฝั่ง FOR (checkbox stack) */
-#mfS1 .for-list,
-#mfS1 .for-options{
-  max-height: 96px; /* ลดความสูงรวม */
+/* --- 1) Compress FOR list only --- */
+#mfS1 .for-list{
+  display: flex;
+  flex-direction: column;
+  gap: 6px !important;          /* ลดช่องไฟระหว่างบรรทัด checkbox */
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
-}
-
-/* บังคับให้คอลัมน์ FOR ไม่ดัน NOTE ลง */
-#mfS1 .for-col{
-  align-self: flex-start;
-}
-
-/* ดันหัวข้อ NOTE ขึ้นให้ตรง baseline กับแถวบน */
-#mfS1 .note-col{
-  align-self: flex-start;
-}
-
-/* ให้ label NOTE ชิดบนเหมือน label แถวบน */
-#mfS1 .note-col label{
-  margin-top: 0 !important;
-}
-
-/* =========================================================
-   Layout A — FOR/NOTE row alignment v16 (Chrome :has)
-   เป้า: หัวข้อ NOTE ให้เริ่ม "ระดับเดียวกับหัวข้อแถวบน" โดยไม่แตะแถวอื่น
-   วิธี: จับแถวที่มี textarea[name="note"] แล้วคุม align เฉพาะแถวนั้น
-   ========================================================= */
-
-/* แถวที่มี NOTE textarea */
-#mfS1 .row:has(textarea[name="note"]),
-#mfS1 .grid:has(textarea[name="note"]){
-  align-items: flex-start !important;
-}
-
-/* บังคับให้คอลัมน์ในแถวนั้นไม่ถูกดันลง */
-#mfS1 .row:has(textarea[name="note"]) > *,
-#mfS1 .grid:has(textarea[name="note"]) > *{
-  align-self: flex-start !important;
-  margin-top: 0 !important;
   padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
-
-/* ลด “ความยาว” ของกล่องติ๊ก FOR: ตัด margin ที่ทำให้มันสูงเกิน */
-#mfS1 .row:has(textarea[name="note"]) label,
-#mfS1 .grid:has(textarea[name="note"]) label{
-  margin-top: 0 !important;
-  margin-bottom: 4px !important;
+#mfS1 .for-list label{
+  margin: 0 !important;         /* กัน label ของ checkbox ทำให้สูงเกิน */
   line-height: 1.15 !important;
 }
 
-/* ลดช่องไฟระหว่างรายการ checkbox เฉพาะในแถว FOR/NOTE */
-#mfS1 .row:has(textarea[name="note"]) input[type="checkbox"],
-#mfS1 .grid:has(textarea[name="note"]) input[type="checkbox"]{
+/* ถ้ามี container ครอบ checkbox แต่ละบรรทัด */
+#mfS1 .for-list .row,
+#mfS1 .for-list .item,
+#mfS1 .for-list .opt{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* --- 2) Lift NOTE headline (and its block) slightly --- */
+/* NOTE textarea exists as textarea[name="note"] */
+#mfS1 label[for="note"],
+#mfS1 textarea[name="note"]{
+  position: relative;
+  top: -8px;                    /* ดึง NOTE ขึ้นให้ตรง baseline แถวบน */
+}
+
+/* กัน textarea โดนดึงแล้วชนขอบ */
+#mfS1 textarea[name="note"]{
   margin-top: 0 !important;
 }
 
-/* ให้ NOTE label ชิดบนแบบเดียวกับแถวบน */
-#mfS1 .row:has(textarea[name="note"]) textarea[name="note"],
-#mfS1 .grid:has(textarea[name="note"]) textarea[name="note"]{
-  margin-top: 0 !important;
-}
+/* Optional: if NOTE is inside a .field wrapper, tighten its top padding */
+/* ถ้า NOTE อยู่ใน .field แล้วมี padding-top เยอะ ให้ลบตรงนั้นในโครงจริง (ไม่ใช้ :has เพื่อความชัวร์) */
