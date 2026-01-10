@@ -684,16 +684,6 @@ body { overflow: hidden; }
   .layout-a{ grid-template-columns: 1fr; }
 }
 
-/* Baseline: ฝั่งขวาเดิมมี <div class="hr"></div> ก่อนหัวข้อ Items
-   เรา "เพิ่มเส้นแบบเดียวกัน" ให้ฝั่งซ้ายด้วย pseudo-element เพื่อให้เท่ากัน */
-.layout-a .layout-col.left::before{
-  content:"";
-  display:block;
-  height:1px;
-  background: var(--border);
-  margin: 10px 0; /* เท่ากับ .hr */
-}
-
 /* กันไม่ให้ layout-a ไปบีบช่องไฟเดิมของ form */
 .layout-a .layout-col.left,
 .layout-a .layout-col.right{
@@ -739,20 +729,21 @@ body { overflow: hidden; }
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
-/* PATCH v36 — Add top divider + spacing to LEFT (visual balance with RIGHT Items)
-   Apply at VERY END of CSS
-*/
+/* =========================================================
+   Layout A — Left divider + baseline alignment (robust)
+   ใช้ #mfS1 เป็นตัวคุม (ของจริงในหน้า) กัน selector หลุด
+   ========================================================= */
 
-/* Add top divider to left column, same visual as Items */
-.layout-a .layout-col.left::before{
-  content: "";
-  display: block;
-  height: 1px;
+/* Add a top divider line above LEFT section to match RIGHT (Items) */
+#mfS1::before{
+  content:"";
+  display:block;
+  height:1px;
   background: var(--border, #e5e7eb);
-  margin: 12px 0 14px 0; /* tune: pushes left content down to match right */
+  margin: 12px 0 14px 0; /* adjust baseline */
 }
 
-/* Ensure first row starts after divider cleanly */
-.layout-a .layout-col.left > *:first-child{
+/* Ensure LEFT starts after divider cleanly */
+#mfS1 > *:first-child{
   margin-top: 0 !important;
 }
