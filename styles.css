@@ -859,120 +859,111 @@ body { overflow: hidden; }
   min-width: 0 !important;
 }
 
-
-/* ทำให้หัว Items เป็นจุดอ้างอิง */
-#mfS2{
-  position: relative;
-}
-
-/* ให้ปุ่ม +เพิ่มรายการ อยู่มุมขวาบนเหมือนเดิม */
-#mfS2 .items-head,
-#mfS2 .items-toolbar{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-}
-
-/* จับปุ่ม "ลบ" ของ Item แรก แล้วดันขึ้นมาอยู่หน้า +เพิ่มรายการ */
-#mfS2 .item-row:first-of-type .btn-del,
-#mfS2 .item-row:first-of-type .btn-delete,
-#mfS2 .item-row:first-of-type .danger,
-#mfS2 .item-card:first-of-type .btn-del,
-#mfS2 .item-card:first-of-type .btn-delete{
-  position: absolute !important;
-  top: 10px !important;
-  right: 150px !important;   /* อยู่หน้า +เพิ่มรายการ */
-  z-index: 5 !important;
-}
-
-/* กันไม่ให้ปุ่มลบไปทับเนื้อหา item */
-#mfS2 .item-row:first-of-type,
-#mfS2 .item-card:first-of-type{
-  padding-top: 42px !important;
-}
-
-/* Responsive: จอเล็กให้ปุ่มติดกันแบบแคบลง */
-@media (max-width: 520px){
-  #mfS2 .item-row:first-of-type .btn-del,
-  #mfS2 .item-row:first-of-type .btn-delete,
-  #mfS2 .item-row:first-of-type .danger,
-  #mfS2 .item-card:first-of-type .btn-del,
-  #mfS2 .item-card:first-of-type .btn-delete{
-    right: 128px !important;
-  }
-}
-
 /* =========================================================
-   Layout A — Items controls moved to bottom (v22)
+   MintFlow — Orange Section Bands (v23)
    เป้า:
-   - ปุ่ม "ลบ" + "+ เพิ่มรายการ" อยู่เป็นชุดเดียวกัน
-   - ย้ายชุดปุ่มไปไว้ "ด้านล่างของ Items" (เหนือกล่อง Preview/ส่วนถัดไป)
-   - ไม่แตะฝั่งซ้าย
-   วิธี: ย้ายด้วย position ภายใน #mfS2 (CSS ย้าย DOM จริงๆ ไม่ได้)
+   - ทำ "แถบหัวข้อ" สีเดียวกับปุ่ม Go (ส้ม) คาดยาวเต็มคอลัมน์
+   - แยกซ้าย/ขวาคนละแถบ (ไม่คาดทั้งหน้า)
+   - หัวข้อเป็นสีขาว
+   - ลบ (Required) ด้วยการซ่อน span/class ที่พบบ่อย (ถ้ามี)
    ========================================================= */
 
-/* ให้คอลัมน์ Items เป็นกรอบอ้างอิง */
-#mfS2{ position: relative; }
+:root{
+  --mf-band-bg: #ff7a1a;
+  --mf-band-fg: #ffffff;
+  --mf-band-radius: 12px;
+}
 
-/* ซ่อนชุดปุ่มบนหัว Items (ถ้ามี) เพื่อไม่ให้ซ้ำ */
+/* ---------- ซ่อน (Required) (ถ้ามาเป็น span/class) ---------- */
+.required, .req, .is-required, .req-text,
+small.required, span.required, em.required,
+small.req, span.req, em.req{
+  display:none !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งซ้าย: ใช้แถวแรก (Doc Date / Urgency) เป็น band ---------- */
+#mfS1 .row:first-child{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  margin-bottom: 10mm; /* คง 1cm หลังแถบ */
+}
+
+/* ตัวหนังสือหัวข้อบนแถบ */
+#mfS1 .row:first-child label,
+#mfS1 .row:first-child .lbl,
+#mfS1 .row:first-child .label{
+  color: var(--mf-band-fg) !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+/* คำแปลไทยใต้หัวข้อบนแถบ (ถ้ามี) ให้เป็นขาวแบบซอฟต์ */
+#mfS1 .row:first-child .sub,
+#mfS1 .row:first-child small,
+#mfS1 .row:first-child .muted{
+  color: rgba(255,255,255,.85) !important;
+}
+
+/* กัน input ชนแถบ */
+#mfS1 .row:first-child input,
+#mfS1 .row:first-child select{
+  background: #fff !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งขวา: band ที่หัว Items (คำว่า Items + ปุ่มเพิ่มรายการ) ---------- */
+/* ยิงหลายชื่อ เผื่อโครงต่างกัน */
+#mfS2 .items-head,
+#mfS2 .items-toolbar,
+#mfS2 .items-header,
+#mfS2 .items-top{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom: 12px;
+}
+
+/* หัวคำว่า Items ให้เป็นขาว */
+#mfS2 .items-head .section-title,
+#mfS2 .items-head h2,
+#mfS2 .items-head h3,
+#mfS2 .items-toolbar .section-title,
+#mfS2 .items-toolbar h2,
+#mfS2 .items-toolbar h3,
+#mfS2 .items-header .section-title,
+#mfS2 .items-header h2,
+#mfS2 .items-header h3{
+  color: var(--mf-band-fg) !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+/* ปุ่ม +เพิ่มรายการบนแถบ: ให้คุมสีให้เข้ากัน */
 #mfS2 .items-head button,
-#mfS2 .items-toolbar button{
-  visibility: hidden !important;
-  pointer-events: none !important;
+#mfS2 .items-toolbar button,
+#mfS2 .items-header button,
+#mfS2 .items-top button{
+  background: rgba(255,255,255,.16) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+}
+#mfS2 .items-head button:hover,
+#mfS2 .items-toolbar button:hover,
+#mfS2 .items-header button:hover,
+#mfS2 .items-top button:hover{
+  background: rgba(255,255,255,.22) !important;
 }
 
-/* ดันพื้นที่ล่างไว้ให้วางชุดปุ่ม (กันทับเนื้อหา/กล่องพรีวิว) */
-#mfS2{ padding-bottom: 56px !important; }
-
-/* วาง "+ เพิ่มรายการ" ไว้มุมขวาล่างของคอลัมน์ Items */
-#mfS2 .btn-add,
-#mfS2 .btnAdd,
-#mfS2 button[aria-label*="เพิ่ม"],
-#mfS2 button:has(> span):is(.btn){
-  /* heuristic: keep only if this matches your add button class; harmless otherwise */
-}
-#mfS2 .items-add,
-#mfS2 .btn-add-item,
-#mfS2 .btn-add,
-#mfS2 button[data-action="addItem"],
-#mfS2 button.add-item{
-  position: absolute !important;
-  right: 10px !important;
-  bottom: 10px !important;
-  z-index: 6 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-
-/* วางปุ่ม "ลบ" ของ Item แรก มาด้วยกัน (อยู่ซ้ายของ +เพิ่มรายการ) */
-#mfS2 .item-row:first-of-type .btn-del,
-#mfS2 .item-row:first-of-type .btn-delete,
-#mfS2 .item-row:first-of-type .danger,
-#mfS2 .item-card:first-of-type .btn-del,
-#mfS2 .item-card:first-of-type .btn-delete{
-  position: absolute !important;
-  right: 150px !important;
-  bottom: 10px !important;
-  z-index: 6 !important;
-}
-
-/* Responsive: จอเล็กให้ชิดกัน */
+/* Responsive */
 @media (max-width:520px){
-  #mfS2 .items-add,
-  #mfS2 .btn-add-item,
-  #mfS2 .btn-add,
-  #mfS2 button[data-action="addItem"],
-  #mfS2 button.add-item{
-    right: 8px !important;
-    bottom: 8px !important;
-  }
-  #mfS2 .item-row:first-of-type .btn-del,
-  #mfS2 .item-row:first-of-type .btn-delete,
-  #mfS2 .item-row:first-of-type .danger,
-  #mfS2 .item-card:first-of-type .btn-del,
-  #mfS2 .item-card:first-of-type .btn-delete{
-    right: 132px !important;
-    bottom: 8px !important;
+  #mfS2 .items-head,
+  #mfS2 .items-toolbar,
+  #mfS2 .items-header,
+  #mfS2 .items-top{
+    flex-wrap: wrap;
   }
 }
