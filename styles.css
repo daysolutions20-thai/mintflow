@@ -848,3 +848,43 @@ body { overflow: hidden; }
 #mfS1 .note-col label{
   margin-top: 0 !important;
 }
+
+/* =========================================================
+   Layout A — FOR/NOTE row alignment v16 (Chrome :has)
+   เป้า: หัวข้อ NOTE ให้เริ่ม "ระดับเดียวกับหัวข้อแถวบน" โดยไม่แตะแถวอื่น
+   วิธี: จับแถวที่มี textarea[name="note"] แล้วคุม align เฉพาะแถวนั้น
+   ========================================================= */
+
+/* แถวที่มี NOTE textarea */
+#mfS1 .row:has(textarea[name="note"]),
+#mfS1 .grid:has(textarea[name="note"]){
+  align-items: flex-start !important;
+}
+
+/* บังคับให้คอลัมน์ในแถวนั้นไม่ถูกดันลง */
+#mfS1 .row:has(textarea[name="note"]) > *,
+#mfS1 .grid:has(textarea[name="note"]) > *{
+  align-self: flex-start !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ลด “ความยาว” ของกล่องติ๊ก FOR: ตัด margin ที่ทำให้มันสูงเกิน */
+#mfS1 .row:has(textarea[name="note"]) label,
+#mfS1 .grid:has(textarea[name="note"]) label{
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
+  line-height: 1.15 !important;
+}
+
+/* ลดช่องไฟระหว่างรายการ checkbox เฉพาะในแถว FOR/NOTE */
+#mfS1 .row:has(textarea[name="note"]) input[type="checkbox"],
+#mfS1 .grid:has(textarea[name="note"]) input[type="checkbox"]{
+  margin-top: 0 !important;
+}
+
+/* ให้ NOTE label ชิดบนแบบเดียวกับแถวบน */
+#mfS1 .row:has(textarea[name="note"]) textarea[name="note"],
+#mfS1 .grid:has(textarea[name="note"]) textarea[name="note"]{
+  margin-top: 0 !important;
+}
