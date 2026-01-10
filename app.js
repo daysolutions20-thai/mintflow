@@ -924,71 +924,94 @@ const itemsEl = $("#items");
 
   const collectQRFromForm = ({strict=true}={}) => {
     const form = $("#frmCreate");
-    const requester = form.requester.value.trim();
-    const phone = form.phone.value.trim();
-    const itemsBlocks = Array.from(itemsEl.children);
-    const items = itemsBlocks.map((blk, idx)=>{
-      const name = blk.querySelector('input[name="item_name"]').value.trim();
-      const model = blk.querySelector('input[name="item_model"]').value.trim();
-      const code = blk.querySelector('input[name="item_code"]').value.trim();
-      const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-      const unit = blk.querySelector('[name="unit"]').value.trim();
-      const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
-      const detail = (detailEl ? detailEl.value : "").trim();
+    if(!form) throw new Error("Form not ready");
 
-      const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
-      const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
-      const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
+    const getFormVal = (name)=>{
+      const el = form.elements ? form.elements[name] : null;
+      return (el && typeof el.value === "string") ? el.value : (el && el.value != null ? String(el.value) : "");
+    };
+    const getTrim = (name)=> (getFormVal(name) || "").trim();
+
+    const requester = getTrim("requester");
+    const phone = getTrim("phone");
+
+    const itemsBlocks = itemsEl ? Array.from(itemsEl.children) : [];
+    const items = itemsBlocks.map((blk, idx)=>{
+      const q = (sel)=> blk ? blk.querySelector(sel) : null;
+      const v = (sel)=> {
+        const el = q(sel);
+        return el && el.value != null ? String(el.value) : "";
+      };
+      const t = (sel)=> (v(sel) || "").trim();
+
+      const name = t('input[name="item_name"]');
+      const model = t('input[name="item_model"]');
+      const code = t('input[name="item_code"]');
+
+      const qtyRaw = v('input[name="qty"]');
+      const qty = Number(qtyRaw || 0);
+
+      // unit can be select or input; always query by [name="unit"]
+      const unit = (t('[name="unit"]') || "");
+
+      const detailEl = q('textarea[name="detail"], input[name="detail"]');
+      const detail = (detailEl && detailEl.value != null ? String(detailEl.value) : "").trim();
+
+      const sea = !!q('input[name="exportSea"]')?.checked;
+      const land = !!q('input[name="exportLand"]')?.checked;
+      const air = !!q('input[name="exportAir"]')?.checked;
+
       const exportParts = [];
       if(sea) exportParts.push("By Sea");
       if(land) exportParts.push("By Land");
       if(air) exportParts.push("By Air");
-      const remarkInput = blk.querySelector('input[name="remark"]');
-      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
-      const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
-      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
+      const remarkInput = q('input[name="remark"]');
+      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput && remarkInput.value != null ? String(remarkInput.value) : "").trim());
+
+      const photosInput = q('input[name="photos"]');
+      const photos = photosInput && photosInput.files ? Array.from(photosInput.files).map(f=>f.name) : [];
+
+      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos, exportBy: exportParts };
     });
 
+    const forListEl = $("#forList");
+    const forBy = forListEl ? Array.from(forListEl.querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value) : [];
+
     return {
-      docDate: form.docDate.value,
-      urgency: form.urgency.value,
-      project: form.project.value.trim(),
-      subject: form.subject.value.trim(),
+      docDate: getFormVal("docDate"),
+      urgency: getFormVal("urgency"),
+      project: getTrim("project"),
+      subject: getTrim("subject"),
       requester, phone,
-      forBy: Array.from($("#forList").querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value),
-      note: form.note.value.trim(),
+      forBy,
+      note: getTrim("note"),
       items
     };
   };
 
+
   // Helpers: treat a completely blank form as "no preview"
+  // We consider "blank" = user hasn't typed anything meaningful.
+  // Default values like docDate, urgency, qty=1, unit default don't count as meaningful.
   const isAllEmptyQR = (d)=>{
     if(!d) return true;
 
-    // NOTE: ignore auto/default fields like docDate, urgency, and default qty=1.
-    const anyTop = !!((d.project||"").trim() || (d.requester||"").trim() || (d.phone||"").trim() || (d.note||"").trim());
-    const anyFor = Array.isArray(d.forFlags) && d.forFlags.length>0;
+    const anyTop = !!((d.project||"").trim() || (d.subject||"").trim() || (d.requester||"").trim() || (d.phone||"").trim() || (d.note||"").trim());
+    const anyFor = Array.isArray(d.forBy) && d.forBy.length>0;
 
     const anyItems = Array.isArray(d.items) && d.items.some(it=>{
-      if(!it) return false;
-      const name  = (it.name  || "").trim();
-      const model = (it.model || "").trim();
-      const code  = (it.code  || "").trim();
-      const detail= (it.detail|| "").trim();
-      const remark= (it.remark|| "").trim();
-      const unit  = (it.unit  || "").trim();
-      const unitLower = (unit || "").toLowerCase();
-      const unitIsDefault = (unitLower==="" || ["pcs","pc","ea","unit","units"].includes(unitLower));
-      const anyText = !!(name || model || code || detail || remark || (!unitIsDefault && unit));
-
-      const qtyStr = String(it.qty ?? "").trim();
-      const qtyIsDefault = (qtyStr==="" || qtyStr==="1"); // UI default
-      return anyText || !qtyIsDefault;
+      const hasText = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim());
+      const hasRemark = !!((it.remark||"").trim());
+      const hasPhotos = Array.isArray(it.photos) && it.photos.length>0;
+      const hasExport = Array.isArray(it.exportBy) && it.exportBy.length>0;
+      // qty/unit alone doesn't count
+      return hasText || hasRemark || hasPhotos || hasExport;
     });
 
     return !(anyTop || anyFor || anyItems);
   };
+
 
 
   // Wire Preview button
