@@ -821,44 +821,40 @@ body { overflow: hidden; }
 }
 
 /* =========================================================
-   Layout A — FOR input width reduction to pull NOTE left (v20)
-   ตามคำสั่ง: ลด "ความยาวของกล่องข้อความในส่วน FOR" เพื่อให้ NOTE ขยับมาทางซ้าย
-   - ไม่ขยับ NOTE ด้วย top/position
-   - ไม่ยุ่ง spacing 1cm แถวอื่น
+   Layout A — FOR inputs narrower so NOTE column can sit left (v15a)
+   เป้า: ลด "ความยาว" กล่องข้อความใน FOR (forRepairTxt/forSaleTxt)
+         และกันไม่ให้ FOR (content-min-width) ดัน NOTE ไปทางขวา
+   ไม่แตะ NOTE position/top, ไม่แตะ spacing 1cm แถวอื่น
    ========================================================= */
 
-/* จำกัดความกว้างของคอลัมน์ FOR เฉพาะแถว FOR+NOTE */
-#mfS1 .for-note-row{
-  align-items: flex-start !important;
-  gap: 12px !important;
-}
-
-/* ทำให้ FOR แคบลง → NOTE จะเลื่อนมาซ้าย */
-#mfS1 .for-note-row .for-field{
-  flex: 0 0 320px !important;   /* ปรับคอลัมน์ FOR */
-  max-width: 320px !important;
-}
-
-/* NOTE กินพื้นที่ที่เหลือ */
-#mfS1 .for-note-row .note-field{
-  flex: 1 1 auto !important;
+/* ให้ flex items หดได้ (กัน content ดันคอลัมน์) */
+#mfS1 .row > *,
+#mfS1 .field{
   min-width: 0 !important;
 }
 
-/* ลด "ความยาว" ของกล่องข้อความใน FOR (Repair/Sale) */
-#mfS1 .for-note-row #forRepairTxt,
-#mfS1 .for-note-row #forSaleTxt{
-  width: 160px !important;
-  max-width: 160px !important;
-  flex: 0 0 160px !important;
+/* บีบ input ใน FOR ให้สั้นลง */
+#mfS1 #forRepairTxt,
+#mfS1 #forSaleTxt{
+  max-width: 220px !important;   /* ปรับได้: 200-260 */
+  width: 100% !important;
 }
 
-/* กันบวม: บรรทัด checkbox ไม่ให้ดันกว้างเกิน */
-#mfS1 .for-note-row .for-line{
-  gap: 8px !important;
+/* ให้บรรทัด Repair/Sale จัด layout สวยและหดได้ */
+#mfS1 .for-line{
+  display:flex !important;
+  gap:8px !important;
+  align-items:center !important;
 }
 
-/* NOTE label/textarea ไม่แตะตำแหน่ง แค่คุมระยะมาตรฐาน */
-#mfS1 .for-note-row .note-field label{
-  margin-top: 0 !important;
+/* label checkbox ไม่ให้กว้างเกิน */
+#mfS1 .for-line .chk{
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+}
+
+/* input หดได้จริงใน flex */
+#mfS1 .for-line input.input{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
 }
