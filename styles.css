@@ -798,11 +798,11 @@ body { overflow: hidden; }
 }
 
 /* =========================================================
-   Layout A — Baseline Nudge v10
-   ฝั่งซ้ายต้อง "ลง" ให้ตรงกับฝั่งขวา (Items)
+   Layout A — Baseline Nudge v11 (force apply)
+   ถ้า margin-top ที่ first-child ไม่กระดิก แปลว่าโครง DOM ไม่ตรง
+   เลยดันทั้งคอลัมน์ซ้าย (#mfS1) ลงแบบชัวร์ๆ
    ========================================================= */
 
-/* NUDGE DOWN: ปรับค่า +2px ถึง +10px (ตอนนี้ตั้ง +6px) */
-#mfS1 > *:first-child{
-  margin-top: 6px !important;
+#mfS1{
+  transform: translateY(6px) !important;
 }
