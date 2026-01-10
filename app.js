@@ -270,6 +270,32 @@ function biLabel(en, th){
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
     .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
     #items .card .row.row-codeqty > .field{ min-width: 0; }
+
+
+    /* v24: QR action buttons (Preview/Submit/Cancel) equal width */
+    #frmCreate .btnRow3{
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 10px !important;
+      align-items: stretch !important;
+    }
+    #frmCreate .btnRow3 > .btn{ width: 100% !important; }
+
+    /* v24: submit confirm modal (simple, self-contained) */
+    .mfModal{ display:none; position:fixed; inset:0; z-index:9999; }
+    .mfModal.is-open{ display:block; }
+    .mfModal__backdrop{ position:absolute; inset:0; background: rgba(0,0,0,.35); }
+    .mfModal__panel{
+      position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+      width: min(440px, calc(100vw - 32px));
+      background:#fff; border-radius:16px; padding:16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .mfModal__title{ font-weight:800; margin:0 0 8px; letter-spacing:.4px; }
+    .mfModal__body{ color: rgba(0,0,0,.65); margin: 0 0 14px; line-height:1.35; }
+    .mfModal__actions{ display:flex; gap:10px; justify-content:flex-end; }
+    .mfModal__actions .btn{ min-width: 110px; }
+
 `;
   const style = document.createElement("style");
   style.setAttribute("data-mintflow", "bilingual-labels");
@@ -600,7 +626,7 @@ function renderCreateQR(el){
           textarea[name="note"]{min-height:96px}
         </style>
 
-        <h2 style="margin:0 0 10px">Form Quotation Request (QR)</h2>
+        <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
@@ -667,9 +693,23 @@ function renderCreateQR(el){
           </div>
           <div id="items"></div>
 
-          <div class="row">
-            <button class="btn btn-primary" type="submit">Submit & Generate QR</button>
+          <div class="row btnRow3">
+            <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
+            <button class="btn btn-primary" type="submit" id="btnSubmit">Submit</button>
             <button class="btn btn-ghost" type="button" id="btnCancel">Cancel</button>
+          </div>
+
+          <!-- Submit confirm modal -->
+          <div class="mfModal" id="submitModal" aria-hidden="true">
+            <div class="mfModal__backdrop" data-close="1"></div>
+            <div class="mfModal__panel" role="dialog" aria-modal="true" aria-labelledby="mfModalTitle">
+              <div class="mfModal__title" id="mfModalTitle">PREVIEW</div>
+              <div class="mfModal__body">กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนกดส่ง</div>
+              <div class="mfModal__actions">
+                <button class="btn btn-primary" type="button" id="btnConfirmSubmit">Confirm</button>
+                <button class="btn btn-ghost" type="button" id="btnCancelSubmit">Cancel</button>
+              </div>
+            </div>
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
@@ -854,24 +894,40 @@ const itemsEl = $("#items");
 
   addItem();
 
-  $("#frmCreate").onsubmit = (e)=>{
-    e.preventDefault();
-    const form = e.target;
 
+  // v24: Preview + submit confirm flow
+  const submitModal = $("#submitModal");
+  const openSubmitModal = ()=>{
+    if(!submitModal) return true;
+    submitModal.classList.add("is-open");
+    submitModal.setAttribute("aria-hidden","false");
+    return false;
+  };
+  const closeSubmitModal = ()=>{
+    if(!submitModal) return;
+    submitModal.classList.remove("is-open");
+    submitModal.setAttribute("aria-hidden","true");
+  };
+
+  // build preview box (same structure as after submit, but no docNo / no save)
+  const renderPreviewFromData = (data)=>{
+    $("#preview").innerHTML = `
+      <div class="pill">Preview</div>
+      <div class="hr"></div>
+      <div><b>Project:</b> ${escapeHtml(data.project||"-")}</div>
+      <div><b>Requester:</b> ${escapeHtml(data.requester||"-")} (${escapeHtml(data.phone||"-")})</div>
+      <div><b>Items:</b> ${data.items?.length || 0}</div>
+      <div class="hr"></div>
+      <div class="subtext">* ยังไม่ส่ง (กด Submit เพื่อส่งจริง)</div>
+    `;
+  };
+
+  const collectQRFromForm = ()=>{
+    const form = $("#frmCreate");
     const requester = form.requester.value.trim();
     const phone = form.phone.value.trim();
-    if(!requester || !phone){
-      toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
-      return;
-    }
-
-    const itemBlocks = Array.from(itemsEl.children);
-    if(!itemBlocks.length){
-      toast("ต้องมีอย่างน้อย 1 รายการ");
-      return;
-    }
-
-    const items = itemBlocks.map((blk, idx)=>{
+    const itemsBlocks = Array.from(itemsEl.children);
+    const items = itemsBlocks.map((blk, idx)=>{
       const name = blk.querySelector('input[name="item_name"]').value.trim();
       const model = blk.querySelector('input[name="item_model"]').value.trim();
       const code = blk.querySelector('input[name="item_code"]').value.trim();
@@ -880,7 +936,6 @@ const itemsEl = $("#items");
       const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
       const detail = (detailEl ? detailEl.value : "").trim();
 
-      // Export By (checkboxes) -> store into remark (backward compatible)
       const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
       const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
       const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
@@ -888,54 +943,140 @@ const itemsEl = $("#items");
       if(sea) exportParts.push("By Sea");
       if(land) exportParts.push("By Land");
       if(air) exportParts.push("By Air");
-
       const remarkInput = blk.querySelector('input[name="remark"]');
       const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
       const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
 
-      if(!name || !(qty > 0)){
-        throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
-      }
       return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
     });
 
-    try{
-      items.forEach((it, i)=>{
-        if(!it.name || !(it.qty>0) || !it.unit) throw new Error(`รายการที่ ${i+1} ไม่ครบ`);
-      });
-    }catch(err){
-      toast(err.message);
-      return;
-    }
-
-    const docDate = form.docDate.value;
-    const docNo = newDocNo("QR", docDate);
-    const db = loadDB();
-    db.qr = db.qr || [];
-
-    const reqObj = {
-      kind: "QR",
-      id: nanoid(12),
-      docNo,
-      docDate,
-      project: form.project.value.trim(),
-      requester,
-      phone,
-      forStock: !!form.forStock?.checked,
-      forRepair: !!form.forRepair?.checked,
-      forRepairTxt: (form.forRepairTxt?.value || "").trim(),
-      forSale: !!form.forSale?.checked,
-      forSaleTxt: (form.forSaleTxt?.value || "").trim(),
+    return {
+      docDate: form.docDate.value,
       urgency: form.urgency.value,
+      project: form.project.value.trim(),
+      subject: form.subject.value.trim(),
+      requester, phone,
+      forBy: Array.from($("#forList").querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value),
       note: form.note.value.trim(),
-      status: "Submitted",
-      editToken: nanoid(24),
-      createdAt: nowISO(),
-      updatedAt: nowISO(),
-      items: items.map(it=> ({...it, photos: it.photos.map(n=> ({ name:n, addedAt: nowISO() }))})),
-      files: { quotation: [], po: [], shipping: [] },
-      activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
+      items
     };
+  };
+
+  // Wire Preview button
+  const btnPreview = $("#btnPreview");
+  if(btnPreview){
+    btnPreview.onclick = ()=>{
+      try{
+        const data = collectQRFromForm();
+        renderPreviewFromData(data);
+        toast("Preview updated");
+      }catch(err){
+        toast(err.message || "Preview error");
+      }
+    };
+  }
+
+  // Modal wiring
+  if(submitModal){
+    submitModal.addEventListener("click", (ev)=>{
+      const t = ev.target;
+      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
+    });
+  }
+  const btnCancelSubmit = $("#btnCancelSubmit");
+  if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
+
+  $("#frmCreate").onsubmit = (e)=>{
+    e.preventDefault();
+    // show Preview reminder before submit
+    openSubmitModal();
+  };
+
+  // Confirm submit -> run the original submit logic
+  const btnConfirmSubmit = $("#btnConfirmSubmit");
+  if(btnConfirmSubmit){
+    btnConfirmSubmit.onclick = ()=>{
+      closeSubmitModal();
+      const form = $("#frmCreate");
+          const requester = form.requester.value.trim();
+          const phone = form.phone.value.trim();
+          if(!requester || !phone){
+            toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
+            return;
+          }
+
+          const itemBlocks = Array.from(itemsEl.children);
+          if(!itemBlocks.length){
+            toast("ต้องมีอย่างน้อย 1 รายการ");
+            return;
+          }
+
+          const items = itemBlocks.map((blk, idx)=>{
+            const name = blk.querySelector('input[name="item_name"]').value.trim();
+            const model = blk.querySelector('input[name="item_model"]').value.trim();
+            const code = blk.querySelector('input[name="item_code"]').value.trim();
+            const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
+            const unit = blk.querySelector('input[name="unit"]').value.trim();
+            const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
+            const detail = (detailEl ? detailEl.value : "").trim();
+
+            // Export By (checkboxes) -> store into remark (backward compatible)
+            const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
+            const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
+            const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
+            const exportParts = [];
+            if(sea) exportParts.push("By Sea");
+            if(land) exportParts.push("By Land");
+            if(air) exportParts.push("By Air");
+
+            const remarkInput = blk.querySelector('input[name="remark"]');
+            const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
+            const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
+
+            if(!name || !(qty > 0)){
+              throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
+            }
+            return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
+          });
+
+          try{
+            items.forEach((it, i)=>{
+              if(!it.name || !(it.qty>0) || !it.unit) throw new Error(`รายการที่ ${i+1} ไม่ครบ`);
+            });
+          }catch(err){
+            toast(err.message);
+            return;
+          }
+
+          const docDate = form.docDate.value;
+          const docNo = newDocNo("QR", docDate);
+          const db = loadDB();
+          db.qr = db.qr || [];
+
+          const reqObj = {
+            kind: "QR",
+            id: nanoid(12),
+            docNo,
+            docDate,
+            project: form.project.value.trim(),
+            requester,
+            phone,
+            forStock: !!form.forStock?.checked,
+            forRepair: !!form.forRepair?.checked,
+            forRepairTxt: (form.forRepairTxt?.value || "").trim(),
+            forSale: !!form.forSale?.checked,
+            forSaleTxt: (form.forSaleTxt?.value || "").trim(),
+            urgency: form.urgency.value,
+            note: form.note.value.trim(),
+            status: "Submitted",
+            editToken: nanoid(24),
+            createdAt: nowISO(),
+            updatedAt: nowISO(),
+            items: items.map(it=> ({...it, photos: it.photos.map(n=> ({ name:n, addedAt: nowISO() }))})),
+            files: { quotation: [], po: [], shipping: [] },
+            activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
+    };
+  }
 
     db.qr.unshift(reqObj);
     saveDB(db);
