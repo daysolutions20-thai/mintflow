@@ -739,3 +739,20 @@ body { overflow: hidden; }
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+/* PATCH v36 — Add top divider + spacing to LEFT (visual balance with RIGHT Items)
+   Apply at VERY END of CSS
+*/
+
+/* Add top divider to left column, same visual as Items */
+.layout-a .layout-col.left::before{
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--border, #e5e7eb);
+  margin: 12px 0 14px 0; /* tune: pushes left content down to match right */
+}
+
+/* Ensure first row starts after divider cleanly */
+.layout-a .layout-col.left > *:first-child{
+  margin-top: 0 !important;
+}
