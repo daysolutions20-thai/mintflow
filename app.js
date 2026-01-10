@@ -924,23 +924,142 @@ const itemsEl = $("#items");
     submitModal.setAttribute("aria-hidden","true");
   };
 
-  // build preview box (same structure as after submit, but no docNo / no save)
-  const renderPreviewFromData = (data)=>{
-    const __pvTarget = $("#previewBody") || $("#preview");
-    if(!__pvTarget) return;
-    __pvTarget.innerHTML = `
-      <div class="pill">Preview</div>
-      <div class="hr"></div>
-      <div><b>Project:</b> ${escapeHtml(data.project||"-")}</div>
-      <div><b>Requester:</b> ${escapeHtml(data.requester||"-")} (${escapeHtml(data.phone||"-")})</div>
-      <div><b>Items:</b> ${data.items?.length || 0}</div>
-      <div class="hr"></div>
-      <div class="subtext">* ยังไม่ส่ง (กด Submit เพื่อส่งจริง)</div>
-    `;
-    $("#previewModal")?.classList.add("is-open");
-  };
+  // Preview Modal (document-like)
+const ensurePreviewModal = ()=>{
+  if($("#previewModal")) return;
+  const modal = document.createElement("div");
+  modal.id = "previewModal";
+  modal.className = "modal";
+  modal.setAttribute("aria-hidden","true");
+  modal.innerHTML = `
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-panel preview-panel" role="dialog" aria-modal="true" aria-label="Preview">
+      <div class="modal-head">
+        <div class="modal-title">Preview</div>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="btnPrintPreview">Print</button>
+          <button type="button" class="btn primary" data-close="1">ปิด</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="previewDoc" class="preview-doc"></div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
 
-  const collectQRFromForm = ({strict=true}={}) => {
+  modal.addEventListener("click",(ev)=>{
+    const t = ev.target;
+    if(t && t.getAttribute && t.getAttribute("data-close")==="1") closePreviewModal();
+  });
+
+  $("#btnPrintPreview")?.addEventListener("click", ()=>{
+    try{ window.print(); }catch(_){}
+  });
+};
+
+const openPreviewModal = ()=>{
+  ensurePreviewModal();
+  const m = $("#previewModal");
+  if(!m) return;
+  m.classList.add("is-open");
+  m.setAttribute("aria-hidden","false");
+};
+const closePreviewModal = ()=>{
+  const m = $("#previewModal");
+  if(!m) return;
+  m.classList.remove("is-open");
+  m.setAttribute("aria-hidden","true");
+};
+
+const fmt = (v)=> escapeHtml((v==null || v==="") ? "-" : String(v));
+const fmtDate = (v)=> fmt(v);
+const joinOrDash = (arr)=> (Array.isArray(arr) && arr.length) ? escapeHtml(arr.join(" / ")) : "-";
+
+const renderPreviewDoc = (data)=>{
+  const target = $("#previewDoc") || $("#previewBody") || $("#preview");
+  if(!target) return;
+
+  const items = Array.isArray(data.items) ? data.items : [];
+  const rows = items.map(it=>{
+    const hasAny = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim() || (it.remark||"").trim() || (Array.isArray(it.photos)&&it.photos.length));
+    if(!hasAny) return "";
+    const photos = (Array.isArray(it.photos)&&it.photos.length) ? escapeHtml(it.photos.join(", ")) : "-";
+    const remark = fmt(it.remark);
+    return `
+      <tr>
+        <td class="c">${fmt(it.lineNo)}</td>
+        <td>${fmt(it.name)}</td>
+        <td>${fmt(it.model)}</td>
+        <td>${fmt(it.code)}</td>
+        <td class="r">${(it.qty!=null && it.qty!=="" ? escapeHtml(String(it.qty)) : "-")}</td>
+        <td>${fmt(it.unit)}</td>
+        <td>${fmt(it.detail)}</td>
+        <td>${remark}</td>
+        <td>${photos}</td>
+      </tr>
+    `;
+  }).join("");
+
+  target.innerHTML = `
+    <div class="pv-page">
+      <div class="pv-top">
+        <div class="pv-title">Quotation Request (QR)</div>
+        <div class="pv-meta">
+          <div><span class="k">Doc Date:</span> <span class="v">${fmtDate(data.docDate)}</span></div>
+          <div><span class="k">Urgency:</span> <span class="v">${fmt(data.urgency)}</span></div>
+        </div>
+      </div>
+
+      <div class="pv-sec">
+        <div class="pv-sec-h">Section 1 — Header</div>
+        <div class="pv-grid">
+          <div class="pv-f"><div class="k">Project</div><div class="v">${fmt(data.project)}</div></div>
+          <div class="pv-f"><div class="k">Subject</div><div class="v">${fmt(data.subject)}</div></div>
+          <div class="pv-f"><div class="k">Requester</div><div class="v">${fmt(data.requester)}</div></div>
+          <div class="pv-f"><div class="k">Phone</div><div class="v">${fmt(data.phone)}</div></div>
+          <div class="pv-f pv-span2"><div class="k">FOR</div><div class="v">${joinOrDash(data.forBy)}</div></div>
+          <div class="pv-f pv-span2"><div class="k">Note</div><div class="v pv-note">${fmt(data.note)}</div></div>
+        </div>
+      </div>
+
+      <div class="pv-sec">
+        <div class="pv-sec-h">Section 2 — Items</div>
+        <div class="pv-table-wrap">
+          <table class="pv-table">
+            <thead>
+              <tr>
+                <th class="c">#</th>
+                <th>Name</th>
+                <th>Model</th>
+                <th>Code</th>
+                <th class="r">QTY</th>
+                <th>Unit</th>
+                <th>Detail</th>
+                <th>Export By</th>
+                <th>Attach</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || `<tr><td colspan="9" class="pv-empty">- ไม่มีรายการ -</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+        <div class="pv-foot">
+          <div class="pv-warn">* Preview นี้แสดงเท่าที่กรอกไว้ (ยังไม่ส่ง) — กด Submit เพื่อส่งจริง</div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+// build preview (document mode)
+const renderPreviewFromData = (data)=>{
+  openPreviewModal();
+  renderPreviewDoc(data);
+};
+
+const collectQRFromForm = ({strict=true}={}) => {
     const form = $("#frmCreate");
     if(!form) throw new Error("Form not ready");
 
