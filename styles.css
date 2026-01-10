@@ -1,3 +1,4 @@
+
 :root{
   --bg: #FFF7ED;            /* cream */
   --card: #FFFFFF;          /* white */
@@ -717,16 +718,17 @@ body { overflow: hidden; }
   min-height: 0 !important;
 }
 
-
 /* =========================================================
-   MintFlow — Layout A FIX v7 (Doc Date / Urgency align with Items)
-   ยิงตรงแถวแรก ไม่เดา ไม่อ้อม
+   MintFlow — Layout A FIX v8
+   - เอาเส้นบน "งอก" ฝั่ง Items ออก (กันเส้นซ้อน)
+   - ดัน baseline ให้ Doc Date ตรงกับ Items
+   - แก้ปุ่ม "+ เพิ่มรายการ" ให้ไม่เบียดเส้น/สัดส่วนไม่เพี้ยน
+   Scope: เฉพาะหน้า Layout A (#mfS1/#mfS2 + .layout-a)
    ========================================================= */
 
-/* Layout A grid */
 .layout-a{
   display:grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:16px;
   align-items:start;
 }
@@ -735,46 +737,62 @@ body { overflow: hidden; }
 }
 .layout-a .layout-col{ min-width:0; }
 
-/* ===== BASELINE: ทำให้ซ้าย/ขวาเริ่มระดับเดียวกัน ===== */
-#mfS1::before,
-#mfS2::before{
+/* ===== BASELINE (ทำให้ซ้ายเริ่มระดับเดียวกับขวา โดยไม่เพิ่มเส้นซ้อนขวา) ===== */
+/* ขวามี .hr ของเดิมอยู่แล้ว → เพิ่มเส้นให้ "ซ้าย" อย่างเดียว */
+#mfS1::before{
   content:"";
   display:block;
   height:1px;
   background: var(--border, #e5e7eb);
-  margin: 10px 0 10px 0;
+  margin: 10px 0; /* match .hr */
 }
 
-/* ===== แถวแรก (Doc Date / Urgency) ===== */
-/* บังคับ grid/row ให้ align บน */
-#mfS1 .row,
-#mfS2 .row{
-  align-items:flex-start !important;
+/* ห้ามมีเส้น pseudo เพิ่มที่ขวา */
+#mfS2::before{ content:none !important; display:none !important; }
+
+/* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
+#mfS2,
+#mfS2 .panel,
+#mfS2 .card,
+#mfS2 .section,
+#mfS2 .items{
+  border-top:none !important;
 }
 
-/* รีเซ็ต margin/padding ที่ดัน Urgency */
-#mfS1 .row > *,
-#mfS2 .row > *{
-  margin-top:0 !important;
-  padding-top:0 !important;
-}
+/* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
+#mfS1 .row{ align-items:flex-start !important; }
+#mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
 
 /* ===== ช่องไฟฝั่งซ้าย 1cm จริง ===== */
+/* ใช้ margin-bottom ของ direct children กัน selector ไม่โดน */
 #mfS1 > .row,
 #mfS1 > .field,
-#mfS1 > .grid{
-  margin-bottom:10mm !important;
-}
+#mfS1 > .grid{ margin-bottom:10mm !important; }
 #mfS1 > .row:last-child,
 #mfS1 > .field:last-child,
-#mfS1 > .grid:last-child{
-  margin-bottom:0 !important;
-}
+#mfS1 > .grid:last-child{ margin-bottom:0 !important; }
 
-/* label */
-#mfS1 label,
-#mfS2 label{
+/* label baseline */
+#mfS1 label, #mfS2 label{
   display:block;
   margin:0 0 6px 0 !important;
   line-height:1.15 !important;
+}
+
+/* ===== ปุ่ม "+ เพิ่มรายการ" ไม่ให้เบียดเส้น/สัดส่วนเพี้ยน ===== */
+/* ยิงเฉพาะปุ่มที่อยู่บนหัว Items (แถวเดียวกับคำว่า Items) */
+#mfS2 .section-title + button,
+#mfS2 .section-title ~ button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
+  align-self:flex-start !important;
+}
+
+/* เผื่อโครงเป็น toolbar */
+#mfS2 .items-toolbar button,
+#mfS2 .items-head button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
 }
