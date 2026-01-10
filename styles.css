@@ -798,11 +798,9 @@ body { overflow: hidden; }
 }
 
 /* =========================================================
-   Layout A — Baseline Nudge v11 (force apply)
-   ถ้า margin-top ที่ first-child ไม่กระดิก แปลว่าโครง DOM ไม่ตรง
-   เลยดันทั้งคอลัมน์ซ้าย (#mfS1) ลงแบบชัวร์ๆ
+   Layout A — Headline Align (v12)
+   ดันหัวข้อฝั่งซ้ายแถวแรก (Doc Date / Urgency) ลงให้ตรงกับ Items
    ========================================================= */
-
-#mfS1{
-  transform: translateY(6px) !important;
+#mfS1 .row:first-child label{
+  margin-top: 6px !important;
 }
