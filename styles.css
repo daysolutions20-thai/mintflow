@@ -20,6 +20,29 @@ body{
   background: var(--bg);
   color: var(--text);
 }
+/* PATCH v34 — Restore 1cm-ish vertical gap between rows in LEFT (Section 1) for Layout A
+   Put this at the VERY END of your CSS (or <style> after main CSS)
+*/
+
+/* Add spacing between each .row inside Section 1 (except the first row) */
+.layout-a .layout-col.left #section-header .row + .row{
+  margin-top: 10mm !important; /* ~1cm */
+}
+
+/* Also ensure labels/headings don't collapse onto previous inputs */
+.layout-a .layout-col.left #section-header .field-label,
+.layout-a .layout-col.left #section-header .label,
+.layout-a .layout-col.left #section-header label{
+  display: block;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Safety: if your project uses .group or .field wrappers */
+.layout-a .layout-col.left #section-header .field + .field,
+.layout-a .layout-col.left #section-header .group + .group{
+  margin-top: 10mm !important;
+}
 
 .app{display:flex; height:100%}
 
