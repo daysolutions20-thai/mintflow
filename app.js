@@ -978,7 +978,9 @@ const itemsEl = $("#items");
       const detail= (it.detail|| "").trim();
       const remark= (it.remark|| "").trim();
       const unit  = (it.unit  || "").trim();
-      const anyText = !!(name || model || code || detail || remark || unit);
+      const unitLower = (unit || "").toLowerCase();
+      const unitIsDefault = (unitLower==="" || ["pcs","pc","ea","unit","units"].includes(unitLower));
+      const anyText = !!(name || model || code || detail || remark || (!unitIsDefault && unit));
 
       const qtyStr = String(it.qty ?? "").trim();
       const qtyIsDefault = (qtyStr==="" || qtyStr==="1"); // UI default
@@ -996,14 +998,14 @@ const itemsEl = $("#items");
       try{
         const data = collectQRFromForm({strict:false});
         if(isAllEmptyQR(data)){
-          toast("กรอกก่อน");
+          toast("กรุณากรอกข้อมูลก่อนพรีวิว");
           // try focus requester field if exists
           const f = $("#frmCreate");
           if(f && f.requester) f.requester.focus();
           return;
         }
         renderPreviewFromData(data);
-        toast("Preview updated");
+        toast("เปิดพรีวิวแล้ว");
       }catch(err){
         toast(err?.message || "Preview error");
       }
