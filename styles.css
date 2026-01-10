@@ -19,6 +19,29 @@ body{
   background: var(--bg);
   color: var(--text);
 }
+/* PATCH v34 — Restore 1cm-ish vertical gap between rows in LEFT (Section 1) for Layout A
+   Put this at the VERY END of your CSS (or <style> after main CSS)
+*/
+
+/* Add spacing between each .row inside Section 1 (except the first row) */
+.layout-a .layout-col.left #section-header .row + .row{
+  margin-top: 10mm !important; /* ~1cm */
+}
+
+/* Also ensure labels/headings don't collapse onto previous inputs */
+.layout-a .layout-col.left #section-header .field-label,
+.layout-a .layout-col.left #section-header .label,
+.layout-a .layout-col.left #section-header label{
+  display: block;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Safety: if your project uses .group or .field wrappers */
+.layout-a .layout-col.left #section-header .field + .field,
+.layout-a .layout-col.left #section-header .group + .group{
+  margin-top: 10mm !important;
+}
 
 .app{display:flex; height:100%}
 
@@ -660,89 +683,108 @@ body { overflow: hidden; }
   line-height: 1.15 !important;
   min-height: 34px !important; /* 2-line label (EN+TH) baseline */
 }
+/* PATCH: Fix left/right alignment (remove extra top divider on Items column)
+   Apply AFTER existing CSS
+*/
 
-
-/* =========================================================
-   MintFlow — Layout A Fix Pack (single source of truth)
-   - ทำให้ซ้าย/ขวา baseline เท่ากัน
-   - คืนช่องไฟ Section 1 (~1cm ระหว่างกลุ่ม)
-   - ไม่ไปชนกับหน้าอื่น (จำกัด scope เฉพาะ Layout A)
-   ========================================================= */
-
-/* Layout A wrapper */
-.layout-a{
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-}
-.layout-a .layout-col{ min-width: 0; }
-
-/* Responsive: จอเล็กยุบเป็นคอลัมน์เดียว */
-@media (max-width: 980px){
-  .layout-a{ grid-template-columns: 1fr; }
-}
-
-/* กันไม่ให้ layout-a ไปบีบช่องไฟเดิมของ form */
-.layout-a .layout-col.left,
-.layout-a .layout-col.right{
-  margin-top: 0;
-  padding-top: 0;
-}
-
-/* คืนช่องไฟ Section 1 (ซ้าย) — ใช้ id จริงของ Layout A */
-#mfS1 label{
-  display:block;
-  margin: 0 0 6px 0 !important;
-  line-height: 1.15 !important;
-}
-
-/* ให้ “กลุ่ม” ในซ้ายห่างกัน ~1cm (row/field สลับกันได้หลายแบบ) */
-#mfS1 .row + .field{ margin-top: 10mm !important; }   /* Doc row -> Project field */
-#mfS1 .field + .row{ margin-top: 10mm !important; }
-#mfS1 .field + .field{ margin-top: 10mm !important; }
-#mfS1 .row + .row{ margin-top: 10mm !important; }
-
-/* เผื่อบางจุดใช้ .grid แทน .row */
-#mfS1 .grid + .field{ margin-top: 10mm !important; }
-#mfS1 .field + .grid{ margin-top: 10mm !important; }
-
-/* ฝั่งขวา: ให้หัวข้อ Items ไม่โดน margin แปลก ๆ จากที่อื่น */
-#mfS2 .section-title,
-.layout-a .layout-col.right .section-title{
-  margin-top: 0 !important;
-}
-
-/* Make textarea stretch nicely inside its field (helps Note) */
-#mfS1 .field textarea{
-  flex: 1 1 auto !important;
-  min-height: 90px; /* คงเดิม */
-}
-/* v2 tweak — align labels in the first row (Doc Date / Urgency) */
-#mfS1 .row{
-  align-items: flex-start !important;
-}
-#mfS1 .row .field,
-#mfS1 .row .col,
-#mfS1 .row > *{
+/* Items section header has extra border/margin */
+#section-items,
+.items-wrapper,
+.items-panel {
+  border-top: none !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+
+/* Ensure both columns align from same baseline */
+.layout-a {
+  align-items: flex-start;
+}
+
+.layout-a .layout-col {
+  padding-top: 0;
+}
+
+/* If Items has internal title bar */
+#section-items > h3,
+#section-items > .section-title {
+  margin-top: 0 !important;
+}
+
+/* Make textarea fill the stretched column height */
+.field textarea{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
 /* =========================================================
-   Layout A — Left divider + baseline alignment (robust)
-   ใช้ #mfS1 เป็นตัวคุม (ของจริงในหน้า) กัน selector หลุด
+   MintFlow — Layout A Fix Pack v6 (baseline + 1cm spacing)
+   Scope: ONLY Layout A containers (#mfS1 left, #mfS2 right)
    ========================================================= */
 
-/* Add a top divider line above LEFT section to match RIGHT (Items) */
+/* 2 columns (desktop) */
+.layout-a{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:16px;
+  align-items:start;
+}
+@media (max-width:980px){
+  .layout-a{ grid-template-columns:1fr; }
+}
+.layout-a .layout-col{ min-width:0; }
+
+/* Baseline divider: match the right side top rule visually */
 #mfS1::before{
   content:"";
   display:block;
   height:1px;
   background: var(--border, #e5e7eb);
-  margin: 12px 0 14px 0; /* adjust baseline */
+  margin: 10px 0; /* match .hr */
 }
 
-/* Ensure LEFT starts after divider cleanly */
-#mfS1 > *:first-child{
-  margin-top: 0 !important;
+/* Ensure first row (Doc Date / Urgency) aligns to top */
+#mfS1 .row{
+  align-items:flex-start !important;
 }
+
+/* Labels spacing */
+#mfS1 label{
+  display:block;
+  margin:0 0 6px 0 !important;
+  line-height:1.15 !important;
+}
+
+/* --- 1cm spacing between blocks in LEFT ---
+   Use margin-bottom on direct children, avoids selector misses (.row + .field, etc.)
+*/
+#mfS1 > .row,
+#mfS1 > .field,
+#mfS1 > .grid{
+  margin-bottom: 10mm !important; /* 1cm */
+}
+#mfS1 > .row:last-child,
+#mfS1 > .field:last-child,
+#mfS1 > .grid:last-child{
+  margin-bottom: 0 !important;
+}
+
+/* Safety: if blocks are wrapped (common pattern) */
+#mfS1 .row + .row,
+#mfS1 .row + .field,
+#mfS1 .field + .row,
+#mfS1 .field + .field,
+#mfS1 .grid + .field,
+#mfS1 .field + .grid{
+  margin-top: 10mm !important; /* 1cm */
+}
+
+/* Right side: keep Items title flush (avoid unexpected top margins) */
+#mfS2 .section-title,
+#mfS2 h3,
+#mfS2 h2{
+  margin-top:0 !important;
+}
+
+/* Preview paper styles should NOT affect form; keep them scoped */
+.preview-paper{ box-sizing:border-box; }
