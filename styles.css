@@ -717,15 +717,16 @@ body { overflow: hidden; }
   min-height: 0 !important;
 }
 
+
 /* =========================================================
-   MintFlow — Layout A Fix Pack v6 (baseline + 1cm spacing)
-   Scope: ONLY Layout A containers (#mfS1 left, #mfS2 right)
+   MintFlow — Layout A FIX v7 (Doc Date / Urgency align with Items)
+   ยิงตรงแถวแรก ไม่เดา ไม่อ้อม
    ========================================================= */
 
-/* 2 columns (desktop) */
+/* Layout A grid */
 .layout-a{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
   gap:16px;
   align-items:start;
 }
@@ -734,57 +735,46 @@ body { overflow: hidden; }
 }
 .layout-a .layout-col{ min-width:0; }
 
-/* Baseline divider: match the right side top rule visually */
-#mfS1::before{
+/* ===== BASELINE: ทำให้ซ้าย/ขวาเริ่มระดับเดียวกัน ===== */
+#mfS1::before,
+#mfS2::before{
   content:"";
   display:block;
   height:1px;
   background: var(--border, #e5e7eb);
-  margin: 10px 0; /* match .hr */
+  margin: 10px 0 10px 0;
 }
 
-/* Ensure first row (Doc Date / Urgency) aligns to top */
-#mfS1 .row{
+/* ===== แถวแรก (Doc Date / Urgency) ===== */
+/* บังคับ grid/row ให้ align บน */
+#mfS1 .row,
+#mfS2 .row{
   align-items:flex-start !important;
 }
 
-/* Labels spacing */
-#mfS1 label{
-  display:block;
-  margin:0 0 6px 0 !important;
-  line-height:1.15 !important;
+/* รีเซ็ต margin/padding ที่ดัน Urgency */
+#mfS1 .row > *,
+#mfS2 .row > *{
+  margin-top:0 !important;
+  padding-top:0 !important;
 }
 
-/* --- 1cm spacing between blocks in LEFT ---
-   Use margin-bottom on direct children, avoids selector misses (.row + .field, etc.)
-*/
+/* ===== ช่องไฟฝั่งซ้าย 1cm จริง ===== */
 #mfS1 > .row,
 #mfS1 > .field,
 #mfS1 > .grid{
-  margin-bottom: 10mm !important; /* 1cm */
+  margin-bottom:10mm !important;
 }
 #mfS1 > .row:last-child,
 #mfS1 > .field:last-child,
 #mfS1 > .grid:last-child{
-  margin-bottom: 0 !important;
+  margin-bottom:0 !important;
 }
 
-/* Safety: if blocks are wrapped (common pattern) */
-#mfS1 .row + .row,
-#mfS1 .row + .field,
-#mfS1 .field + .row,
-#mfS1 .field + .field,
-#mfS1 .grid + .field,
-#mfS1 .field + .grid{
-  margin-top: 10mm !important; /* 1cm */
+/* label */
+#mfS1 label,
+#mfS2 label{
+  display:block;
+  margin:0 0 6px 0 !important;
+  line-height:1.15 !important;
 }
-
-/* Right side: keep Items title flush (avoid unexpected top margins) */
-#mfS2 .section-title,
-#mfS2 h3,
-#mfS2 h2{
-  margin-top:0 !important;
-}
-
-/* Preview paper styles should NOT affect form; keep them scoped */
-.preview-paper{ box-sizing:border-box; }
