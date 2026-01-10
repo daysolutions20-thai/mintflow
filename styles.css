@@ -858,3 +858,121 @@ body { overflow: hidden; }
   flex: 1 1 auto !important;
   min-width: 0 !important;
 }
+
+
+/* ทำให้หัว Items เป็นจุดอ้างอิง */
+#mfS2{
+  position: relative;
+}
+
+/* ให้ปุ่ม +เพิ่มรายการ อยู่มุมขวาบนเหมือนเดิม */
+#mfS2 .items-head,
+#mfS2 .items-toolbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+/* จับปุ่ม "ลบ" ของ Item แรก แล้วดันขึ้นมาอยู่หน้า +เพิ่มรายการ */
+#mfS2 .item-row:first-of-type .btn-del,
+#mfS2 .item-row:first-of-type .btn-delete,
+#mfS2 .item-row:first-of-type .danger,
+#mfS2 .item-card:first-of-type .btn-del,
+#mfS2 .item-card:first-of-type .btn-delete{
+  position: absolute !important;
+  top: 10px !important;
+  right: 150px !important;   /* อยู่หน้า +เพิ่มรายการ */
+  z-index: 5 !important;
+}
+
+/* กันไม่ให้ปุ่มลบไปทับเนื้อหา item */
+#mfS2 .item-row:first-of-type,
+#mfS2 .item-card:first-of-type{
+  padding-top: 42px !important;
+}
+
+/* Responsive: จอเล็กให้ปุ่มติดกันแบบแคบลง */
+@media (max-width: 520px){
+  #mfS2 .item-row:first-of-type .btn-del,
+  #mfS2 .item-row:first-of-type .btn-delete,
+  #mfS2 .item-row:first-of-type .danger,
+  #mfS2 .item-card:first-of-type .btn-del,
+  #mfS2 .item-card:first-of-type .btn-delete{
+    right: 128px !important;
+  }
+}
+
+/* =========================================================
+   Layout A — Items controls moved to bottom (v22)
+   เป้า:
+   - ปุ่ม "ลบ" + "+ เพิ่มรายการ" อยู่เป็นชุดเดียวกัน
+   - ย้ายชุดปุ่มไปไว้ "ด้านล่างของ Items" (เหนือกล่อง Preview/ส่วนถัดไป)
+   - ไม่แตะฝั่งซ้าย
+   วิธี: ย้ายด้วย position ภายใน #mfS2 (CSS ย้าย DOM จริงๆ ไม่ได้)
+   ========================================================= */
+
+/* ให้คอลัมน์ Items เป็นกรอบอ้างอิง */
+#mfS2{ position: relative; }
+
+/* ซ่อนชุดปุ่มบนหัว Items (ถ้ามี) เพื่อไม่ให้ซ้ำ */
+#mfS2 .items-head button,
+#mfS2 .items-toolbar button{
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ดันพื้นที่ล่างไว้ให้วางชุดปุ่ม (กันทับเนื้อหา/กล่องพรีวิว) */
+#mfS2{ padding-bottom: 56px !important; }
+
+/* วาง "+ เพิ่มรายการ" ไว้มุมขวาล่างของคอลัมน์ Items */
+#mfS2 .btn-add,
+#mfS2 .btnAdd,
+#mfS2 button[aria-label*="เพิ่ม"],
+#mfS2 button:has(> span):is(.btn){
+  /* heuristic: keep only if this matches your add button class; harmless otherwise */
+}
+#mfS2 .items-add,
+#mfS2 .btn-add-item,
+#mfS2 .btn-add,
+#mfS2 button[data-action="addItem"],
+#mfS2 button.add-item{
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  z-index: 6 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* วางปุ่ม "ลบ" ของ Item แรก มาด้วยกัน (อยู่ซ้ายของ +เพิ่มรายการ) */
+#mfS2 .item-row:first-of-type .btn-del,
+#mfS2 .item-row:first-of-type .btn-delete,
+#mfS2 .item-row:first-of-type .danger,
+#mfS2 .item-card:first-of-type .btn-del,
+#mfS2 .item-card:first-of-type .btn-delete{
+  position: absolute !important;
+  right: 150px !important;
+  bottom: 10px !important;
+  z-index: 6 !important;
+}
+
+/* Responsive: จอเล็กให้ชิดกัน */
+@media (max-width:520px){
+  #mfS2 .items-add,
+  #mfS2 .btn-add-item,
+  #mfS2 .btn-add,
+  #mfS2 button[data-action="addItem"],
+  #mfS2 button.add-item{
+    right: 8px !important;
+    bottom: 8px !important;
+  }
+  #mfS2 .item-row:first-of-type .btn-del,
+  #mfS2 .item-row:first-of-type .btn-delete,
+  #mfS2 .item-row:first-of-type .danger,
+  #mfS2 .item-card:first-of-type .btn-del,
+  #mfS2 .item-card:first-of-type .btn-delete{
+    right: 132px !important;
+    bottom: 8px !important;
+  }
+}
