@@ -616,18 +616,14 @@ function renderCreateQR(el){
   const today = new Date().toISOString().slice(0,10);
 
   el.innerHTML = `
-    <div class="card">
+    <div class="grid cols-2">
+      <div class="card">
         <style>
           .for-list{display:flex;flex-direction:column;gap:10px}
           .for-line{display:flex;align-items:center;gap:10px}
           .chk{display:flex;align-items:center;gap:10px;white-space:nowrap}
           .for-line .input{flex:1}
           textarea[name="note"]{min-height:96px}
-
-          /* Layout A: 2 columns inside the form (Section 1 / Items) */
-          .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
-          .mfLayoutA .mfCol{min-width:0;}
-          @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         </style>
 
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
@@ -635,9 +631,6 @@ function renderCreateQR(el){
         <div class="hr"></div>
 
         <form class="form" id="frmCreate">
-
-          <div class="mfLayoutA">
-            <div class="mfCol left" id="mfS1">
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
@@ -690,12 +683,10 @@ function renderCreateQR(el){
               <textarea name="note"></textarea>
             </div>
           </div>
-            </div>
-            <div class="mfCol right" id="mfS2">
 
-            <div class="hr"></div>
-            <div class="section-title">
-              <h2 style="margin:0; font-size: 14px">Items</h2>
+          <div class="hr"></div>
+          <div class="section-title">
+            <h2 style="margin:0; font-size: 14px">Items</h2>
             <div class="row tight">
               <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
             </div>
@@ -723,20 +714,7 @@ function renderCreateQR(el){
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
           <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-
-          <!-- Preview modal (FlowAccount style) -->
-          <div class="mfModal" id="previewModal" aria-hidden="true">
-            <div class="mfModal__backdrop" data-close="1"></div>
-            <div class="mfModal__panel" role="dialog" aria-modal="true" aria-labelledby="mfPreviewTitle">
-              <div class="row" style="justify-content:space-between; align-items:center; gap:12px;">
-                <div class="mfModal__title" id="mfPreviewTitle" style="margin:0">Preview</div>
-                <button class="btn btn-ghost" type="button" id="btnClosePreview" data-close="1">Close</button>
-              </div>
-              <div class="hr"></div>
-              <div id="previewBody" class="subtext">กรอกข้อมูลแล้วกด Preview</div>
-            </div>
-          </div>
-
+        
           <datalist id="unitList">
             <option value="Trip"></option>
             <option value="Unit"></option>
@@ -753,10 +731,17 @@ function renderCreateQR(el){
             <option value="Metr"></option>
             <option value="Doz."></option>
           </datalist>
-            </div>
-          </div>
-
 </form>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2 style="margin:0; font-size: 16px">Preview (เดโม)</h2>
+          <div class="subtext">ดูว่าเวลาส่งแล้วจะหน้าตาประมาณไหน</div>
+        </div>
+        <div class="hr"></div>
+        <div id="preview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
+      </div>
     </div>
   `;
 
@@ -924,37 +909,37 @@ const itemsEl = $("#items");
     submitModal.setAttribute("aria-hidden","true");
   };
 
-  // Preview Modal (document-like)
+  // build preview doc (modal) — Layout A: Preview popup (FlowAccount style)
 const ensurePreviewModal = ()=>{
   if($("#previewModal")) return;
-  const modal = document.createElement("div");
-  modal.id = "previewModal";
-  modal.className = "modal";
-  modal.setAttribute("aria-hidden","true");
-  modal.innerHTML = `
-    <div class="modal-backdrop" data-close="1"></div>
-    <div class="modal-panel preview-panel" role="dialog" aria-modal="true" aria-label="Preview">
-      <div class="modal-head">
-        <div class="modal-title">Preview</div>
-        <div class="modal-actions">
-          <button type="button" class="btn" id="btnPrintPreview">Print</button>
-          <button type="button" class="btn primary" data-close="1">ปิด</button>
-        </div>
+  const wrap = document.createElement("div");
+  wrap.className = "mfModal";
+  wrap.id = "previewModal";
+  wrap.setAttribute("aria-hidden","true");
+  wrap.innerHTML = `
+    <div class="mfModal__backdrop" data-close="1"></div>
+    <div class="mfModal__panel" role="dialog" aria-modal="true" aria-labelledby="mfPreviewTitle">
+      <div class="mfModal__title" id="mfPreviewTitle">PREVIEW</div>
+      <div class="mfModal__body">
+        <div id="previewDoc" class="previewDoc"></div>
       </div>
-      <div class="modal-body">
-        <div id="previewDoc" class="preview-doc"></div>
+      <div class="mfModal__actions">
+        <button class="btn btn-ghost" type="button" data-close="1">Close</button>
+        <button class="btn" type="button" id="btnPrintPreview">Print</button>
       </div>
     </div>
   `;
-  document.body.appendChild(modal);
+  document.body.appendChild(wrap);
 
-  modal.addEventListener("click",(ev)=>{
+  wrap.addEventListener("click", (ev)=>{
     const t = ev.target;
-    if(t && t.getAttribute && t.getAttribute("data-close")==="1") closePreviewModal();
+    if(t && t.getAttribute && t.getAttribute("data-close")){
+      closePreviewModal();
+    }
   });
 
   $("#btnPrintPreview")?.addEventListener("click", ()=>{
-    try{ window.print(); }catch(_){}
+    window.print();
   });
 };
 
@@ -972,94 +957,90 @@ const closePreviewModal = ()=>{
   m.setAttribute("aria-hidden","true");
 };
 
-const fmt = (v)=> escapeHtml((v==null || v==="") ? "-" : String(v));
-const fmtDate = (v)=> fmt(v);
-const joinOrDash = (arr)=> (Array.isArray(arr) && arr.length) ? escapeHtml(arr.join(" / ")) : "-";
+// render preview document into modal (no required fields)
+const renderPreviewFromData = (data)=>{
+  ensurePreviewModal();
+  const box = $("#previewDoc");
+  if(!box) return;
 
-const renderPreviewDoc = (data)=>{
-  const target = $("#previewDoc") || $("#previewBody") || $("#preview");
-  if(!target) return;
+  const line = (k, v)=>{
+    if(v==null) return "";
+    const s = String(v).trim();
+    if(!s) return "";
+    return `<div class="pvLine"><span class="pvK">${escapeHtml(k)}:</span> <span class="pvV">${escapeHtml(s)}</span></div>`;
+  };
+
+  const docDate = (data.docDate || data.date || "").trim();
+  const urgency = (data.urgency || "").trim();
 
   const items = Array.isArray(data.items) ? data.items : [];
-  const rows = items.map(it=>{
-    const hasAny = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim() || (it.remark||"").trim() || (Array.isArray(it.photos)&&it.photos.length));
-    if(!hasAny) return "";
-    const photos = (Array.isArray(it.photos)&&it.photos.length) ? escapeHtml(it.photos.join(", ")) : "-";
-    const remark = fmt(it.remark);
+  const itemsRows = items.map((it, i)=>{
+    const name = escapeHtml((it.name||"").trim());
+    const model = escapeHtml((it.model||"").trim());
+    const code = escapeHtml((it.code||"").trim());
+    const qty  = escapeHtml((it.qty||"").trim());
+    const unit = escapeHtml((it.unit||"").trim());
+    const detail = escapeHtml((it.detail||"").trim());
     return `
       <tr>
-        <td class="c">${fmt(it.lineNo)}</td>
-        <td>${fmt(it.name)}</td>
-        <td>${fmt(it.model)}</td>
-        <td>${fmt(it.code)}</td>
-        <td class="r">${(it.qty!=null && it.qty!=="" ? escapeHtml(String(it.qty)) : "-")}</td>
-        <td>${fmt(it.unit)}</td>
-        <td>${fmt(it.detail)}</td>
-        <td>${remark}</td>
-        <td>${photos}</td>
+        <td class="pvNo">${i+1}</td>
+        <td>${name}</td>
+        <td>${model}</td>
+        <td>${code}</td>
+        <td class="pvNum">${qty}</td>
+        <td>${unit}</td>
+        <td>${detail}</td>
       </tr>
     `;
   }).join("");
 
-  target.innerHTML = `
-    <div class="pv-page">
-      <div class="pv-top">
-        <div class="pv-title">Quotation Request (QR)</div>
-        <div class="pv-meta">
-          <div><span class="k">Doc Date:</span> <span class="v">${fmtDate(data.docDate)}</span></div>
-          <div><span class="k">Urgency:</span> <span class="v">${fmt(data.urgency)}</span></div>
+  box.innerHTML = `
+    <div class="pvPaper">
+      <div class="pvHead">
+        <div class="pvTitle">Quotation Request</div>
+        <div class="pvMeta">
+          ${line("Doc Date", docDate)}
+          ${line("Urgency", urgency)}
         </div>
       </div>
 
-      <div class="pv-sec">
-        <div class="pv-sec-h">Section 1 — Header</div>
-        <div class="pv-grid">
-          <div class="pv-f"><div class="k">Project</div><div class="v">${fmt(data.project)}</div></div>
-          <div class="pv-f"><div class="k">Subject</div><div class="v">${fmt(data.subject)}</div></div>
-          <div class="pv-f"><div class="k">Requester</div><div class="v">${fmt(data.requester)}</div></div>
-          <div class="pv-f"><div class="k">Phone</div><div class="v">${fmt(data.phone)}</div></div>
-          <div class="pv-f pv-span2"><div class="k">FOR</div><div class="v">${joinOrDash(data.forBy)}</div></div>
-          <div class="pv-f pv-span2"><div class="k">Note</div><div class="v pv-note">${fmt(data.note)}</div></div>
-        </div>
+      <div class="pvSec">
+        ${line("Project", data.project)}
+        ${line("Subject", data.subject)}
+        ${line("Requester", data.requester)}
+        ${line("Phone", data.phone)}
+        ${line("FOR", data.for)}
+        ${line("Note", data.note)}
       </div>
 
-      <div class="pv-sec">
-        <div class="pv-sec-h">Section 2 — Items</div>
-        <div class="pv-table-wrap">
-          <table class="pv-table">
-            <thead>
-              <tr>
-                <th class="c">#</th>
-                <th>Name</th>
-                <th>Model</th>
-                <th>Code</th>
-                <th class="r">QTY</th>
-                <th>Unit</th>
-                <th>Detail</th>
-                <th>Export By</th>
-                <th>Attach</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows || `<tr><td colspan="9" class="pv-empty">- ไม่มีรายการ -</td></tr>`}
-            </tbody>
-          </table>
+      <div class="pvSec">
+        <div class="pvSecTitle">Items</div>
+        <table class="pvTable">
+          <thead>
+            <tr>
+              <th class="pvNo">#</th>
+              <th>Name</th>
+              <th>Model</th>
+              <th>Code</th>
+              <th class="pvNum">QTY</th>
+              <th>Unit</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows || `<tr><td colspan="7" class="pvEmpty">— ไม่มีรายการ —</td></tr>`}
+          </tbody>
+        </table>
+        <div class="pvFoot">
+          ${line("Export By", data.exportBy)}
         </div>
-        <div class="pv-foot">
-          <div class="pv-warn">* Preview นี้แสดงเท่าที่กรอกไว้ (ยังไม่ส่ง) — กด Submit เพื่อส่งจริง</div>
-        </div>
+        <div class="pvSub">* ยังไม่ส่ง (กด Submit เพื่อส่งจริง)</div>
       </div>
     </div>
   `;
 };
 
-// build preview (document mode)
-const renderPreviewFromData = (data)=>{
-  openPreviewModal();
-  renderPreviewDoc(data);
-};
-
-const collectQRFromForm = ({strict=true}={}) => {
+  const collectQRFromForm = ({strict=true}={}) => {
     const form = $("#frmCreate");
     if(!form) throw new Error("Form not ready");
 
@@ -1151,7 +1132,7 @@ const collectQRFromForm = ({strict=true}={}) => {
 
 
 
-  // Wire Preview button
+  // Wire Preview button (Popup modal)
   const btnPreview = $("#btnPreview");
   if(btnPreview){
     btnPreview.onclick = ()=>{
@@ -1165,33 +1146,20 @@ const collectQRFromForm = ({strict=true}={}) => {
           return;
         }
         renderPreviewFromData(data);
-        toast("เปิดพรีวิวแล้ว");
+        openPreviewModal();
       }catch(err){
         toast(err?.message || "Preview error");
       }
     };
   }
 
-  // Modal wiring
+// Modal wiring
   if(submitModal){
     submitModal.addEventListener("click", (ev)=>{
       const t = ev.target;
       if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
     });
   }
-
-  const previewModal = $("#previewModal");
-  const closePreviewModal = ()=> previewModal?.classList.remove("is-open");
-  if(previewModal){
-    previewModal.addEventListener("click",(ev)=>{
-      const t = ev.target;
-      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closePreviewModal(); }
-    });
-  }
-  const btnClosePreview = $("#btnClosePreview");
-  if(btnClosePreview) btnClosePreview.onclick = ()=> closePreviewModal();
-
-
   const btnCancelSubmit = $("#btnCancelSubmit");
   if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
 
