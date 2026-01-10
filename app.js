@@ -852,7 +852,7 @@ const itemsEl = $("#items");
         const custom = getCustomUnits();
         if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
         ensureUnitList();
-        const unitInput = block.querySelector('input[name="unit"]');
+        const unitInput = block.querySelector('[name="unit"]');
         if(unitInput) unitInput.value = unit;
       });
     }
@@ -922,120 +922,80 @@ const itemsEl = $("#items");
     `;
   };
 
-  const collectQRFromForm = (opts = {}) => {
-  const allowPartial = !!opts.allowPartial;
+  const collectQRFromForm = ({strict=true}={}) => {
+    const form = $("#frmCreate");
+    const requester = form.requester.value.trim();
+    const phone = form.phone.value.trim();
+    const itemsBlocks = Array.from(itemsEl.children);
+    const items = itemsBlocks.map((blk, idx)=>{
+      const name = blk.querySelector('input[name="item_name"]').value.trim();
+      const model = blk.querySelector('input[name="item_model"]').value.trim();
+      const code = blk.querySelector('input[name="item_code"]').value.trim();
+      const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
+      const unit = blk.querySelector('[name="unit"]').value.trim();
+      const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
+      const detail = (detailEl ? detailEl.value : "").trim();
 
-  const v = (el) => (el && el.value != null ? String(el.value).trim() : "");
-  const qv = (blk, sel) => {
-    const el = blk ? blk.querySelector(sel) : null;
-    return v(el);
+      const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
+      const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
+      const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
+      const exportParts = [];
+      if(sea) exportParts.push("By Sea");
+      if(land) exportParts.push("By Land");
+      if(air) exportParts.push("By Air");
+      const remarkInput = blk.querySelector('input[name="remark"]');
+      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
+      const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
+
+      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
+    });
+
+    return {
+      docDate: form.docDate.value,
+      urgency: form.urgency.value,
+      project: form.project.value.trim(),
+      subject: form.subject.value.trim(),
+      requester, phone,
+      forBy: Array.from($("#forList").querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value),
+      note: form.note.value.trim(),
+      items
+    };
   };
 
-  const requester = v(form.requester);
-  const phone = v(form.phone);
-  const docDate = v(form.docDate);
-  const urgency = v(form.urgency);
-  const project = v(form.project);
-  const note = v(form.note);
-
-  // FOR
-  const forBy = [];
-  if (form.forStock && form.forStock.checked) forBy.push("Stock");
-  if (form.forRepair && form.forRepair.checked) forBy.push("Repair");
-  if (form.forSale && form.forSale.checked) forBy.push("Sale");
-  const saleFor = v(form.saleFor);
-  const customerName = v(form.customerName);
-
-  // Export By (per-item) will be collected inside items, but keep a top-level fallback too
-  const exportByTop = [];
-  if (form.exportSea && form.exportSea.checked) exportByTop.push("Sea");
-  if (form.exportLand && form.exportLand.checked) exportByTop.push("Land");
-  if (form.exportAir && form.exportAir.checked) exportByTop.push("Air");
-
-  // Items (safe + filter empty blocks for preview)
-  const itemsEl = $("#itemsContainer");
-  const itemsBlocks = itemsEl ? Array.from(itemsEl.querySelectorAll(".item-block")) : [];
-  const items = [];
-
-  for (const blk of itemsBlocks) {
-    const name = qv(blk, 'input[name="item_name"]');
-    const model = qv(blk, 'input[name="item_model"]');
-    const code = qv(blk, 'input[name="item_code"]');
-    const qtyStr = qv(blk, 'input[name="item_qty"]');
-    const unit = qv(blk, 'input[name="item_unit"]');
-    const detail = qv(blk, 'textarea[name="item_detail"]');
-    const remark = qv(blk, 'textarea[name="item_remark"]');
-
-    const exportBy = [];
-    const sea = blk.querySelector('input[name="item_export_sea"]');
-    const land = blk.querySelector('input[name="item_export_land"]');
-    const air = blk.querySelector('input[name="item_export_air"]');
-    if (sea && sea.checked) exportBy.push("Sea");
-    if (land && land.checked) exportBy.push("Land");
-    if (air && air.checked) exportBy.push("Air");
-
-    // Photos input (file) - keep names only in preview
-    const photosEl = blk.querySelector('input[name="item_photos"]');
-    const photoNames = photosEl && photosEl.files ? Array.from(photosEl.files).map(f => f.name) : [];
-
-    const qtyNum = Number(qtyStr || 0);
-    const hasAny =
-      !!name || !!model || !!code || !!detail || !!remark ||
-      !!unit || qtyNum > 0 ||
-      exportBy.length > 0 ||
-      photoNames.length > 0;
-
-    if (!allowPartial) {
-      // For submit flow: keep every block (even empty), validation happens elsewhere
-      items.push({ name, model, code, qty: qtyNum, unit, detail, remark, exportBy, photoNames });
-    } else {
-      // For preview: only keep blocks that have anything typed/selected
-      if (hasAny) items.push({ name, model, code, qty: qtyNum, unit, detail, remark, exportBy, photoNames });
-    }
-  }
-
-  return {
-    requester,
-    phone,
-    docDate,
-    urgency,
-    project,
-    forBy,
-    saleFor,
-    customerName,
-    note,
-    items,
-    exportByTop
-  };
-};
+  // Helpers: treat a completely blank form as "no preview"
+  const isAllEmptyQR = (d)=>{
+    if(!d) return true;
+    const anyFor = Array.isArray(d.forFlags) && d.forFlags.length>0;
+    const anyTop = !!(d.project || d.requester || d.phone || d.note);
+    const anyItems = Array.isArray(d.items) && d.items.some(it=>{
+      if(!it) return false;
+      const anyText = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim() || (it.remark||"").trim() || (it.unit||"").trim());
+      const qty = String(it.qty ?? "").trim();
+      const qtyIsDefault = (qty==="" || qty==="1"); // default is 1
+      return anyText || !qtyIsDefault;
+    });
+    return !(anyFor || anyTop || anyItems);
   };
 
   // Wire Preview button
   const btnPreview = $("#btnPreview");
   if(btnPreview){
     btnPreview.onclick = ()=>{
-  try{
-    const qr = collectQRFromForm({ allowPartial:true });
-
-    const isAllEmpty =
-      !qr.requester && !qr.phone && !qr.docDate && !qr.urgency &&
-      !qr.project && !qr.note &&
-      (!qr.forBy || qr.forBy.length===0) &&
-      !qr.saleFor && !qr.customerName &&
-      (!qr.exportByTop || qr.exportByTop.length===0) &&
-      (!qr.items || qr.items.length===0);
-
-    if(isAllEmpty){
-      toast("กรอกข้อมูลก่อน");
-      return;
-    }
-
-    renderPreview(qr);
-    toast("Preview updated");
-  }catch(err){
-    toast(err && err.message ? err.message : "Preview error");
-  }
-};
+      try{
+        const data = collectQRFromForm({strict:false});
+        if(isAllEmptyQR(data)){
+          toast("กรอกก่อน");
+          // try focus requester field if exists
+          const f = $("#frmCreate");
+          if(f && f.requester) f.requester.focus();
+          return;
+        }
+        renderPreviewFromData(data);
+        toast("Preview updated");
+      }catch(err){
+        toast(err?.message || "Preview error");
+      }
+    };
   }
 
   // Modal wiring
@@ -1078,7 +1038,7 @@ const itemsEl = $("#items");
             const model = blk.querySelector('input[name="item_model"]').value.trim();
             const code = blk.querySelector('input[name="item_code"]').value.trim();
             const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-            const unit = blk.querySelector('input[name="unit"]').value.trim();
+            const unit = blk.querySelector('[name="unit"]').value.trim();
             const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
             const detail = (detailEl ? detailEl.value : "").trim();
 
@@ -1356,7 +1316,7 @@ function renderCreatePR(el){
         const custom = getCustomUnits();
         if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
         ensureUnitList();
-        const unitInput = block.querySelector('input[name="unit"]');
+        const unitInput = block.querySelector('[name="unit"]');
         if(unitInput) unitInput.value = unit;
       });
     }
