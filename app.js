@@ -268,7 +268,7 @@ function biLabel(en, th){
     .inputPlus .miniBtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;font-size:12px;line-height:1;}
     .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
-    .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
+    .warnBox{margin-top:0;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
     #items .card .row.row-codeqty > .field{ min-width: 0; }
 
 
@@ -689,7 +689,11 @@ function renderCreateQR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
+          
+          <div class="row">
+            <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
           </div>
+</div>
             </div>
             <div class="mfCol right" id="mfS2">
 
@@ -722,8 +726,6 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
-          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-
           <!-- Preview modal (FlowAccount style) -->
           <div class="mfModal" id="previewModal" aria-hidden="true">
             <div class="mfModal__backdrop" data-close="1"></div>
