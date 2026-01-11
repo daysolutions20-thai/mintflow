@@ -1305,3 +1305,10 @@ small.req, span.req, em.req{
 #mfS2 .item-row{
   margin-bottom: inherit;
 }
+/* Export By : vertical layout (same feel as FOR) */
+.export-by-group label,
+.export-by-group .checkbox,
+.export-by-group .option {
+  display: block;
+  margin-bottom: 6px;
+}
