@@ -1333,3 +1333,17 @@ small.req, span.req, em.req{
   gap: 8px;
   margin: 0;
 }
+/* Export By: stack vertical + LEFT align (match FOR) */
+.exportByRow{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+}
+.exportByRow .chkLine{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  margin:0;
+}
