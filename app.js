@@ -616,14 +616,18 @@ function renderCreateQR(el){
   const today = new Date().toISOString().slice(0,10);
 
   el.innerHTML = `
-    <div class="grid cols-2">
-      <div class="card">
+    <div class="card">
         <style>
           .for-list{display:flex;flex-direction:column;gap:10px}
           .for-line{display:flex;align-items:center;gap:10px}
           .chk{display:flex;align-items:center;gap:10px;white-space:nowrap}
           .for-line .input{flex:1}
           textarea[name="note"]{min-height:96px}
+
+          /* Layout A: 2 columns inside the form (Section 1 / Items) */
+          .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+          .mfLayoutA .mfCol{min-width:0;}
+          @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         </style>
 
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
@@ -631,6 +635,9 @@ function renderCreateQR(el){
         <div class="hr"></div>
 
         <form class="form" id="frmCreate">
+
+          <div class="mfLayoutA">
+            <div class="mfCol left" id="mfS1">
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
@@ -682,13 +689,13 @@ function renderCreateQR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
-            <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-
           </div>
+            </div>
+            <div class="mfCol right" id="mfS2">
 
-          <div class="hr"></div>
-          <div class="section-title">
-            <h2 style="margin:0; font-size: 14px">Items</h2>
+            <div class="hr"></div>
+            <div class="section-title">
+              <h2 style="margin:0; font-size: 14px">Items</h2>
             <div class="row tight">
               <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
             </div>
@@ -715,8 +722,24 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
-          
-        
+          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
+
+          <!-- Preview modal (FlowAccount style) -->
+          <div class="mfModal" id="previewModal" aria-hidden="true">
+            <div class="mfModal__backdrop" data-close="1"></div>
+            <div class="mfModal__panel" role="dialog" aria-modal="true" aria-labelledby="mfPreviewTitle">
+              <div class="row" style="justify-content:space-between; align-items:center; gap:12px;">
+                <div class="mfModal__title" id="mfPreviewTitle" style="margin:0">Preview</div>
+                <div class="row tight" style="gap:8px; justify-content:flex-end;">
+                  <button class="btn btn-ghost" type="button" id="btnPrintPreview">Print</button>
+                  <button class="btn btn-ghost" type="button" id="btnClosePreview" data-close="1">Close</button>
+                </div>
+              </div>
+              <div class="hr"></div>
+              <div id="previewBody" class="subtext">กรอกข้อมูลแล้วกด Preview</div>
+            </div>
+          </div>
+
           <datalist id="unitList">
             <option value="Trip"></option>
             <option value="Unit"></option>
@@ -733,17 +756,10 @@ function renderCreateQR(el){
             <option value="Metr"></option>
             <option value="Doz."></option>
           </datalist>
-</form>
-      </div>
+            </div>
+          </div>
 
-      <div class="card">
-        <div class="section-title">
-          <h2 style="margin:0; font-size: 16px">Preview (เดโม)</h2>
-          <div class="subtext">ดูว่าเวลาส่งแล้วจะหน้าตาประมาณไหน</div>
-        </div>
-        <div class="hr"></div>
-        <div id="preview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส</div>
-      </div>
+</form>
     </div>
   `;
 
@@ -911,17 +927,146 @@ const itemsEl = $("#items");
     submitModal.setAttribute("aria-hidden","true");
   };
 
-  // build preview box (same structure as after submit, but no docNo / no save)
+  // build preview as "real document" inside modal (FlowAccount-ish, no required enforcement)
   const renderPreviewFromData = (data)=>{
-    $("#preview").innerHTML = `
-      <div class="pill">Preview</div>
-      <div class="hr"></div>
-      <div><b>Project:</b> ${escapeHtml(data.project||"-")}</div>
-      <div><b>Requester:</b> ${escapeHtml(data.requester||"-")} (${escapeHtml(data.phone||"-")})</div>
-      <div><b>Items:</b> ${data.items?.length || 0}</div>
-      <div class="hr"></div>
-      <div class="subtext">* ยังไม่ส่ง (กด Submit เพื่อส่งจริง)</div>
+    const __pvTarget = $("#previewBody") || $("#preview");
+    if(!__pvTarget) return;
+
+    // Inject preview-doc CSS once (scoped to .mfPreviewDoc*)
+    (function injectPreviewDocCSS(){
+      if(document.querySelector('style[data-mintflow="preview-doc"]')) return;
+      const css = `
+        .mfPreviewDocPaper{
+          width: 794px; max-width: 100%;
+          margin: 0 auto;
+          background:#fff;
+          border: 1px solid rgba(0,0,0,.08);
+          border-radius: 14px;
+          padding: 18px 18px 16px;
+          box-shadow: 0 10px 28px rgba(0,0,0,.10);
+          color:#111;
+        }
+        .mfPreviewDocHeader{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px;}
+        .mfPreviewDocTitle{font-weight:900;letter-spacing:.3px;font-size:18px;line-height:1.1;margin:0;}
+        .mfPreviewDocMeta{font-size:12px;color:rgba(0,0,0,.62);line-height:1.3;}
+        .mfPreviewDocGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+        .mfPreviewDocBlock{padding:10px 12px;border:1px solid rgba(0,0,0,.08);border-radius:12px;}
+        .mfPreviewDocBlock h3{margin:0 0 8px;font-size:12px;letter-spacing:.2px;color:rgba(0,0,0,.55);}
+        .mfPreviewDocLine{display:flex;gap:8px;line-height:1.25;margin:6px 0;font-size:13px;}
+        .mfPreviewDocLine b{min-width:92px;display:inline-block;color:rgba(0,0,0,.72);}
+        .mfPreviewDocNote{white-space:pre-wrap;}
+        .mfPreviewDocTable{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;}
+        .mfPreviewDocTable th,.mfPreviewDocTable td{border:1px solid rgba(0,0,0,.10);padding:6px 7px;vertical-align:top;}
+        .mfPreviewDocTable th{background:rgba(0,0,0,.035);text-align:left;font-weight:800;color:rgba(0,0,0,.72);}
+        .mfPreviewDocFooter{margin-top:10px;font-size:12px;color:rgba(0,0,0,.55);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+        .mfPreviewDocPill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed rgba(255,153,102,.55);background:rgba(255,153,102,.08);border-radius:999px;font-weight:800;color:#c23b22;}
+        @media (max-width: 980px){
+          .mfPreviewDocGrid{grid-template-columns:1fr;}
+        }
+        @media print{
+          body *{visibility:hidden !important;}
+          #previewModal, #previewModal *{visibility:visible !important;}
+          #previewModal{position:static !important; inset:auto !important;}
+          #previewModal .mfModal__backdrop{display:none !important;}
+          #previewModal .mfModal__panel{position:static !important; left:auto !important; top:auto !important; transform:none !important; box-shadow:none !important; width:100% !important; padding:0 !important;}
+          #previewModal .row, #previewModal .hr{display:none !important;} /* hide modal chrome */
+          .mfPreviewDocPaper{border:none !important; box-shadow:none !important; padding:0 !important;}
+        }
+      `;
+      const style = document.createElement("style");
+      style.setAttribute("data-mintflow","preview-doc");
+      style.textContent = css;
+      document.head.appendChild(style);
+    })();
+
+    const val = (v)=> (v==null || String(v).trim()==="" ? "" : String(v));
+    const line = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div>${escapeHtml(v)}</div></div>` : "";
+    const noteLine = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div class="mfPreviewDocNote">${escapeHtml(v)}</div></div>` : "";
+
+    const docDate = val(data.docDate);
+    const urgency = val(data.urgency);
+    const project = val(data.project);
+    const requester = val(data.requester);
+    const phone = val(data.phone);
+    const forMode = val(data.forMode || data.for); // tolerate legacy key
+    const note = val(data.note);
+    const exportBy = Array.isArray(data.exportBy) ? data.exportBy.filter(Boolean) : (val(data.exportBy) ? [val(data.exportBy)] : []);
+    const attachCount = data.attachCount != null ? String(data.attachCount) : "";
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const itemsRows = items.map((it, i)=>{
+      const c = (x)=> escapeHtml(val(x));
+      return `
+        <tr>
+          <td style="width:34px">${i+1}</td>
+          <td>${c(it.name)}</td>
+          <td>${c(it.model)}</td>
+          <td>${c(it.code)}</td>
+          <td style="width:70px">${c(it.qty)}</td>
+          <td style="width:80px">${c(it.unit)}</td>
+          <td>${c(it.detail)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    __pvTarget.innerHTML = `
+      <div class="mfPreviewDocPaper" id="mfPreviewDocPaper">
+        <div class="mfPreviewDocHeader">
+          <div>
+            <div class="mfPreviewDocTitle">Quotation Request</div>
+            <div class="mfPreviewDocMeta">Preview only (ยังไม่ส่งจริง)</div>
+          </div>
+          <div class="mfPreviewDocMeta" style="text-align:right">
+            ${docDate ? `Doc Date: ${escapeHtml(docDate)}<br>` : ``}
+            ${urgency ? `Urgency: ${escapeHtml(urgency)}<br>` : ``}
+            ${data.docNo ? `Doc No: ${escapeHtml(data.docNo)}<br>` : ``}
+          </div>
+        </div>
+
+        <div class="mfPreviewDocGrid">
+          <div class="mfPreviewDocBlock">
+            <h3>Section 1</h3>
+            ${line("Project", project)}
+            ${line("Requester", requester)}
+            ${line("Phone", phone)}
+            ${line("FOR", forMode)}
+            ${noteLine("Note", note)}
+          </div>
+
+          <div class="mfPreviewDocBlock">
+            <h3>Section 2</h3>
+            ${exportBy.length ? `<div class="mfPreviewDocLine"><b>Export By</b><div>${escapeHtml(exportBy.join(", "))}</div></div>` : ``}
+            ${attachCount ? line("Attach", attachCount) : ``}
+            <div class="mfPreviewDocLine"><b>Items</b><div>${items.length} รายการ</div></div>
+            <div class="mfPreviewDocPill" style="margin-top:10px;">ตรวจสอบก่อน Submit</div>
+          </div>
+        </div>
+
+        ${items.length ? `
+          <table class="mfPreviewDocTable" aria-label="Items table">
+            <thead>
+              <tr>
+                <th style="width:34px">#</th>
+                <th>Name</th>
+                <th>Model</th>
+                <th>Code</th>
+                <th style="width:70px">QTY</th>
+                <th style="width:80px">Unit</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>${itemsRows}</tbody>
+          </table>
+        ` : `<div class="mfPreviewDocFooter"><div>ยังไม่มีรายการ Items</div></div>`}
+
+        <div class="mfPreviewDocFooter">
+          <div>${requester ? `Prepared by: ${escapeHtml(requester)}` : ``}</div>
+          <div>${nowISO ? `Generated: ${escapeHtml(nowISO().slice(0,19).replace("T"," "))}` : ``}</div>
+        </div>
+      </div>
     `;
+
+    $("#previewModal")?.classList.add("is-open");
   };
 
   const collectQRFromForm = ({strict=true}={}) => {
@@ -1044,6 +1189,33 @@ const itemsEl = $("#items");
       if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
     });
   }
+
+  const previewModal = $("#previewModal");
+  const closePreviewModal = ()=> previewModal?.classList.remove("is-open");
+  if(previewModal){
+    previewModal.addEventListener("click",(ev)=>{
+      const t = ev.target;
+      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closePreviewModal(); }
+    });
+  }
+  const btnClosePreview = $("#btnClosePreview");
+  if(btnClosePreview) btnClosePreview.onclick = ()=> closePreviewModal();
+
+
+  const btnPrintPreview = $("#btnPrintPreview");
+  if(btnPrintPreview){
+    btnPrintPreview.onclick = ()=>{
+      try{
+        // print the preview document only
+        $("#previewModal")?.classList.add("is-open");
+        window.print();
+      }catch(e){
+        toast("Print error");
+      }
+    };
+  }
+
+
   const btnCancelSubmit = $("#btnCancelSubmit");
   if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
 
@@ -2150,4 +2322,3 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
- 
