@@ -1159,3 +1159,43 @@ small.req, span.req, em.req{
   border-radius:2px;
   background: var(--mf-band-accent);
 }
+
+/* =========================================================
+   PATCH v26 — Ensure Project/Subject row is themed
+   (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
+   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
+   ========================================================= */
+
+#mfS1 .row:has(#project),
+#mfS1 .row:has([name="project"]),
+#mfS1 .row:has(#subject),
+#mfS1 .row:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+#mfS1 .row:has(#project) label,
+#mfS1 .row:has([name="project"]) label,
+#mfS1 .row:has(#subject) label,
+#mfS1 .row:has([name="subject"]) label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+#mfS1 .row:has(#project) label::before,
+#mfS1 .row:has([name="project"]) label::before,
+#mfS1 .row:has(#subject) label::before,
+#mfS1 .row:has([name="subject"]) label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
