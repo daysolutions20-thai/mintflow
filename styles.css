@@ -1,4 +1,3 @@
-
 :root{
   --bg: #FFF7ED;            /* cream */
   --card: #FFFFFF;          /* white */
@@ -1190,6 +1189,84 @@ small.req, span.req, em.req{
 #mfS1 .row:has([name="project"]) label::before,
 #mfS1 .row:has(#subject) label::before,
 #mfS1 .row:has([name="subject"]) label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v27 — Project/Subject block (NOT inside .row) theme
+   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
+   ========================================================= */
+
+/* Card wrapper for Project/Subject regardless of structure */
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]),
+#mfS1 .col:has(#project),
+#mfS1 .col:has([name="project"]),
+#mfS1 .col:has(#subject),
+#mfS1 .col:has([name="subject"]),
+#mfS1 .field:has(#project),
+#mfS1 .field:has([name="project"]),
+#mfS1 .field:has(#subject),
+#mfS1 .field:has([name="subject"]),
+#mfS1 .form-group:has(#project),
+#mfS1 .form-group:has([name="project"]),
+#mfS1 .form-group:has(#subject),
+#mfS1 .form-group:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Heading/label inside the Project/Subject card */
+#mfS1 > *:has(#project) > label:first-of-type,
+#mfS1 > *:has([name="project"]) > label:first-of-type,
+#mfS1 > *:has(#subject) > label:first-of-type,
+#mfS1 > *:has([name="subject"]) > label:first-of-type,
+#mfS1 .col:has(#project) label:first-of-type,
+#mfS1 .col:has([name="project"]) label:first-of-type,
+#mfS1 .col:has(#subject) label:first-of-type,
+#mfS1 .col:has([name="subject"]) label:first-of-type,
+#mfS1 .field:has(#project) label:first-of-type,
+#mfS1 .field:has([name="project"]) label:first-of-type,
+#mfS1 .field:has(#subject) label:first-of-type,
+#mfS1 .field:has([name="subject"]) label:first-of-type,
+#mfS1 .form-group:has(#project) label:first-of-type,
+#mfS1 .form-group:has([name="project"]) label:first-of-type,
+#mfS1 .form-group:has(#subject) label:first-of-type,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar */
+#mfS1 > *:has(#project) > label:first-of-type::before,
+#mfS1 > *:has([name="project"]) > label:first-of-type::before,
+#mfS1 > *:has(#subject) > label:first-of-type::before,
+#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
+#mfS1 .col:has(#project) label:first-of-type::before,
+#mfS1 .col:has([name="project"]) label:first-of-type::before,
+#mfS1 .col:has(#subject) label:first-of-type::before,
+#mfS1 .col:has([name="subject"]) label:first-of-type::before,
+#mfS1 .field:has(#project) label:first-of-type::before,
+#mfS1 .field:has([name="project"]) label:first-of-type::before,
+#mfS1 .field:has(#subject) label:first-of-type::before,
+#mfS1 .field:has([name="subject"]) label:first-of-type::before,
+#mfS1 .form-group:has(#project) label:first-of-type::before,
+#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
+#mfS1 .form-group:has(#subject) label:first-of-type::before,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
