@@ -1276,3 +1276,24 @@ small.req, span.req, em.req{
   border-radius:2px;
   background: var(--mf-band-accent);
 }
+
+/* =========================================================
+   PATCH v28 — Reduce spacing BETWEEN section cards only
+   From ~1cm to ~0.5cm
+   (Do NOT touch inner padding or field spacing)
+   ========================================================= */
+
+/* Control vertical gap between section cards */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]){
+  margin-bottom: 8px !important; /* ~0.5cm visual gap */
+}
+
+/* Safety: do not affect items section internal spacing */
+#mfS2 .item,
+#mfS2 .item-row{
+  margin-bottom: inherit;
+}
