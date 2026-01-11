@@ -1292,6 +1292,13 @@ small.req, span.req, em.req{
 #mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
+.pill.submit-note {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  margin-top: 0.5rem;
+}
 
 /* Safety: do not affect items section internal spacing */
 #mfS2 .item,
