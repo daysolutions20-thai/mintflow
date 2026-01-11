@@ -835,21 +835,23 @@ const itemsEl = $("#items");
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
 
-      <div class="field">
-        <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-        <div class="exportByRow">
-          <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-          <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-          <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-        </div>
-      </div>
+      <div class="row row-export-attach">
+  <div class="field">
+    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+    <div class="exportByRow">
+      <label class="chkLine"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+      <label class="chkLine"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+      <label class="chkLine"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+    </div>
+  </div>
 
-      <div class="field">
-        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
-        <input class="input" name="photos" type="file" accept="image/*" multiple />
-        <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
-        <div class="subtext" data-ph-list></div>
-      </div>
+  <div class="field">
+    <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
+    <input class="input" name="photos" type="file" accept="image/*" multiple />
+    <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
+    <div class="subtext" data-ph-list></div>
+  </div>
+</div>
     `;
     block.querySelector("[data-remove]").onclick = ()=>{
       block.remove();
