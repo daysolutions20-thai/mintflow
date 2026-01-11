@@ -1083,3 +1083,79 @@ small.req, span.req, em.req{
 #mfS2 .items-top button:hover{
   filter: brightness(.95);
 }
+
+/* =========================================================
+   PATCH v25 — Apply soft band + heading accent to other headings
+   - ทำหัวข้อฝั่งซ้ายทุกแถว (Project/Requester/FOR/Note ฯลฯ) ให้เป็นธีมเดียวกับแถวแรก
+   - กันไม่ให้ไปโดน label ของ checkbox ใน FOR list
+   - ฝั่งขวา: เพิ่ม accent ให้หัวข้อ Item # (ถ้ามี)
+   ========================================================= */
+
+/* -------- LEFT: all form rows in Section 1 -------- */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Headline labels in left section (field labels) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar before label text */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* Sub label text (ไทยใต้หัวข้อ) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .sub,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) small,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .muted{
+  color: var(--mf-band-sub) !important;
+}
+
+/* -------- SAFETY: don't style checkbox labels inside FOR list -------- */
+#mfS1 .for-list label{
+  padding-left: 0 !important;
+  font-weight: 400 !important;
+}
+#mfS1 .for-list label::before{
+  content: none !important;
+}
+
+/* -------- RIGHT: item card headings (optional) -------- */
+/* If your item card has a title like "Item #1" in h4/.item-title */
+#mfS2 .item-title,
+#mfS2 .item-headline,
+#mfS2 h4{
+  position: relative;
+  padding-left: 14px;
+}
+#mfS2 .item-title::before,
+#mfS2 .item-headline::before,
+#mfS2 h4::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
