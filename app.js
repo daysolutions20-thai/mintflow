@@ -695,7 +695,6 @@ function renderCreateQR(el){
             <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
           </div>
 </div>
-            </div>
             <div class="mfCol right" id="mfS2">
 
             <div class="hr"></div>
