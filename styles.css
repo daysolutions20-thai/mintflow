@@ -1316,3 +1316,20 @@ small.req, span.req, em.req{
   margin:0;
 }
 .exportByRow .chkLine input{ margin:0; }
+/* =========================================================
+   Export By : vertical + LEFT aligned (same as FOR)
+   ========================================================= */
+
+.export-by-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.export-by-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
