@@ -1347,3 +1347,13 @@ small.req, span.req, em.req{
   width:100%;
   margin:0;
 }
+/* Submit note: FULL width + centered + spacing under buttons */
+.pill.submit-note{
+  display:flex !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  justify-content:center !important;
+  text-align:center !important;
+  margin-top:0.5rem !important;
+}
+
