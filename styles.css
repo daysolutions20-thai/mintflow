@@ -1467,3 +1467,20 @@ small.req, span.req, em.req{
   margin-left: 0;
   margin-right: 0;
 }
+/* ===== FORCE: Submit note full width + center (RIGHT COLUMN) ===== */
+#frmCreate #mfs2 .pill.submit-note{
+  display: flex !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* ถ้ามันอยู่ในแถว grid ให้กินเต็มแถว */
+#frmCreate #mfs2 .btnRow3 .pill.submit-note,
+#frmCreate #mfs2 .row .pill.submit-note{
+  grid-column: 1 / -1 !important;
+}
