@@ -690,25 +690,19 @@ function renderCreateQR(el){
               <textarea name="note"></textarea>
             </div>
           </div>
-
-          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
             </div>
             <div class="mfCol right" id="mfS2">
 
             <div class="hr"></div>
             <div class="section-title">
               <h2 style="margin:0; font-size: 14px">Items</h2>
-          </div>
-          <div id="items"></div>
-            <div class="field">
-              <div class="row tight itemControls">
-                <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
-                <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
-              </div>
+            <div class="row tight">
+              <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
             </div>
           </div>
+          <div id="items"></div>
 
-<div class="row btnRow3">
+          <div class="row btnRow3">
             <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
             <button class="btn btn-primary" type="submit" id="btnSubmit">Submit</button>
             <button class="btn btn-ghost" type="button" id="btnCancel">Cancel</button>
@@ -728,6 +722,7 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
 
           <!-- Preview modal (FlowAccount style) -->
           <div class="mfModal" id="previewModal" aria-hidden="true">
@@ -838,7 +833,6 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-
       <div class="row row-export-attach">
         <div class="field">
           <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
@@ -853,14 +847,18 @@ const itemsEl = $("#items");
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
           <input class="input" name="photos" type="file" accept="image/*" multiple />
           <div class="subtext" data-ph-list></div>
-          <div data-attach-controls></div>
+
+          <div class="row tight itemControls">
+            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+          </div>
         </div>
+      </div>
       </div>
     `;
     block.querySelector("[data-remove]").onclick = ()=>{
       block.remove();
-    renumberItems();
-    mountItemControls();
+      renumberItems();
     };
     const fileInput = block.querySelector('input[name="photos"]');
     const phList = block.querySelector("[data-ph-list]");
@@ -893,29 +891,22 @@ const itemsEl = $("#items");
     });
   };
 
-  const mountItemControls = ()=>{
-    const itemsEl = $("#items");
-    if(!itemsEl) return;
-    const blocks = Array.from(itemsEl.children);
-    const last = blocks[blocks.length-1];
-    if(!last) return;
-    // remove any existing controls
-    blocks.forEach(b=>{
-      b.querySelectorAll("#btnAddItem, #btnDelItem").forEach(el=>el.remove());
-    });
-    const slot = last.querySelector("[data-attach-controls]");
-    if(!slot) return;
-    slot.innerHTML = `
-      <div class="row tight itemControls">
-        <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
-        <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
-      </div>
-    `;
-    // bind handlers
-      };
-    }
-  };
-  // FOR: enable detail inputs only when checked
+  $("#btnAddItem").onclick = addItem;
+
+  
+
+  // Delete last item (keep at least 1 item)
+  const btnDelItem = $("#btnDelItem");
+  if(btnDelItem){
+    btnDelItem.onclick = ()=>{
+      const cards = $$("#items > .card");
+      if(cards.length <= 1) return;
+      cards[cards.length-1].remove();
+      renumberItems();
+    };
+  }
+
+// FOR: enable detail inputs only when checked
   const repairChk = $("#forRepairChk");
   const saleChk = $("#forSaleChk");
   const repairTxt = $("#forRepairTxt");
