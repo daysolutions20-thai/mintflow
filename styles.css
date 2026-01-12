@@ -1434,3 +1434,12 @@ small.req, span.req, em.req{
 #mfS2 .field .input{
   width: 100%;
 }
+/* ===== FIX: Submit note full width & center ===== */
+#frmCreate .pill.submit-note{
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
