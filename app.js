@@ -701,11 +701,16 @@ function renderCreateQR(el){
           </div>
           <div id="items"></div>
 
-
-          <div class="row tight itemControls">
-            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+          <div class="row row-export-attach row-item-controls">
+            <div></div>
+            <div class="attachControlsBox">
+              <div class="row tight itemControls">
+                <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
+                <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+              </div>
+            </div>
           </div>
+
 
           <div class="row btnRow3">
             <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
