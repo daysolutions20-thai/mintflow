@@ -1385,3 +1385,20 @@ small.req, span.req, em.req{
 }
 #mfS2 .btnRow3{ margin-top: 12px; }
 #mfS2 .pill.submit-note, #mfS2 .pill{ margin-top: 8px; }
+
+
+/* ============================================================
+   PATCH v46 - Fix warnBox overlapping Note / right column
+   - warnBox is inside a flex .row (FOR/Note row), so force it
+     to break to a new line and take full width.
+   ============================================================ */
+#frmCreate .row .warnBox{
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  order: 99 !important;           /* keep it after fields in the row */
+  margin-top: 8px !important;     /* same feel as section gap */
+  white-space: normal !important; /* allow wrapping */
+}
