@@ -846,8 +846,8 @@ const itemsEl = $("#items");
           <div class="subtext" data-ph-list></div>
 
           <div class="row tight itemControls">
-            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
           </div>
 
           
@@ -889,22 +889,37 @@ const itemsEl = $("#items");
       if(h3) h3.textContent = `Item #${i+1}`;
     });
   };
+  // Item controls (Add / Delete) - delegated (stable even after re-render)
+  const syncItemControls = ()=>{
+    const cards = $$("#items > .card");
+    cards.forEach((c, i)=>{
+      const controls = c.querySelector(".itemControls");
+      if(!controls) return;
+      controls.style.display = (i === cards.length-1) ? "flex" : "none";
+    });
+  };
 
-  const _btnAddItem = $("#btnAddItem");
-  if(_btnAddItem) _btnAddItem.onclick = addItem;
+  itemsEl.addEventListener("click", (e)=>{
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
 
-  
-
-  // Delete last item (keep at least 1 item)
-  const btnDelItem = $("#btnDelItem");
-  if(btnDelItem){
-    btnDelItem.onclick = ()=>{
+    const action = btn.getAttribute("data-action");
+    if(action === "addItem"){
+      addItem();
+      renumberItems();
+      syncItemControls();
+      return;
+    }
+    if(action === "delItem"){
       const cards = $$("#items > .card");
       if(cards.length <= 1) return;
       cards[cards.length-1].remove();
       renumberItems();
-    };
-  }
+      syncItemControls();
+      return;
+    }
+  });
+
 
 // FOR: enable detail inputs only when checked
   const repairChk = $("#forRepairChk");
@@ -930,6 +945,8 @@ const itemsEl = $("#items");
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
   addItem();
+  renumberItems();
+  syncItemControls();
 
 
   // v24: Preview + submit confirm flow
