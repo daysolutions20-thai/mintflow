@@ -1357,3 +1357,30 @@ small.req, span.req, em.req{
 #frmCreate .row.row-export-attach{
   margin-top: 8px !important; /* match 0.5 gap vibe */
 }
+
+/* ===== PATCH v44: Right controls row polish (Export/Attach + itemControls) ===== */
+#mfS2 .row-export-attach{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row-export-attach .field{ margin: 0; }
+
+#mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+#mfS2 .exportByRow .chkLine{
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+#mfS2 .itemControls{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+#mfS2 .btnRow3{ margin-top: 12px; }
+#mfS2 .pill.submit-note, #mfS2 .pill{ margin-top: 8px; }
