@@ -758,6 +758,17 @@ function renderCreateQR(el){
     </div>
   `;
 
+  // Layout A: remove redundant "Items" title (if present) at top of right column
+  try{
+    const s2 = document.querySelector("#mfS2");
+    const titleH2 = s2 && s2.querySelector(".section-title h2");
+    if(titleH2 && titleH2.textContent.trim() === "Items"){
+      const wrap = titleH2.closest(".section-title");
+      if(wrap) wrap.remove();
+    }
+  }catch(e){}
+
+
   
   // v9: keep NOTE textarea bottom aligned with FOR block
   setTimeout(()=>{ requestAnimationFrame(()=>{ balanceForNoteRow(); }); }, 0);
@@ -852,7 +863,8 @@ const itemsEl = $("#items");
       </div>
       </div>
     `;
-    block.querySelector("[data-remove]").onclick = ()=>{
+    const _rm = block.querySelector("[data-remove]");
+    if(_rm) _rm.onclick = ()=>{
       block.remove();
       renumberItems();
     };
@@ -1492,8 +1504,7 @@ function renderCreatePR(el){
     block.innerHTML = `
       <div class="section-title">
         <h3 style="margin:0">Item #${idx}</h3>
-        <button class="btn btn-danger btn-small" type="button" data-remove>ลบ</button>
-      </div>
+</div>
 
       <div class="row">
         <div class="field">
@@ -1539,7 +1550,8 @@ function renderCreatePR(el){
         <div class="subtext" data-ph-list></div>
       </div>
     `;
-    block.querySelector("[data-remove]").onclick = ()=>{
+    const _rm = block.querySelector("[data-remove]");
+    if(_rm) _rm.onclick = ()=>{
       block.remove();
       renumber();
       calcTotal();
