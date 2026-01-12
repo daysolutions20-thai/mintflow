@@ -700,9 +700,6 @@ function renderCreateQR(el){
               <h2 style="margin:0; font-size: 14px">Items</h2>
           </div>
           <div id="items"></div>
-
-          <div class="row row-export-attach row-item-controls">
-            <div class="field"></div>
             <div class="field">
               <div class="row tight itemControls">
                 <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
@@ -856,12 +853,14 @@ const itemsEl = $("#items");
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
           <input class="input" name="photos" type="file" accept="image/*" multiple />
           <div class="subtext" data-ph-list></div>
+          <div data-attach-controls></div>
         </div>
       </div>
     `;
     block.querySelector("[data-remove]").onclick = ()=>{
       block.remove();
-      renumberItems();
+    renumberItems();
+    mountItemControls();
     };
     const fileInput = block.querySelector('input[name="photos"]');
     const phList = block.querySelector("[data-ph-list]");
@@ -894,31 +893,28 @@ const itemsEl = $("#items");
     });
   };
 
-  const btnAddItem = $("#btnAddItem");
-  if(btnAddItem) btnAddItem.onclick = addItem;
-
-  // Items: remove last item (or clear the first one)
-  const btnDelItem = $("#btnDelItem");
-  if(btnDelItem){
-    btnDelItem.onclick = ()=>{
-      const itemsEl = $("#items");
-      const blocks = Array.from(itemsEl.children);
-      if(blocks.length <= 1){
-        const b = blocks[0];
-        if(!b) return;
-        b.querySelectorAll("input, textarea, select").forEach(el=>{
-          if(el.type === "checkbox" || el.type === "radio") el.checked = false;
-          else el.value = "";
-        });
-        const ph = b.querySelector("[data-ph-list]");
-        if(ph) ph.textContent = "";
-      }else{
-        blocks[blocks.length-1].remove();
-      }
-      renumberItems();
-    };
-  }
-
+  const mountItemControls = ()=>{
+    const itemsEl = $("#items");
+    if(!itemsEl) return;
+    const blocks = Array.from(itemsEl.children);
+    const last = blocks[blocks.length-1];
+    if(!last) return;
+    // remove any existing controls
+    blocks.forEach(b=>{
+      b.querySelectorAll("#btnAddItem, #btnDelItem").forEach(el=>el.remove());
+    });
+    const slot = last.querySelector("[data-attach-controls]");
+    if(!slot) return;
+    slot.innerHTML = `
+      <div class="row tight itemControls">
+        <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
+        <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+      </div>
+    `;
+    // bind handlers
+      };
+    }
+  };
   // FOR: enable detail inputs only when checked
   const repairChk = $("#forRepairChk");
   const saleChk = $("#forSaleChk");
