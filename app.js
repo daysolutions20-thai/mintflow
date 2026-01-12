@@ -660,11 +660,11 @@ function renderCreateQR(el){
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
             </div>
             <div class="field">
-              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" required />
             </div>
           </div>
@@ -808,7 +808,7 @@ const itemsEl = $("#items");
 </div>
       <div class="row">
         <div class="field">
-          <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
+          <label>${biLabel("Name", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
           <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
@@ -822,11 +822,11 @@ const itemsEl = $("#items");
           <input class="input" name="item_code" placeholder="ถ้ามี" />
         </div>
         <div class="field">
-          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label>${biLabel("QTY", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
           <div class="inputPlus">
             <input class="input" name="unit" list="unitList" style="flex:1" />
             <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
@@ -1414,11 +1414,11 @@ function renderCreatePR(el){
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Requester (Required)", "ชื่อผู้ขอ (จำเป็น)")}</label>
+              <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
             </div>
             <div class="field">
-              <label>${biLabel("Phone (Required)", "เบอร์โทร (จำเป็น)")}</label>
+              <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
               <input class="input" name="phone" placeholder="0812345678" required />
             </div>
           </div>
@@ -1512,18 +1512,18 @@ function renderCreatePR(el){
           <input class="input" name="code" placeholder="ถ้ามี" />
         </div>
         <div class="field" style="flex:2">
-          <label>${biLabel("Detail (Required)", "รายละเอียด (จำเป็น)")}</label>
+          <label>${biLabel("Detail", "รายละเอียด (จำเป็น)")}</label>
           <input class="input" name="detail" placeholder="เช่น DIESEL FOR TEST MACHINE" required />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>${biLabel("QTY (Required)", "จำนวน (จำเป็น)")}</label>
+          <label>${biLabel("QTY", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
         </div>
         <div class="field">
-          <label>${biLabel("Unit (Required)", "หน่วย (จำเป็น)")}</label>
+          <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
           <select name="unit" required>
             <option value="">เลือก</option>
             <option>pcs</option>
