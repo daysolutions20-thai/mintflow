@@ -689,6 +689,9 @@ function renderCreateQR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
+
+          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
+
           </div>
             </div>
             <div class="mfCol right" id="mfS2">
@@ -719,8 +722,6 @@ function renderCreateQR(el){
           </div>
 
           <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
-          <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-
           <!-- Preview modal (FlowAccount style) -->
           <div class="mfModal" id="previewModal" aria-hidden="true">
             <div class="mfModal__backdrop" data-close="1"></div>
