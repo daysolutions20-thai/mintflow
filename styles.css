@@ -1327,7 +1327,18 @@ small.req, span.req, em.req{
 }
 
 .row.itemControls{
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 10px;
   margin-top: 12px;
+}
+
+/* v31 - Align Export checkbox lines to left + restore submit note spacing */
+.exportByRow{ padding-left: 0; }
+.exportByRow .chkLine{ justify-content: flex-start; padding-left: 0; }
+.pill.submit-note{
+  display:flex;
+  width:100%;
+  justify-content:center;
+  text-align:center;
+  margin-top: 12px !important;
 }
