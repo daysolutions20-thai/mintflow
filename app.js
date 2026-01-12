@@ -697,9 +697,6 @@ function renderCreateQR(el){
             <div class="mfCol right" id="mfS2">
 
             <div class="hr"></div>
-            <div class="section-title">
-              <h2 style="margin:0; font-size: 14px">Items</h2>
-          </div>
           <div id="items"></div>
 
           <div class="row btnRow3">
@@ -797,8 +794,7 @@ const itemsEl = $("#items");
     block.innerHTML = `
       <div class="section-title">
         <h3 style="margin:0">Item #${idx}</h3>
-        <button class="btn btn-danger btn-small" type="button" data-remove>ลบ</button>
-      </div>
+</div>
       <div class="row">
         <div class="field">
           <label>${biLabel("Name (Required)", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
@@ -1496,8 +1492,7 @@ function renderCreatePR(el){
     block.innerHTML = `
       <div class="section-title">
         <h3 style="margin:0">Item #${idx}</h3>
-        <button class="btn btn-danger btn-small" type="button" data-remove>ลบ</button>
-      </div>
+</div>
 
       <div class="row">
         <div class="field">
