@@ -1399,3 +1399,12 @@ small.req, span.req, em.req{
   margin-top: 8px;
   margin-bottom: 8px;
 }
+
+
+/* ============================================================
+   PATCH v48 - Add top spacing before Export/Attach row (Right)
+   - Move the "Export By / Attach photos" headings down ~1cm
+   ============================================================ */
+#frmCreate .row.row-export-attach{
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
+}
