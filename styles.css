@@ -1300,79 +1300,54 @@ small.req, span.req, em.req{
 
 
 /* ============================================================
-   PATCH v39 - Right side: Export + Attach in one row (45/55)
-   - Export checkbox stack vertical
-   - Item controls under Attach (no floating)
-   - Keep submit buttons & submit note spacing unchanged
+   PATCH v42 (CLEAN) - Right side: Export/Attach in ONE ROW 50/50
+   - Keep Preview/Submit/Cancel + submit-note untouched (only spacing safety)
+   - Buttons (Delete/Add) are rendered INSIDE Attach field (app.js v48)
    ============================================================ */
 
-/* Row: Export / Attach */
-#frmCreate .row.row-export-attach{
-  display:flex;
-  align-items:flex-start;
-  gap: 20px;
-  flex-wrap: nowrap; /* don't stack */
-  margin-top: 8px;   /* light breathing room under Detail */
-}
-#frmCreate .row.row-export-attach > .field{ min-width: 0; }
-#frmCreate .row.row-export-attach > .field:first-child{ flex: 1 1 0; }
-#frmCreate .row.row-export-attach > .field:last-child{ flex: 1 1 0; }
-
-/* Export list: vertical like FOR */
-#frmCreate .row.row-export-attach .exportByRow{
-  display:flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0;
-  align-items:flex-start;
-}
-#frmCreate .row.row-export-attach .exportByRow .chkLine{
-  display:flex;
-  align-items:center;
-  gap: 8px;
-  margin: 0;
+/* Export + Attach: same row, 50/50 like FOR/Note */
+#mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
+  gap: 20px !important;
+  align-items: start !important;
 }
 
-/* Controls: under Attach, align to left inside right column */
-#frmCreate .row.row-export-attach .itemControls{
-  margin-top: 12px;
-  justify-content: flex-start;
-  gap: 10px;
+/* Make sure each field behaves like a column */
+#mfS2 .row.row-export-attach > .field{
+  min-width: 0;
 }
 
-/* Ensure submit note does NOT stick to buttons */
-#frmCreate .btnRow3{ margin-bottom: 8px; }
-#frmCreate .pill.submit-note{ width:100%; margin-top: 10px !important; }
-/* =========================================================
-   PATCH v41 — Fix spacing between Item controls and Submit area
-   Goal:
-   - Keep Preview/Submit/Cancel + submit-note untouched visually,
-     but ensure controls above them don't collide.
-   ========================================================= */
-
-/* The row that holds Delete/Add buttons (below Export/Attach) */
-#frmCreate .row.row-export-attach.row-item-controls{
-  margin-top: 12px !important;
-  margin-bottom: 16px !important; /* create breathing room before .btnRow3 */
+/* Export checkboxes: left aligned (no center drifting) */
+#mfS2 .row.row-export-attach .exportByRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
   align-items: flex-start !important;
 }
 
-/* Ensure 50/50 columns are respected even if nested flex rules interfere */
-#frmCreate .row.row-export-attach.row-item-controls > .field{
-  flex: 1 1 0 !important;
-  width: auto !important;
-  min-width: 0 !important;
+#mfS2 .row.row-export-attach .chkLine{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin: 0 !important;
 }
 
-/* Keep the button group from drifting/centering oddly */
-#frmCreate .row.row-export-attach.row-item-controls .itemControls{
-  width: 100% !important;
-  justify-content: flex-start !important; /* under Attach column, left-aligned */
+/* Buttons under Attach: keep under file input, left aligned inside right column */
+#mfS2 .row.row-export-attach .itemControls{
+  display: flex !important;
   gap: 10px !important;
-  flex-wrap: wrap;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-top: 12px !important;   /* space from file input */
 }
 
-/* Extra safety: restore spacing above the dashed submit note pill */
-#frmCreate .btnRow3 + .pill.submit-note{
-  margin-top: 12px !important;
+/* Safety spacing between controls area and bottom buttons row */
+#mfS2 .row.row-export-attach{
+  margin-bottom: 12px !important; /* creates breathing room before btnRow3 */
 }
+
+/* Submit note: make sure it doesn't stick to btnRow3 */
+#mfS2 .btnRow3{ margin-bottom: 10px !important; }
+#mfS2 .pill.submit-note{ margin-top: 10px !important; width:100% !important; }
