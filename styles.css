@@ -1342,3 +1342,10 @@ small.req, span.req, em.req{
   text-align:center;
   margin-top: 12px !important;
 }
+
+/* v32: Right side controls polish */
+.exportByRow{ align-items:flex-start; }
+.exportByRow .chkLine{ justify-content:flex-start; }
+.row.row-export-attach{ align-items:flex-start; }
+.pill.submit-note{ width:100%; margin-top: 0.5rem !important; }
+.itemControls{ margin-top: 12px; justify-content:flex-end; gap:10px; }
