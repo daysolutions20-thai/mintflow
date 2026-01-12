@@ -1398,3 +1398,38 @@ small.req, span.req, em.req{
 #frmCreate .row.row-export-attach .exportByRow .chkLine{ display:flex !important; justify-content:flex-start !important; }
 
 #frmCreate .btnRow3 + .pill{ margin-top: 12px !important; }
+
+
+/* v38 FIX (DOM-true): 
+   - Export checkboxes force LEFT align
+   - ItemControls (Del/Add) sit UNDER Attach column (right half), no floating center
+   - Restore spacing between btnRow3 and submit-note
+*/
+#frmCreate .row.row-export-attach .exportByRow{
+  display:flex;
+  flex-direction: column;
+  align-items: flex-start !important;
+}
+#frmCreate .row.row-export-attach .exportByRow .chkLine{
+  justify-content: flex-start !important;
+  width: auto !important;
+}
+
+/* match 45/55 like the Export/Attach row */
+#frmCreate .row.row-export-attach{
+  display:flex;
+  gap: 20px;
+}
+#frmCreate .row.row-export-attach > .field:first-child{ flex: 0 0 45%; }
+#frmCreate .row.row-export-attach > .field:last-child{ flex: 0 0 55%; }
+
+/* controls row uses the same 45/55 grid; buttons align to left of right column */
+#frmCreate .row.row-export-attach.row-item-controls{
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+#frmCreate .row.row-export-attach.row-item-controls .itemControls{
+  justify-content: flex-start;
+}
+#frmCreate .row.btnRow3{ margin-top: 12px; }
+#frmCreate .pill.submit-note{ margin-top: 12px !important; }
