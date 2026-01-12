@@ -1387,3 +1387,26 @@ small.req, span.req, em.req{
 }
 
 .row.btnRow3{ margin-top: 12px; }
+
+
+/* === PATCH v35: Fix item controls position + restore spacing (no extra boxes) === */
+.row.row-item-controls{
+  margin-top: 8px !important;   /* gap under Export/Attach row */
+  margin-bottom: 14px !important; /* gap before Preview/Submit/Cancel row */
+}
+.row.row-item-controls > div:first-child{ flex: 1 1 0% !important; }
+.row.row-item-controls > div:last-child{
+  flex: 1 1 0% !important;
+  display: flex !important;
+  justify-content: flex-start !important; /* start at left of RIGHT half => under Attach */
+  align-items: center !important;
+}
+
+/* remove extra top gap inside the right-half button row */
+.row.row-item-controls .row.itemControls{ margin-top: 0 !important; }
+
+/* keep submit note separated from buttons */
+.pill.submit-note{ margin-top: 12px !important; }
+
+/* ensure Export checklines never indent */
+.exportByRow, .exportByRow .chkLine{ justify-content: flex-start !important; }
