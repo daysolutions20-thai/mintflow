@@ -1316,45 +1316,18 @@ small.req, span.req, em.req{
   margin:0;
 }
 .exportByRow .chkLine input{ margin:0; }
+
+
 /* =========================================================
-   Export By : vertical + LEFT aligned (same as FOR)
+   Layout A - Right column controls
    ========================================================= */
-
-.export-by-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
-
-.export-by-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-}
-/* Export By: stack vertical + LEFT align (match FOR) */
-.exportByRow{
-  display:flex;
-  flex-direction:column;
+.row.row-export-attach{
   align-items:flex-start;
-  gap:6px;
+  margin-top: 20px; /* user tuned */
 }
-.exportByRow .chkLine{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  width:100%;
-  margin:0;
+
+.row.itemControls{
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
 }
-/* Submit note: FULL width + centered + spacing under buttons */
-.pill.submit-note{
-  display:flex !important;
-  width:100% !important;
-  box-sizing:border-box !important;
-  justify-content:center !important;
-  text-align:center !important;
-  margin-top:0.5rem !important;
-}
-.row.row-export-attach { align-items: flex-start; }
-.row.row-export-attach { margin-top: 20px; }
