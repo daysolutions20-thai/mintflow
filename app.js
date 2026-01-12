@@ -711,8 +711,7 @@ function renderCreateQR(el){
             </div>
           </div>
 
-
-          <div class="row btnRow3">
+<div class="row btnRow3">
             <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
             <button class="btn btn-primary" type="submit" id="btnSubmit">Submit</button>
             <button class="btn btn-ghost" type="button" id="btnCancel">Cancel</button>
