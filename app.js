@@ -696,9 +696,6 @@ function renderCreateQR(el){
             <div class="hr"></div>
             <div class="section-title">
               <h2 style="margin:0; font-size: 14px">Items</h2>
-            <div class="row tight">
-              <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
-            </div>
           </div>
           <div id="items"></div>
 
