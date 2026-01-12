@@ -698,11 +698,13 @@ function renderCreateQR(el){
             <div class="hr"></div>
             <div class="section-title">
               <h2 style="margin:0; font-size: 14px">Items</h2>
-            <div class="row tight">
-              <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
-            </div>
           </div>
           <div id="items"></div>
+
+          <div class="row tight itemControls">
+            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+          </div>
 
           <div class="row btnRow3">
             <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
@@ -723,7 +725,7 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <div class="pill submit-note ">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+          <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
 
           <!-- Preview modal (FlowAccount style) -->
           <div class="mfModal" id="previewModal" aria-hidden="true">
@@ -836,22 +838,21 @@ const itemsEl = $("#items");
       </div>
 
       <div class="row row-export-attach">
-  <div class="field">
-    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-    <div class="exportByRow">
-      <label class="chkLine"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-      <label class="chkLine"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-      <label class="chkLine"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-    </div>
-  </div>
+        <div class="field">
+          <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+          <div class="exportByRow">
+            <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+          </div>
+        </div>
 
-  <div class="field">
-    <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-    <input class="input" name="photos" type="file" accept="image/*" multiple />
-    <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
-    <div class="subtext" data-ph-list></div>
-  </div>
-</div>
+        <div class="field">
+          <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
+          <input class="input" name="photos" type="file" accept="image/*" multiple />
+          <div class="subtext" data-ph-list></div>
+        </div>
+      </div>
     `;
     block.querySelector("[data-remove]").onclick = ()=>{
       block.remove();
@@ -889,6 +890,28 @@ const itemsEl = $("#items");
   };
 
   $("#btnAddItem").onclick = addItem;
+
+  // Items: remove last item (or clear the first one)
+  const btnDelItem = $("#btnDelItem");
+  if(btnDelItem){
+    btnDelItem.onclick = ()=>{
+      const itemsEl = $("#items");
+      const blocks = Array.from(itemsEl.children);
+      if(blocks.length <= 1){
+        const b = blocks[0];
+        if(!b) return;
+        b.querySelectorAll("input, textarea, select").forEach(el=>{
+          if(el.type === "checkbox" || el.type === "radio") el.checked = false;
+          else el.value = "";
+        });
+        const ph = b.querySelector("[data-ph-list]");
+        if(ph) ph.textContent = "";
+      }else{
+        blocks[blocks.length-1].remove();
+      }
+      renumberItems();
+    };
+  }
 
   // FOR: enable detail inputs only when checked
   const repairChk = $("#forRepairChk");
