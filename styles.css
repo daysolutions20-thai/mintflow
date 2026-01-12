@@ -1443,3 +1443,15 @@ small.req, span.req, em.req{
   text-align: center !important;
   box-sizing: border-box;
 }
+/* ===== FIX: Submit note full width & center (RIGHT column only) ===== */
+#mfS2 .pill.submit-note{
+  display: flex !important;          /* ฆ่า inline-flex */
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
