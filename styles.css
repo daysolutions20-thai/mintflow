@@ -1388,17 +1388,14 @@ small.req, span.req, em.req{
 
 
 /* ============================================================
-   PATCH v46 - Fix warnBox overlapping Note / right column
-   - warnBox is inside a flex .row (FOR/Note row), so force it
-     to break to a new line and take full width.
+   PATCH v47 - warnBox placement (outside FOR/Note card)
+   - keep the warnBox looking like the original: full width,
+     nice spacing from cards above/below.
    ============================================================ */
-#frmCreate .row .warnBox{
-  flex: 0 0 100% !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  display: block !important;
-  order: 99 !important;           /* keep it after fields in the row */
-  margin-top: 8px !important;     /* same feel as section gap */
-  white-space: normal !important; /* allow wrapping */
+#mfS1 .warnBox{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
