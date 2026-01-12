@@ -701,11 +701,6 @@ function renderCreateQR(el){
           </div>
           <div id="items"></div>
 
-          <div class="row tight itemControls">
-            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
-          </div>
-
           <div class="row btnRow3">
             <button class="btn btn-ghost" type="button" id="btnPreview">Preview</button>
             <button class="btn btn-primary" type="submit" id="btnSubmit">Submit</button>
@@ -851,6 +846,10 @@ const itemsEl = $("#items");
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
           <input class="input" name="photos" type="file" accept="image/*" multiple />
           <div class="subtext" data-ph-list></div>
+          <div class="row tight itemControls">
+            <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
+          </div>
         </div>
       </div>
     `;
