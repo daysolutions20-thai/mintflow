@@ -849,6 +849,8 @@ const itemsEl = $("#items");
             <button class="btn btn-danger btn-small" type="button" id="btnDelItem">ลบ</button>
             <button class="btn btn-ghost" type="button" id="btnAddItem">+ เพิ่มรายการ</button>
           </div>
+
+          
         </div>
       </div>
       </div>
@@ -888,7 +890,8 @@ const itemsEl = $("#items");
     });
   };
 
-  $("#btnAddItem").onclick = addItem;
+  const _btnAddItem = $("#btnAddItem");
+  if(_btnAddItem) _btnAddItem.onclick = addItem;
 
   
 
