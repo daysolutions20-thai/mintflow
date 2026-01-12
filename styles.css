@@ -1311,6 +1311,7 @@ small.req, span.req, em.req{
   grid-template-columns: 1fr 1fr !important;  /* 50/50 */
   gap: 20px !important;
   align-items: start !important;
+  margin-top: 16px !important; /* give space after Detail */
 }
 
 /* Make sure each field behaves like a column */
