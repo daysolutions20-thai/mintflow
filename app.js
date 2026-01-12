@@ -689,11 +689,11 @@ function renderCreateQR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
+</div>
+            
 
           <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
-
-          </div>
-            </div>
+</div>
             <div class="mfCol right" id="mfS2">
 
             <div class="hr"></div>
