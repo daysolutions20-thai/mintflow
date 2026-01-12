@@ -1408,3 +1408,29 @@ small.req, span.req, em.req{
 #frmCreate .row.row-export-attach{
   margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
 }
+
+
+/* ============================================================
+   PATCH v49 - Right column alignment cleanup
+   - Keep item input boxes aligned in the same vertical grid
+   ============================================================ */
+#mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field{
+  margin: 0 !important;
+  min-width: 0;
+}
+#mfS2 .field .input{
+  width: 100%;
+}
