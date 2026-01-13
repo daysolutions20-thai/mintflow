@@ -3289,3 +3289,32 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-codeqty{
   align-items: start !important;
 }
+
+/* =====================================================================
+   MintFlow HOTFIX (2026-01-13) — Attach photos column NOT centered (v3)
+   Symptom:
+   - "Attach photos" block (label + file input + buttons) sits centered,
+     making the right column look "เอียง/กระเท่เร่" compared to other fields.
+   Fix:
+   - Force the RIGHT field in row-export-attach to left-align like Model/QTY.
+   ===================================================================== */
+
+/* Right-side (Attach) field: keep everything left-aligned */
+#mfS2 .row.row-export-attach > .field:last-child{
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+/* Make the file input stretch full width (so it visually aligns with other inputs) */
+#mfS2 .row.row-export-attach > .field:last-child input[type="file"],
+#mfS2 .row.row-export-attach > .field:last-child .input{
+  width: 100% !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+/* Buttons under Attach: left aligned under the file input */
+#mfS2 .row.row-export-attach > .field:last-child .itemControls{
+  width: 100% !important;
+  justify-content: flex-start !important;
+}
