@@ -3318,3 +3318,63 @@ END – DO NOT EDIT BELOW
   width: 100% !important;
   justify-content: flex-start !important;
 }
+
+/* =====================================================================
+   PATCH v50 (2026-01-13) — FIX: Item card overflow on narrow width
+   Symptom:
+   - When screen is narrow, Unit / Attach photos "leak" outside the item card.
+   Cause (typical):
+   - Grid columns stay multi-col with fixed min widths / children not allowed to shrink.
+   Fix:
+   - Force min-width:0 everywhere inside item card
+   - Make rows stack on small screens (no horizontal overflow)
+   - Keep file input and buttons contained
+   ===================================================================== */
+
+/* Let content shrink inside the item card */
+#mfS2, #mfS2 *{
+  min-width: 0 !important;
+}
+
+/* Safety: never allow inner blocks to paint outside the card */
+#mfS2 .card,
+#mfS2 .item,
+#mfS2 .items,
+#mfS2 .items-panel,
+#mfS2 .items-wrapper{
+  overflow: hidden !important;
+}
+
+/* Contain long controls */
+#mfS2 input, #mfS2 select, #mfS2 textarea, #mfS2 button{
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Desktop/tablet: keep your intended grids */
+#mfS2 .row.row-name-model{ overflow: hidden; }
+#mfS2 .row.row-codeqty{ overflow: hidden; }
+#mfS2 .row.row-export-attach{ overflow: hidden; }
+
+/* Mobile: stack to prevent leakage */
+@media (max-width: 640px){
+  #mfS2 .row.row-name-model{
+    grid-template-columns: 1fr !important;
+  }
+  #mfS2 .row.row-codeqty{
+    grid-template-columns: 1fr !important; /* Code, QTY, Unit stack */
+  }
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important; /* Export then Attach stack */
+  }
+
+  /* File input row full width */
+  #mfS2 .row.row-export-attach input[type="file"]{
+    width: 100% !important;
+  }
+
+  /* Buttons wrap, stay inside */
+  #mfS2 .itemControls{
+    flex-wrap: wrap !important;
+  }
+}
