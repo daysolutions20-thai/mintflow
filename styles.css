@@ -1562,6 +1562,14 @@ small.req, span.req, em.req{
   width: 100% !important;
   box-sizing: border-box !important;
 }
+/* ===== FIX: align QTY/Unit headers with Model/Attach photos ===== */
+#mfs2 .row.row-codeqty{
+  display: grid !important;
+  /* ขยายคอลัมน์ Code ให้กว้างขึ้น -> ดัน QTY/Unit ไปขวาให้ตรงแนว Model */
+  grid-template-columns: 1.55fr 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
 /* =========================================================
    END – DO NOT EDIT BELOW
    ========================================================= */
