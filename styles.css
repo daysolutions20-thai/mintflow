@@ -3378,3 +3378,73 @@ END – DO NOT EDIT BELOW
     flex-wrap: wrap !important;
   }
 }
+
+/* =====================================================================
+   PATCH v51 (2026-01-13) — Mobile: Export checkbox alignment + stop clipping
+   Fixes:
+   1) Export By checkboxes: checkbox + text baseline straight (no weird drift)
+   2) On narrow width, right-side blocks were getting CLIPPED (cut text/buttons)
+      -> remove over-aggressive overflow:hidden and use overflow-x hidden only.
+   ===================================================================== */
+
+/* ---- 1) Export By: checkbox + label alignment ---- */
+#mfS2 .exportByRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+#mfS2 .exportByRow .chkLine{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+#mfS2 .exportByRow .chkLine input[type="checkbox"]{
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  transform: translateY(1px); /* tiny optical baseline fix */
+}
+
+/* ---- 2) Stop clipping inside the Item card ---- */
+/* Replace previous overflow:hidden with x-only hiding (keeps content visible) */
+#mfS2 .card,
+#mfS2 .item,
+#mfS2 .items,
+#mfS2 .items-panel,
+#mfS2 .items-wrapper{
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+/* Rows: do NOT hide overflow (it was cutting Unit/Attach on small screens) */
+#mfS2 .row.row-name-model,
+#mfS2 .row.row-codeqty,
+#mfS2 .row.row-export-attach{
+  overflow: visible !important;
+}
+
+/* Mobile stacking: keep padding/width sane so nothing gets cut */
+@media (max-width: 640px){
+  #mfS2 .row.row-name-model,
+  #mfS2 .row.row-codeqty,
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Ensure the last column controls never exceed the card width */
+  #mfS2 .row.row-export-attach input[type="file"],
+  #mfS2 .row.row-export-attach .itemControls,
+  #mfS2 .row.row-export-attach button{
+    max-width: 100% !important;
+  }
+
+  /* Prevent long file control from clipping */
+  #mfS2 .row.row-export-attach .field:last-child{
+    padding-right: 0 !important;
+  }
+}
