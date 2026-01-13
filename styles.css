@@ -1549,7 +1549,19 @@ small.req, span.req, em.req{
 #submitNote *{
   float: none !important;
 }
-
+/* ===== FIX: QTY / Unit column protruding (horizontal misalignment) ===== */
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.4fr 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+#mfS2 .row.row-codeqty .field{ min-width: 0 !important; }
+#mfS2 .row.row-codeqty .field .input,
+#mfS2 .row.row-codeqty .field input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
 /* =========================================================
    END – DO NOT EDIT BELOW
    ========================================================= */
