@@ -1308,28 +1308,12 @@ small.req, span.req, em.req{
 /* Export + Attach: same row, 50/50 like FOR/Note */
 #mfS2 .row.row-export-attach{
   display: grid !important;
-  /* match 3-col row so Export By aligns with Model/Attach column */
-  grid-template-columns: 1.4fr .8fr .8fr !important;
+  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
   gap: 20px !important;
   align-items: start !important;
-  margin-top: 16px !important;
+  margin-top: 16px !important; /* give space after Detail */
 }
 
-/* push Export By to the 2nd column (same start as "Model") */
-.row.row-export-attach > .field:nth-child(1){
-  grid-column: 2 !important;
-}
-
-/* keep Attach photos in the 3rd column */
-.row.row-export-attach > .field:nth-child(2){
-  grid-column: 3 !important;
-}
-
-/* if the add/delete controls row exists as a sibling, keep it under Attach */
-.row.row-export-attach > .btnRow3,
-.row.row-export-attach > .row.btnRow3{
-  grid-column: 3 !important;
-}
 /* Make sure each field behaves like a column */
 #mfS2 .row.row-export-attach > .field{
   min-width: 0;
@@ -1587,5 +1571,53 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
+/* =========================================================
+   FIX: Align QTY column start with Model/Attach (50% split)
+   + Keep Export column truly left-aligned
+   + Make submit note full width + centered (robust)
+   (Inserted ABOVE: END – DO NOT EDIT BELOW)
+   ========================================================= */
+
+/* 1) QTY column was starting too early (because first col < 50%).
+      Force Code/QTY/Unit to 2fr/1fr/1fr => QTY starts at 50% line. */
+#frmCreate #mfS2 .row.row-codeqty{
+  grid-template-columns: 2fr 1fr 1fr !important;
+}
+
+/* 2) Export / Attach row: keep 50/50 and pin Export to the LEFT */
+#frmCreate #mfS2 .row.row-export-attach{
+  grid-template-columns: 1fr 1fr !important;
+  align-items: start !important;
+}
+#frmCreate #mfS2 .row.row-export-attach .exportByRow{
+  justify-content: flex-start !important;
+  text-align: left !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+#frmCreate #mfS2 .row.row-export-attach .exportByRow .chkLine,
+#frmCreate #mfS2 .row.row-export-attach .exportByRow label{
+  justify-content: flex-start !important;
+  margin-left: 0 !important;
+}
+
+/* 3) Submit note: full width of RIGHT column + centered text */
+#frmCreate #mfS2 #submitNote.pill.submit-note,
+#frmCreate #mfS2 .pill.submit-note{
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* If submitNote sits inside a grid row, force it to span full row */
+#frmCreate #mfS2 .row.btnRow3 > #submitNote,
+#frmCreate #mfS2 .row.btnRow3 > .pill.submit-note{
+  grid-column: 1 / -1 !important;
+}
+
    END – DO NOT EDIT BELOW
    ========================================================= */
