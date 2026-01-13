@@ -1571,53 +1571,9 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-/* =========================================================
-   FIX: Align QTY column start with Model/Attach (50% split)
-   + Keep Export column truly left-aligned
-   + Make submit note full width + centered (robust)
-   (Inserted ABOVE: END – DO NOT EDIT BELOW)
-   ========================================================= */
-
-/* 1) QTY column was starting too early (because first col < 50%).
-      Force Code/QTY/Unit to 2fr/1fr/1fr => QTY starts at 50% line. */
-#frmCreate #mfS2 .row.row-codeqty{
-  grid-template-columns: 2fr 1fr 1fr !important;
+/* ===== PATCH v51: Nudge QTY column slightly right to align with Model/Attach ===== */
+#mfS2 .row.row-codeqty > .field:nth-child(2){
+  margin-left: 10px !important;
 }
-
-/* 2) Export / Attach row: keep 50/50 and pin Export to the LEFT */
-#frmCreate #mfS2 .row.row-export-attach{
-  grid-template-columns: 1fr 1fr !important;
-  align-items: start !important;
-}
-#frmCreate #mfS2 .row.row-export-attach .exportByRow{
-  justify-content: flex-start !important;
-  text-align: left !important;
-  margin-left: 0 !important;
-  padding-left: 0 !important;
-}
-#frmCreate #mfS2 .row.row-export-attach .exportByRow .chkLine,
-#frmCreate #mfS2 .row.row-export-attach .exportByRow label{
-  justify-content: flex-start !important;
-  margin-left: 0 !important;
-}
-
-/* 3) Submit note: full width of RIGHT column + centered text */
-#frmCreate #mfS2 #submitNote.pill.submit-note,
-#frmCreate #mfS2 .pill.submit-note{
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-}
-
-/* If submitNote sits inside a grid row, force it to span full row */
-#frmCreate #mfS2 .row.btnRow3 > #submitNote,
-#frmCreate #mfS2 .row.btnRow3 > .pill.submit-note{
-  grid-column: 1 / -1 !important;
-}
-
    END – DO NOT EDIT BELOW
    ========================================================= */
