@@ -3206,14 +3206,56 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
-
 /* =====================================================================
-   MintFlow HOTFIX (2026-01-13) — RIGHT column baseline align
-   Target: Model / QTY / Attach photos headings to start on the same line
-   Notes:
-   - Safe override only (does not rely on removing previous patches)
-   - Keep this at the VERY END of styles.css
+   MintFlow HOTFIX (2026-01-13) — RIGHT column straight grid (v2)
+   Fix:
+   - Remove any vertical drift between left/right fields in the same row
+   - Lock label baseline for Name/Model, Code/QTY/Unit, Export/Attach
    ===================================================================== */
+
+/* Row containers: always align from top */
+#mfS2 .row.row-name-model,
+#mfS2 .row.row-codeqty,
+#mfS2 .row.row-export-attach{
+  align-items: start !important;
+}
+
+/* Fields: no hidden top margin/padding that causes "เอียง" */
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field,
+#mfS2 .row.row-export-attach > .field{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-width: 0 !important;
+}
+
+/* Labels: same block height so baselines match */
+#mfS2 .row.row-name-model .field > label,
+#mfS2 .row.row-codeqty .field > label,
+#mfS2 .row.row-export-attach .field > label{
+  display: block !important;
+  line-height: 1.15 !important;
+  margin: 0 0 6px 0 !important;
+  padding-top: 0 !important;
+  min-height: 34px !important; /* 2-line (EN/TH) */
+}
+
+/* Inputs: fill column, no overflow */
+#mfS2 .row.row-name-model input,
+#mfS2 .row.row-name-model select,
+#mfS2 .row.row-codeqty input,
+#mfS2 .row.row-codeqty select,
+#mfS2 .row.row-export-attach input,
+#mfS2 .row.row-export-attach select{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Export checkboxes: force left align (no centering drift) */
+#mfS2 .row.row-export-attach .exportByRow{
+  align-items: flex-start !important;
+  margin-top: 0 !important;
+}
 
 /* 1) Normalize label block height across right-side rows */
 #mfS2 .row.row-name-model .field > label,
