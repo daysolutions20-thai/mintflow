@@ -1596,5 +1596,49 @@ small.req, span.req, em.req{
 /* ===== END FINAL FIX ===== */
 
 
+
+/* ===================================================================
+   v603 FINAL (RIGHT COLUMN): lock grids so "Model / QTY / Attach photos"
+   start on the exact same vertical line (do not affect left column)
+   =================================================================== */
+
+#frmCreate #mfS2 .row.row-codeqty,
+#frmCreate #mfS2 .row.row-name-model,
+#frmCreate #mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: 1.55fr 1fr 1fr !important; /* Code | QTY | Unit  (also used as base for Model/Attach) */
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+/* Row with 2 fields: make the 2nd field span col 2-3 (so its LEFT edge aligns with QTY/Attach) */
+#frmCreate #mfS2 .row.row-name-model > .field:nth-child(2){
+  grid-column: 2 / 4 !important;
+}
+
+/* Export/Attach: keep Export in col 1, push Attach to start at col 2 */
+#frmCreate #mfS2 .row.row-export-attach > .field:nth-child(2){
+  grid-column: 2 / 4 !important;
+}
+
+/* Safety: prevent shrink/overflow weirdness */
+#frmCreate #mfS2 .row.row-codeqty > .field,
+#frmCreate #mfS2 .row.row-name-model > .field,
+#frmCreate #mfS2 .row.row-export-attach > .field{
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+#frmCreate #mfS2 .row.row-codeqty .input,
+#frmCreate #mfS2 .row.row-name-model .input,
+#frmCreate #mfS2 .row.row-export-attach .input,
+#frmCreate #mfS2 .row.row-codeqty input,
+#frmCreate #mfS2 .row.row-name-model input,
+#frmCreate #mfS2 .row.row-export-attach input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* =================================================================== */
 END – DO NOT EDIT BELOW
    ========================================================= */
