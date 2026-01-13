@@ -1571,5 +1571,22 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-   END – DO NOT EDIT BELOW
+   
+/* ===== FIX: align QTY/Unit headers with Model/Attach photos (RIGHT shift, not up) ===== */
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  /* widen Code column so QTY/Unit move RIGHT */
+  grid-template-columns: 1.55fr 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+#mfS2 .row.row-codeqty .field{ min-width: 0 !important; }
+#mfS2 .row.row-codeqty .field .input,
+#mfS2 .row.row-codeqty .field input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+
+END – DO NOT EDIT BELOW
    ========================================================= */
