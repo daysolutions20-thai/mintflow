@@ -1422,8 +1422,8 @@ small.req, span.req, em.req{
 }
 #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.5fr .75fr .75fr;
-  gap: 12px;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 20px;
   align-items: start;
 }
 #mfS2 .row.row-name-model > .field,
