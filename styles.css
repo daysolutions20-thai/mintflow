@@ -1571,74 +1571,76 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-   END –
-
-/* ===================== FINAL PATCH: QTY alignment + submit note (RIGHT ONLY) ===================== */
-/* Align QTY/Unit column start with Model column start (50/50) */
-#mfS2 .row.row-codeqty{
-  grid-template-columns: 1.55fr .65fr .7fr; !important;
-}
-
-/* Keep submit note full width of RIGHT column and perfectly centered */
-#mfS2 #submitNote.pill.submit-note,
-#mfS2 .pill.submit-note{
-  width: 100% !important;
-  max-width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  margin: 12px 0 0 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* Safety: don't let submit note try to span the OUTER grid (prevents "เบี้ยว") */
-#frmCreate > .mfLayoutA > #submitNote,
-#frmCreate .mfLayoutA > #submitNote{
-  grid-column: auto !important;
-}
-
-/* If submitNote is inside RIGHT column grid, allow it to span that grid row */
-#mfS2 #submitNote{
-  grid-column: 1 / -1 !important;
-}
-/* NUDGE: Attach photos ขยับซ้ายครึ่งเคาะ */
-#mfS2 .row-export-attach .field:last-child{
-  margin-left: -6px;
-}
- 
+   
 /* =========================================================
-   PATCH v60 (ONLY 3 ROWS): QTY/Unit row + Export/Attach row + Submit note
-   - Fix "QTY + Attach photos" drifting to the LEFT (push slightly RIGHT)
-   - Keep everything else untouched
+   PATCH v60.1 — FIX RIGHT COLUMN ALIGN (Model / QTY / Attach)
+   + Keep everything else untouched.
+   Goal:
+   - Make the "2nd column" start line identical across:
+     row-name-model, row-codeqty, row-export-attach
+   - Prevent labels/fields from shifting via stray margins
    ========================================================= */
+
+#mfS2 .row.row-name-model{
+  /* match first-column width with code/qty row */
+  display: grid !important;
+  grid-template-columns: 1.4fr 1.6fr !important; /* col2 start aligns with row-codeqty */
+  gap: 12px !important;
+  align-items: start;
+}
+
 #mfS2 .row.row-codeqty{
-  /* increase first column a touch -> pushes QTY/Unit to the right */
-  grid-template-columns: 1.47fr .765fr .765fr !important;
+  display: grid !important;
+  grid-template-columns: 1.4fr .8fr .8fr !important; /* keep your existing ratio */
+  gap: 12px !important;
+  align-items: start;
 }
 
 #mfS2 .row.row-export-attach{
-  /* push Attach photos column a touch to the right */
-  grid-template-columns: 1.05fr .95fr !important;
+  display: grid !important;
+  grid-template-columns: 1.4fr 1.6fr !important; /* col2 start aligns with row-codeqty */
+  gap: 12px !important;
+  align-items: start;
 }
 
-/* kill any old offset that can drag the Attach column left */
-#mfS2 .row.row-export-attach > .field:last-child{
-  margin-left: 0 !important;
+/* hard-stop any sneaky offset on fields/labels inside these 3 rows */
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field,
+#mfS2 .row.row-export-attach > .field{
+  margin: 0 !important;
+  min-width: 0 !important;
 }
 
-/* Submit note: full width of RIGHT column + centered text (no sideways drift) */
-#mfS2 #submitNote{
+#mfS2 .row.row-name-model label,
+#mfS2 .row.row-codeqty label,
+#mfS2 .row.row-export-attach label{
+  margin: 0 0 2px 0 !important;
+  padding: 0 !important;
+}
+
+/* ensure inputs stretch cleanly inside grid cells */
+#mfS2 .row.row-name-model .input,
+#mfS2 .row.row-codeqty .input,
+#mfS2 .row.row-export-attach .input,
+#mfS2 .row.row-name-model textarea,
+#mfS2 .row.row-codeqty textarea,
+#mfS2 .row.row-export-attach textarea{
   width: 100% !important;
-  max-width: 100% !important;
-  margin-left: 0 !important;
   box-sizing: border-box;
 }
-#mfS2 #submitNote.pill{
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
+
+/* keep attach box from looking "left-pulled" on some browsers */
+#mfS2 .row.row-export-attach .field:last-child{
+  justify-self: stretch;
 }
-DO NOT EDIT BELOW
+
+/* =========================================================
+   (Optional safety) If something was pushed off-canvas by a
+   negative translate/margin elsewhere, neutralize overflow.
+   ========================================================= */
+#mfS2{
+  overflow: visible;
+}
+
+END – DO NOT EDIT BELOW
    ========================================================= */
