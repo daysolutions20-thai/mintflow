@@ -718,7 +718,7 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <div class="pill">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
+          <div id="submitNote" class="pill submit-note">หลัง Submit: ระบบจะสร้าง QR + ไฟล์ PDF/Excel (ของจริง) และเก็บลง Drive อัตโนมัติ</div>
           <!-- Preview modal (FlowAccount style) -->
           <div class="mfModal" id="previewModal" aria-hidden="true">
             <div class="mfModal__backdrop" data-close="1"></div>
