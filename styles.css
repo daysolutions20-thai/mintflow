@@ -1576,7 +1576,7 @@ small.req, span.req, em.req{
 /* ===================== FINAL PATCH: QTY alignment + submit note (RIGHT ONLY) ===================== */
 /* Align QTY/Unit column start with Model column start (50/50) */
 #mfS2 .row.row-codeqty{
-  grid-template-columns: 1.50fr .7fr .7fr !important;
+  grid-template-columns: 1.55fr .65fr .7fr; !important;
 }
 
 /* Keep submit note full width of RIGHT column and perfectly centered */
@@ -1602,6 +1602,9 @@ small.req, span.req, em.req{
 #mfS2 #submitNote{
   grid-column: 1 / -1 !important;
 }
-
+/* NUDGE: Attach photos ขยับซ้ายครึ่งเคาะ */
+#mfS2 .row-export-attach .field:last-child{
+  margin-left: -6px;
+}
  DO NOT EDIT BELOW
    ========================================================= */
