@@ -1571,9 +1571,22 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-/* ===== PATCH v51: Nudge QTY column slightly right to align with Model/Attach ===== */
-#mfS2 .row.row-codeqty > .field:nth-child(2){
-  margin-left: 10px !important;
+   
+
+/* ====== PATCH v52: Nudge QTY column to align with other headings (only Items row) ====== */
+#frmCreate #mfS2 .row.row-codeqty > .field:nth-child(2){
+  padding-left: 12px; /* ~2 เคาะ */
+  box-sizing: border-box;
 }
-   END – DO NOT EDIT BELOW
+#frmCreate #mfS2 .row.row-codeqty > .field:nth-child(2) .input{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Safety: keep Export/Attach row untouched */
+#frmCreate #mfS2 .row.row-export-attach{
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+END – DO NOT EDIT BELOW
    ========================================================= */
