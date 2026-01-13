@@ -1572,23 +1572,29 @@ small.req, span.req, em.req{
 }
 /* =========================================================
    
-/* ===== v602: FIX Model column start to align with QTY/Attach (do not touch left) ===== */
-#frmCreate #mfS2 .row.row-name-model{
+/* ===== FINAL FIX: Name/Model align with Code/QTY/Unit ===== */
+#mfS2 .row.row-name-model{
   display: grid !important;
-  /* Match code/qty/unit first column width so "Model" starts at same vertical line as QTY */
-  grid-template-columns: 1.4fr 1.6fr !important;
+  grid-template-columns: 1.55fr 1fr 1fr !important; /* ต้องตรงกับ row-codeqty */
   gap: 12px !important;
-  align-items: start !important;
+  align-items: start;
 }
-#frmCreate #mfS2 .row.row-name-model > .field{
-  margin: 0 !important;
-  min-width: 0 !important;
+
+/* Name = column 1 */
+#mfS2 .row.row-name-model > .field:first-child{
+  grid-column: 1 / 2 !important;
 }
-/* Ensure the input stretches inside the grid cell */
-#frmCreate #mfS2 .row.row-name-model .input{
+
+/* Model = start at QTY line */
+#mfS2 .row.row-name-model > .field:last-child{
+  grid-column: 2 / 4 !important;
+}
+
+#mfS2 .row.row-name-model input{
   width: 100% !important;
 }
-/* ===== end v602 ===== */
+/* ===== END FINAL FIX ===== */
+
 
 END – DO NOT EDIT BELOW
    ========================================================= */
