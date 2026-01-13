@@ -1416,7 +1416,7 @@ small.req, span.req, em.req{
    ============================================================ */
 #mfS2 .row.row-name-model{
   display: grid !important;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.4fr 1.6fr;
   gap: 12px;
   align-items: start;
 }
@@ -1571,76 +1571,5 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-   
-/* =========================================================
-   PATCH v60.1 — FIX RIGHT COLUMN ALIGN (Model / QTY / Attach)
-   + Keep everything else untouched.
-   Goal:
-   - Make the "2nd column" start line identical across:
-     row-name-model, row-codeqty, row-export-attach
-   - Prevent labels/fields from shifting via stray margins
-   ========================================================= */
-
-#mfS2 .row.row-name-model{
-  /* match first-column width with code/qty row */
-  display: grid !important;
-  grid-template-columns: 1.4fr 1.6fr !important; /* col2 start aligns with row-codeqty */
-  gap: 12px !important;
-  align-items: start;
-}
-
-#mfS2 .row.row-codeqty{
-  display: grid !important;
-  grid-template-columns: 1.4fr .8fr .8fr !important; /* keep your existing ratio */
-  gap: 12px !important;
-  align-items: start;
-}
-
-#mfS2 .row.row-export-attach{
-  display: grid !important;
-  grid-template-columns: 1.4fr 1.6fr !important; /* col2 start aligns with row-codeqty */
-  gap: 12px !important;
-  align-items: start;
-}
-
-/* hard-stop any sneaky offset on fields/labels inside these 3 rows */
-#mfS2 .row.row-name-model > .field,
-#mfS2 .row.row-codeqty > .field,
-#mfS2 .row.row-export-attach > .field{
-  margin: 0 !important;
-  min-width: 0 !important;
-}
-
-#mfS2 .row.row-name-model label,
-#mfS2 .row.row-codeqty label,
-#mfS2 .row.row-export-attach label{
-  margin: 0 0 2px 0 !important;
-  padding: 0 !important;
-}
-
-/* ensure inputs stretch cleanly inside grid cells */
-#mfS2 .row.row-name-model .input,
-#mfS2 .row.row-codeqty .input,
-#mfS2 .row.row-export-attach .input,
-#mfS2 .row.row-name-model textarea,
-#mfS2 .row.row-codeqty textarea,
-#mfS2 .row.row-export-attach textarea{
-  width: 100% !important;
-  box-sizing: border-box;
-}
-
-/* keep attach box from looking "left-pulled" on some browsers */
-#mfS2 .row.row-export-attach .field:last-child{
-  justify-self: stretch;
-}
-
-/* =========================================================
-   (Optional safety) If something was pushed off-canvas by a
-   negative translate/margin elsewhere, neutralize overflow.
-   ========================================================= */
-#mfS2{
-  overflow: visible;
-}
-
-END – DO NOT EDIT BELOW
+   END – DO NOT EDIT BELOW
    ========================================================= */
