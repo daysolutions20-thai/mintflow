@@ -1484,3 +1484,72 @@ small.req, span.req, em.req{
 #frmCreate #mfs2 .row .pill.submit-note{
   grid-column: 1 / -1 !important;
 }
+/* ===== FORCE: Submit note full width & center (FINAL) ===== */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+}
+
+/* ให้มันอิงความกว้างคอลัมน์ขวาเสมอ */
+#mfS2 #submitNote,
+#frmCreate #submitNote{
+  grid-column: 1 / -1 !important;
+}
+/* =========================================================
+   MINTFLOW – HARD OVERRIDE (FINAL)
+   Purpose:
+   1. Submit note (หลัง Submit...) ยืดเต็มคอลัมน์
+   2. ข้อความอยู่กึ่งกลางเสมอ
+   3. ไม่โดน grid / flex อื่นดึงกลับ
+   ========================================================= */
+
+/* ---------- Submit note base ---------- */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+  padding: 8px 12px !important;
+}
+
+/* ---------- Force full row in RIGHT column grid ---------- */
+#mfS2 #submitNote{
+  grid-column: 1 / -1 !important;
+}
+
+/* ---------- In case parent is flex / weird row ---------- */
+#mfS2 .row,
+#mfS2 .btnRow3{
+  width: 100% !important;
+}
+
+/* ---------- Prevent any inline / legacy override ---------- */
+#mfS2 .pill.submit-note{
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* ---------- Safety: block float / inline ---------- */
+#submitNote,
+#submitNote *{
+  float: none !important;
+}
+
+/* =========================================================
+   END – DO NOT EDIT BELOW
+   ========================================================= */
