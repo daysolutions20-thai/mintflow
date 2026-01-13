@@ -1599,40 +1599,41 @@ small.req, span.req, em.req{
 END – DO NOT EDIT BELOW
    ========================================================= */
 
-/* ================================================================
-   v604 - Right column: align Model / QTY / Attach photos columns
-   - Only touches #mfS2 (right side)
-   - Goal: Model start == QTY start == Attach photos start
-   ================================================================ */
-#frmCreate #mfS2 .row.row-name-model,
-#frmCreate #mfS2 .row.row-export-attach{
+
+/* ============================================================
+   v605 FINAL: Right column alignment (ONLY mfS2)
+   - Align Model start with QTY/Attach
+   - Fix Export By options wrapping (keep enough column width)
+   ============================================================ */
+
+#frmCreate #mfS2 .row.row-name-model{
   display: grid !important;
-  grid-template-columns: 1.55fr 1fr !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(320px, 1fr) !important;
   gap: 12px !important;
   align-items: start !important;
 }
 
 #frmCreate #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.55fr 1fr 1fr !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(180px, 1fr) minmax(220px, 1fr) !important;
   gap: 12px !important;
   align-items: start !important;
 }
 
-#frmCreate #mfS2 .row.row-name-model > .field,
-#frmCreate #mfS2 .row.row-export-attach > .field,
-#frmCreate #mfS2 .row.row-codeqty > .field{
-  margin: 0 !important;
-  min-width: 0 !important;
+#frmCreate #mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(320px, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
 }
 
-#frmCreate #mfS2 .row.row-name-model .input,
-#frmCreate #mfS2 .row.row-export-attach .input,
-#frmCreate #mfS2 .row.row-codeqty .input,
-#frmCreate #mfS2 .row.row-name-model input,
-#frmCreate #mfS2 .row.row-export-attach input,
-#frmCreate #mfS2 .row.row-codeqty input{
-  width: 100% !important;
-  box-sizing: border-box !important;
+/* Safety: stop the Export checkbox text from breaking into one-word-per-line */
+#frmCreate #mfS2 .row.row-export-attach .field:first-child{
+  min-width: 320px !important;
 }
-/* ======================= end v604 ======================= */
+
+#frmCreate #mfS2 .row.row-export-attach .field:first-child *{
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
