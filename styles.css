@@ -1422,7 +1422,7 @@ small.req, span.req, em.req{
 }
 #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.4fr .8fr .8fr;
+  grid-template-columns: 1.5fr .75fr .75fr;
   gap: 12px;
   align-items: start;
 }
@@ -1571,22 +1571,5 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-   
-
-/* ====== PATCH v52: Nudge QTY column to align with other headings (only Items row) ====== */
-#frmCreate #mfS2 .row.row-codeqty > .field:nth-child(2){
-  padding-left: 12px; /* ~2 เคาะ */
-  box-sizing: border-box;
-}
-#frmCreate #mfS2 .row.row-codeqty > .field:nth-child(2) .input{
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Safety: keep Export/Attach row untouched */
-#frmCreate #mfS2 .row.row-export-attach{
-  padding-left: 0 !important;
-  margin-left: 0 !important;
-}
-END – DO NOT EDIT BELOW
+   END – DO NOT EDIT BELOW
    ========================================================= */
