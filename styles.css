@@ -1576,7 +1576,7 @@ small.req, span.req, em.req{
 /* ===================== FINAL PATCH: QTY alignment + submit note (RIGHT ONLY) ===================== */
 /* Align QTY/Unit column start with Model column start (50/50) */
 #mfS2 .row.row-codeqty{
-  grid-template-columns: 1.6fr .7fr .7fr !important;
+  grid-template-columns: 1.55fr .7fr .7fr !important;
 }
 
 /* Keep submit note full width of RIGHT column and perfectly centered */
