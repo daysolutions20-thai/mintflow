@@ -3206,3 +3206,44 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
+
+/* =====================================================================
+   MintFlow HOTFIX (2026-01-13) — RIGHT column baseline align
+   Target: Model / QTY / Attach photos headings to start on the same line
+   Notes:
+   - Safe override only (does not rely on removing previous patches)
+   - Keep this at the VERY END of styles.css
+   ===================================================================== */
+
+/* 1) Normalize label block height across right-side rows */
+#mfS2 .row.row-name-model .field > label,
+#mfS2 .row.row-codeqty .field > label,
+#mfS2 .row.row-export-attach .field > label{
+  display: block !important;
+  line-height: 1.15 !important;
+  margin: 0 0 6px 0 !important;
+  min-height: 34px !important; /* locks 2-line (EN/TH) label baseline */
+}
+
+/* 2) Prevent any field from forcing column overflow (keeps vertical grid straight) */
+#mfS2 .row.row-name-model .field,
+#mfS2 .row.row-codeqty .field,
+#mfS2 .row.row-export-attach .field{
+  min-width: 0 !important;
+}
+
+/* 3) Ensure inputs fill their column cleanly */
+#mfS2 .row.row-name-model input,
+#mfS2 .row.row-name-model select,
+#mfS2 .row.row-codeqty input,
+#mfS2 .row.row-codeqty select,
+#mfS2 .row.row-export-attach input,
+#mfS2 .row.row-export-attach select{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 4) Optional: make sure the QTY/Unit row stretches evenly (header align stability) */
+#mfS2 .row.row-codeqty{
+  align-items: start !important;
+}
