@@ -1416,7 +1416,7 @@ small.req, span.req, em.req{
    ============================================================ */
 #mfS2 .row.row-name-model{
   display: grid !important;
-  grid-template-columns: 1.4fr 1.6fr;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   align-items: start;
 }
@@ -1571,5 +1571,24 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* =========================================================
-   END – DO NOT EDIT BELOW
+   
+/* ===== v602: FIX Model column start to align with QTY/Attach (do not touch left) ===== */
+#frmCreate #mfS2 .row.row-name-model{
+  display: grid !important;
+  /* Match code/qty/unit first column width so "Model" starts at same vertical line as QTY */
+  grid-template-columns: 1.4fr 1.6fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+#frmCreate #mfS2 .row.row-name-model > .field{
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+/* Ensure the input stretches inside the grid cell */
+#frmCreate #mfS2 .row.row-name-model .input{
+  width: 100% !important;
+}
+/* ===== end v602 ===== */
+
+END – DO NOT EDIT BELOW
    ========================================================= */
