@@ -1308,7 +1308,7 @@ small.req, span.req, em.req{
 /* Export + Attach: same row, 50/50 like FOR/Note */
 #mfS2 .row.row-export-attach{
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
+  grid-template-columns: 0.95fr 1.05fr !important;  /* tuned */
   gap: 20px !important;
   align-items: start !important;
   margin-top: 16px !important; /* give space after Detail */
@@ -1362,7 +1362,7 @@ small.req, span.req, em.req{
 /* ===== PATCH v44: Right controls row polish (Export/Attach + itemControls) ===== */
 #mfS2 .row-export-attach{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 0.95fr 1.05fr !important;
   gap: 12px;
   align-items: start;
 }
@@ -1422,7 +1422,7 @@ small.req, span.req, em.req{
 }
 #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.4fr .8fr .8fr;
+  grid-template-columns: 1.45fr .775fr .775fr !important;
   gap: 12px;
   align-items: start;
 }
@@ -1552,7 +1552,7 @@ small.req, span.req, em.req{
 /* ===== FIX: QTY / Unit column protruding (horizontal misalignment) ===== */
 #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.4fr 1fr 1fr !important;
+  grid-template-columns: 1.45fr .775fr .775fr !important;
   gap: 12px !important;
   align-items: stretch !important;
 }
@@ -1576,7 +1576,7 @@ small.req, span.req, em.req{
 /* ===================== FINAL PATCH: QTY alignment + submit note (RIGHT ONLY) ===================== */
 /* Align QTY/Unit column start with Model column start (50/50) */
 #mfS2 .row.row-codeqty{
-  grid-template-columns: 1.55fr .65fr .7fr; !important;
+  grid-template-columns: 1.45fr .775fr .775fr !important;
 }
 
 /* Keep submit note full width of RIGHT column and perfectly centered */
@@ -1602,9 +1602,19 @@ small.req, span.req, em.req{
 #mfS2 #submitNote{
   grid-column: 1 / -1 !important;
 }
-/* NUDGE: Attach photos ขยับซ้ายครึ่งเคาะ */
-#mfS2 .row-export-attach .field:last-child{
-  margin-left: -6px;
+/* PATCH: keep Submit note full-width + centered (no drift) */
+#mfS2 #submitNote.pill.submit-note{
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  grid-column: 1 / -1 !important;
 }
+
  DO NOT EDIT BELOW
    ========================================================= */
