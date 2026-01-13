@@ -1422,9 +1422,10 @@ small.req, span.req, em.req{
 }
 #mfS2 .row.row-codeqty{
   display: grid !important;
-  grid-template-columns: 1.4fr .8fr .8fr;
-  gap: 20px;
-  align-items: start;
+  grid-template-columns: 1.60fr 1fr 1fr;
+  gap: 12px !important;
+  align-items: start !important;
+  column-gap: 12px !important; /* <<< ดัน QTY/Unit ไปขวาอีก ~2 เคาะ */
 }
 #mfS2 .row.row-name-model > .field,
 #mfS2 .row.row-codeqty > .field{
@@ -1457,18 +1458,18 @@ small.req, span.req, em.req{
 }
 /* ===== FINAL FIX : Submit note full width & center (RIGHT COLUMN ONLY) ===== */
 
-#frmCreate #mfs2 .pill.submit-note {
+#frmCreate #mfS2 .pill.submit-note {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   box-sizing: border-box;
-  margin-left: 0;
+  margin-left: 12px !important;
   margin-right: 0;
 }
 /* ===== FORCE: Submit note full width + center (RIGHT COLUMN) ===== */
-#frmCreate #mfs2 .pill.submit-note{
+#frmCreate #mfS2 .pill.submit-note{
   display: flex !important;
   width: 100% !important;
   max-width: none !important;
@@ -1480,8 +1481,8 @@ small.req, span.req, em.req{
 }
 
 /* ถ้ามันอยู่ในแถว grid ให้กินเต็มแถว */
-#frmCreate #mfs2 .btnRow3 .pill.submit-note,
-#frmCreate #mfs2 .row .pill.submit-note{
+#frmCreate #mfS2 .btnRow3 .pill.submit-note,
+#frmCreate #mfS2 .row .pill.submit-note{
   grid-column: 1 / -1 !important;
 }
 /* ===== FORCE: Submit note full width & center (FINAL) ===== */
@@ -1563,7 +1564,7 @@ small.req, span.req, em.req{
   box-sizing: border-box !important;
 }
 /* ===== FIX: align QTY/Unit headers with Model/Attach photos ===== */
-#mfs2 .row.row-codeqty{
+#mfS2 .row.row-codeqty{
   display: grid !important;
   /* ขยายคอลัมน์ Code ให้กว้างขึ้น -> ดัน QTY/Unit ไปขวาให้ตรงแนว Model */
   grid-template-columns: 1.55fr 1fr 1fr !important;
@@ -1571,12 +1572,12 @@ small.req, span.req, em.req{
   align-items: start !important;
 }
 /* FORCE nudge QTY/Unit to the right (lock target) */
-#mfs2 .row.row-codeqty{
+#mfS2 .row.row-codeqty{
   column-gap: 28px !important;
 }
-#mfs2 .row.row-codeqty > .field:nth-child(2),
-#mfs2 .row.row-codeqty > .field:nth-child(3){
-  margin-left: 10px !important;
+#mfS2 .row.row-codeqty > .field:nth-child(2),
+#mfS2 .row.row-codeqty > .field:nth-child(3){
+  margin-left: 12px !important;
 }
 /* =========================================================
    END – DO NOT EDIT BELOW
