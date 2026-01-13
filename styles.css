@@ -1570,6 +1570,14 @@ small.req, span.req, em.req{
   gap: 12px !important;
   align-items: start !important;
 }
+/* FORCE nudge QTY/Unit to the right (lock target) */
+#mfs2 .row.row-codeqty{
+  column-gap: 28px !important;
+}
+#mfs2 .row.row-codeqty > .field:nth-child(2),
+#mfs2 .row.row-codeqty > .field:nth-child(3){
+  margin-left: 10px !important;
+}
 /* =========================================================
    END – DO NOT EDIT BELOW
    ========================================================= */
