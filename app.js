@@ -853,7 +853,7 @@ const itemsEl = $("#items");
           <input class="input" name="photos" type="file" accept="image/*" multiple />
           <div class="subtext" data-ph-list></div>
 
-          <div class="row tight itemControls">
+          <div class="itemControls">
             <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
             <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
           </div>
@@ -953,13 +953,12 @@ const itemsEl = $("#items");
 
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
-  // HARD reset: prevent accidental duplicate Item blocks (e.g., re-render / resize)
-  itemsEl.innerHTML = "";
-  
   addItem();
   renumberItems();
   syncItemControls();
-// v24: Preview + submit confirm flow
+
+
+  // v24: Preview + submit confirm flow
   const submitModal = $("#submitModal");
   const openSubmitModal = ()=>{
     if(!submitModal) return true;
@@ -1597,11 +1596,9 @@ function renderCreatePR(el){
   $("#btnAddPRItem").onclick = addItem;
   $("#btnCancelPR").onclick = ()=> location.hash = "#/home";
 
-  // HARD reset: prevent accidental duplicate Item blocks (PR)
-  itemsEl.innerHTML = "";
-  
   addItem();
-$("#frmCreatePR").onsubmit = (e)=>{
+
+  $("#frmCreatePR").onsubmit = (e)=>{
     e.preventDefault();
     const form = e.target;
 
