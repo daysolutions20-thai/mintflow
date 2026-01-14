@@ -3271,3 +3271,33 @@ END – DO NOT EDIT BELOW
 #frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1) input{
   width: 100% !important;
 }
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #3 (ATTACH ALIGN ON NARROW SCREEN)
+   Requirement:
+   - Desktop: DO NOTHING (already correct)
+   - Narrow screen: Attach photos column must align with other fields
+   - Do NOT touch QTY / Code / Export
+   ============================================================ */
+
+/* Only when screen is narrow */
+@media (max-width: 900px){
+  /* Attach photos field: remove any left shift */
+  #frmCreate #mfS2 #items .card .row.row-export-attach > .field:nth-child(2){
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    justify-self: stretch !important;
+  }
+
+  /* File input should fill column and not push right */
+  #frmCreate #mfS2 #items .card .row.row-export-attach input[type="file"]{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Action buttons under attach: keep aligned left */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls{
+    justify-content: flex-start !important;
+    margin-left: 0 !important;
+  }
+}
