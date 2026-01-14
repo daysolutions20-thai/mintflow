@@ -3448,3 +3448,44 @@ END – DO NOT EDIT BELOW
     padding-right: 0 !important;
   }
 }
+
+/* =====================================================================
+   PATCH v52 (2026-01-13) — Export By checkbox FIX (DO NOT TOUCH OTHER PARTS)
+   Goal:
+   - Make the three Export By lines look normal again:
+     checkbox + text on the same baseline, no weird indent/center.
+   Scope:
+   - ONLY inside right column (#mfS2) and ONLY lines that contain a checkbox.
+   ===================================================================== */
+
+/* Target any line inside Export By that contains a checkbox */
+#mfS2 .exportByRow :is(label, .chkLine, .chk-line, .line, .rowline):has(input[type="checkbox"]),
+#mfS2 .exportByRow :is(div, p, li, span):has(> input[type="checkbox"]){
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+/* If Export By is rendered as a list, kill list indent */
+#mfS2 .exportByRow ul,
+#mfS2 .exportByRow ol{
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+/* Checkbox itself: reset any transforms/margins */
+#mfS2 .exportByRow input[type="checkbox"]{
+  margin: 0 !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+}
+
+/* Text next to checkbox: keep on one baseline */
+#mfS2 .exportByRow :is(label, .chkLine, .chk-line, .line, .rowline):has(input[type="checkbox"]) *{
+  line-height: 1.2 !important;
+}
