@@ -838,31 +838,15 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-      
       <div class="row row-export-attach">
-        <!-- LEFT : Export -->
         <div class="field">
           <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
           <div class="exportByRow">
-            <label class="chkLine"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-            <label class="chkLine"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-            <label class="chkLine"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
           </div>
         </div>
-
-        <!-- RIGHT : Attach (Model-style) -->
-        <div class="field">
-          <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-          <input class="input" name="photos" type="file" accept="image/*" multiple />
-          <div class="subtext" data-ph-list></div>
-
-          <div class="itemControls">
-            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
-          </div>
-        </div>
-      </div>
-
 
         <div class="field">
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
@@ -1557,13 +1541,6 @@ function renderCreatePR(el){
           <label>${biLabel("Total", "รวม")}</label>
           <div class="input" style="background:#fff7ed80" data-line-total>0.00</div>
         </div>
-      </div>
-
-      <div class="field">
-        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
-        <input class="input" name="photos" type="file" accept="image/*" multiple />
-        <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
-        <div class="subtext" data-ph-list></div>
       </div>
     `;
     const _rm = block.querySelector("[data-remove]");
