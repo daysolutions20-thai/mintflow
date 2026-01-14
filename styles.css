@@ -3206,48 +3206,41 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
-/* =========================================================
-   HOTFIX: Item # card same orange tone as left blocks
-   (scoped to Request QR Items only)
-   ========================================================= */
-#items > .card{
-  background: rgba(255,247,237,.8) !important; /* same as left soft orange */
-  border: 1px solid rgba(249,115,22,.25) !important;
-  box-shadow: none !important;
-  border-radius: 14px !important;
+
+
+/* ================================
+   FINAL OVERRIDES (Item # card)
+   ================================ */
+
+/* 1) Remove the unexpected underline/line under "Item #" */
+#mfS2 .card .hr{display:none !important;}
+#mfS2 .card h4{border-bottom:0 !important; box-shadow:none !important;}
+#mfS2 .card h4::after{content:none !important;}
+
+/* 2) Export/Attach: keep inside Item card and align as 2 columns (desktop), stack on mobile */
+#mfS2 .row.row-export-attach{
+  display:grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+#mfS2 .row.row-export-attach > .field{min-width:0;}
+#mfS2 .row.row-export-attach input[type="file"]{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
 }
 
-/* Orange divider under Item header (matches left section feel) */
-#items > .card .section-title{
-  border-bottom: 1px solid rgba(249,115,22,.25) !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 12px !important;
+/* Keep the Delete/Add buttons from overflowing */
+#mfS2 .row.itemControls{
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:flex-end;
 }
+#mfS2 .row.itemControls .btn{white-space:nowrap;}
 
-/* Ensure inner content doesn't break the rounded border */
-#items > .card .row,
-#items > .card .row.row-codeqty,
-#items > .card .row.row-export-attach{
-  overflow: visible !important;
-}
-
-/* Keep attach controls from overflowing on small widths (do NOT touch QTY layout) */
-@media (max-width: 520px){
-  #items > .card .row.row-export-attach{
-    gap: 12px !important;
-  }
-  #items > .card .row.row-export-attach .field{
-    min-width: 0 !important;
-  }
-  #items > .card .row.row-export-attach input[type="file"]{
-    max-width: 100% !important;
-  }
-  #items > .card .row.itemControls{
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-    justify-content: flex-end !important;
-  }
-  #items > .card .row.itemControls > *{
-    max-width: 100% !important;
-  }
+@media (max-width: 760px){
+  #mfS2 .row.row-export-attach{grid-template-columns:1fr !important;}
+  #mfS2 .row.itemControls{justify-content:flex-start !important;}
 }
