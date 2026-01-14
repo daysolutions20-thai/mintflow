@@ -3273,39 +3273,59 @@ END – DO NOT EDIT BELOW
 }
 
 /* ============================================================
-   MINTFLOW — MICRO FIX #3B (ATTACH MOBILE, FORCE 1-COL)
-   Fix ONLY: on narrow screens, stop Attach block from "being a right column"
-   and prevent "+ เพิ่มรายการ" from spilling out.
-   - Does NOT touch QTY/Code alignment
-   - Does NOT touch Export checkbox look
+   MICRO FIX — ATTACH ON MOBILE (MODEL-STYLE)
+   Goal:
+   - Do what row-name-model does on narrow screens:
+     stack to 1 column and make controls fit.
+   Scope:
+   - ONLY item attach block: .row.row-export-attach
+   - ONLY at <=980px (same breakpoint family as the base CSS)
+   - Do NOT touch QTY/Code/Export on desktop
    ============================================================ */
 
-@media (max-width: 900px){
-  /* FORCE the Export/Attach row to become a single column */
-  #mfS2 .row.row-export-attach{
-    display: grid !important;
+@media (max-width: 980px){
+  /* 1) Stack Export/Attach to one column (like Model row stacks) */
+  #frmCreate #mfS2 #items .card .row.row-export-attach{
     grid-template-columns: minmax(0,1fr) !important;
     gap: 12px !important;
   }
 
-  /* Make both fields fill the single column */
-  #mfS2 .row.row-export-attach > .field{
-    width: 100% !important;
-    max-width: 100% !important;
+  /* 2) Ensure fields don't carry any side offset */
+  #frmCreate #mfS2 #items .card .row.row-export-attach > .field{
+    margin-left: 0 !important;
+    padding-left: 0 !important;
     min-width: 0 !important;
   }
 
-  /* File input + any buttons inside the Attach field must not exceed column */
-  #mfS2 .row.row-export-attach > .field:nth-child(2) input[type="file"],
-  #mfS2 .row.row-export-attach > .field:nth-child(2) button,
-  #mfS2 .row.row-export-attach > .field:nth-child(2) .btn{
+  /* 3) File input must shrink */
+  #frmCreate #mfS2 #items .card .row.row-export-attach input[type="file"]{
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  /* Safety: never show horizontal spill inside the item card on mobile */
-  #mfS2 #items .card{
+  /* 4) Buttons under Attach: stack vertically, full width (prevents overflow) */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls{
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 12px 0 0 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls button,
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls .btn{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  /* 5) Absolute safety: never show horizontal spill for the item card */
+  #frmCreate #mfS2 #items .card{
     overflow-x: hidden !important;
     overflow-y: visible !important;
   }
