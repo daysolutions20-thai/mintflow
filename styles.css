@@ -1300,31 +1300,68 @@ small.req, span.req, em.req{
 
 
 /* ============================================================
-   PATCH v42 (CLEAN) - Right side: Export/Attach in ONE ROW 50/50
-   - Keep Preview/Submit/Cancel + submit-note untouched (only spacing safety)
-   - Buttons (Delete/Add) are rendered INSIDE Attach field (app.js v48)
+
+/* ============================================================
+   RIGHT ITEM LAYOUT — CLEAN FINAL (2026-01-14)
+   Reference: row-name-model works because it is 50/50 (1fr 1fr).
+   Fixes applied:
+   - Make row-codeqty match the same 50% split boundary:
+       Code = 50%, QTY = 25%, Unit = 25%
+     so the QTY column start aligns with Model/Attach column start.
+   - Keep Export/Attach 50/50, and keep checkboxes left-aligned.
+   - On narrow screens, stack rows to prevent overflow ("ตกขอบ") WITHOUT clipping.
    ============================================================ */
 
-/* Export + Attach: same row, 50/50 like FOR/Note */
+/* Name / Model : 50/50 */
+#mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+/* Code / QTY / Unit : 50% | 25% | 25%  (QTY aligns to 50% line) */
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1fr .5fr .5fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+/* Export / Attach : 50/50 */
 #mfS2 .row.row-export-attach{
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
+  grid-template-columns: 1fr 1fr !important;
   gap: 20px !important;
   align-items: start !important;
-  margin-top: 16px !important; /* give space after Detail */
+  margin-top: 16px !important;
+  margin-bottom: 12px !important;
 }
 
-/* Make sure each field behaves like a column */
+/* Field safety */
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field,
 #mfS2 .row.row-export-attach > .field{
-  min-width: 0;
+  margin: 0 !important;
+  min-width: 0 !important;
 }
 
-/* Export checkboxes: left aligned (no center drifting) */
+/* Inputs: full width for text-like controls only (do NOT touch checkbox/radio) */
+#mfS2 input:not([type="checkbox"]):not([type="radio"]),
+#mfS2 select,
+#mfS2 textarea{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Export checkboxes: left, normal */
 #mfS2 .row.row-export-attach .exportByRow{
   display: flex !important;
   flex-direction: column !important;
   gap: 10px !important;
   align-items: flex-start !important;
+  margin-top: 8px !important;
 }
 
 #mfS2 .row.row-export-attach .chkLine{
@@ -1335,105 +1372,30 @@ small.req, span.req, em.req{
   margin: 0 !important;
 }
 
-/* Buttons under Attach: keep under file input, left aligned inside right column */
+/* Buttons under Attach: stay inside right column */
 #mfS2 .row.row-export-attach .itemControls{
   display: flex !important;
   gap: 10px !important;
   justify-content: flex-start !important;
   align-items: center !important;
-  margin-top: 12px !important;   /* space from file input */
+  margin-top: 12px !important;
 }
 
-/* Safety spacing between controls area and bottom buttons row */
-#mfS2 .row.row-export-attach{
-  margin-bottom: 12px !important; /* creates breathing room before btnRow3 */
+/* Narrow screens: stack to prevent overflow */
+@media (max-width: 900px){
+  #mfS2 .row.row-name-model,
+  #mfS2 .row.row-codeqty,
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  #mfS2 input[type="file"]{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 }
 
-/* Submit note: make sure it doesn't stick to btnRow3 */
-#mfS2 .btnRow3{ margin-bottom: 10px !important; }
-#mfS2 .pill.submit-note{ margin-top: 10px !important; width:100% !important; }
-
-
-/* PATCH v43: spacing before Export/Attach row (avoid sticking to Detail box) */
-#frmCreate .row.row-export-attach{
-  margin-top: 8px !important; /* match 0.5 gap vibe */
-}
-
-/* ===== PATCH v44: Right controls row polish (Export/Attach + itemControls) ===== */
-#mfS2 .row-export-attach{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: start;
-}
-#mfS2 .row-export-attach .field{ margin: 0; }
-
-#mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-#mfS2 .exportByRow .chkLine{
-  display: flex;
-  justify-content: flex-start !important;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-}
-
-#mfS2 .itemControls{
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
-}
-#mfS2 .btnRow3{ margin-top: 12px; }
-#mfS2 .pill.submit-note, #mfS2 .pill{ margin-top: 8px; }
-
-
-/* ============================================================
-   PATCH v47 - warnBox placement (outside FOR/Note card)
-   - keep the warnBox looking like the original: full width,
-     nice spacing from cards above/below.
-   ============================================================ */
-#mfS1 .warnBox{
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-
-/* ============================================================
-   PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Move the "Export By / Attach photos" headings down ~1cm
-   ============================================================ */
-#frmCreate .row.row-export-attach{
-  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
-}
-
-
-/* ============================================================
-   PATCH v49 - Right column alignment cleanup
-   - Keep item input boxes aligned in the same vertical grid
-   ============================================================ */
-#mfS2 .row.row-name-model{
-  display: grid !important;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: start;
-}
-#mfS2 .row.row-codeqty{
-  display: grid !important;
-  grid-template-columns: 1.4fr .8fr .8fr;
-  gap: 12px;
-  align-items: start;
-}
-#mfS2 .row.row-name-model > .field,
-#mfS2 .row.row-codeqty > .field{
-  margin: 0 !important;
-  min-width: 0;
-}
-#mfS2 .field .input{
-  width: 100%;
-}
 /* ===== FIX: Submit note full width & center ===== */
 #frmCreate .pill.submit-note{
   width: 100% !important;
@@ -3206,91 +3168,3 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
-/* ============================================================
-   MINTFLOW — FINAL V7 (2026-01-14)
-   Fix:
-   - Prevent our layout rules from breaking Export checkboxes
-   - Apply width:100% ONLY to text-like controls (not checkbox/radio)
-   - Keep Item rows contained / responsive stack (<=900px)
-   Scope: #frmCreate #mfS2 only
-   ============================================================ */
-
-#frmCreate #mfS2, 
-#frmCreate #mfS2 *{
-  box-sizing: border-box;
-  min-width: 0;
-}
-
-/* Top align rows */
-#frmCreate #mfS2 .row.row-name-model,
-#frmCreate #mfS2 .row.row-codeqty,
-#frmCreate #mfS2 .row.row-export-attach{
-  align-items: start !important;
-}
-
-#frmCreate #mfS2 .row.row-name-model > .field,
-#frmCreate #mfS2 .row.row-codeqty > .field,
-#frmCreate #mfS2 .row.row-export-attach > .field{
-  align-self: start !important;
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Contain inside item card (no clipping vertically) */
-#frmCreate #mfS2 #items .card{
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
-}
-
-/* Full-width ONLY for text-like controls (DO NOT touch checkbox/radio) */
-#frmCreate #mfS2 input:not([type="checkbox"]):not([type="radio"]),
-#frmCreate #mfS2 select,
-#frmCreate #mfS2 textarea{
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* File input can be wide; cap it */
-#frmCreate #mfS2 input[type="file"]{
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Export By checkbox alignment (minimal, safe) */
-#frmCreate #mfS2 .exportByRow{
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  align-items: flex-start !important;
-}
-#frmCreate #mfS2 .exportByRow > *{
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 !important;
-}
-#frmCreate #mfS2 .exportByRow input[type="checkbox"]{
-  width: auto !important;
-  max-width: none !important;
-  margin: 0 !important;
-  transform: none !important;
-}
-
-/* Stack earlier to stop squeeze overflow */
-@media (max-width: 900px){
-  #frmCreate #mfS2 .row.row-name-model,
-  #frmCreate #mfS2 .row.row-codeqty,
-  #frmCreate #mfS2 .row.row-export-attach{
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 12px !important;
-  }
-}
-
-/* DEBUG: comment out after confirmed
-   If this border does NOT appear, you're not loading the file you think you are.
-*/
-#frmCreate #mfS2 .row.row-codeqty{
-  outline: 1px dashed rgba(255,0,0,.6);
-  outline-offset: 2px;
-}
