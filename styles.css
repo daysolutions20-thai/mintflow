@@ -3263,3 +3263,108 @@ END – DO NOT EDIT BELOW
     gap: 12px;
   }
 }
+
+/* ============================================================
+   FINAL STABLE FIX — v2 (2026-01-14)
+   Restore Export By checkboxes visibility + alignment
+   (Some base rules were hiding checkbox inputs; force native)
+   ============================================================ */
+
+#mfS2 .exportByRow{
+  min-height: 44px; /* prevents collapsing when content wraps */
+}
+
+#mfS2 .exportByRow input[type="checkbox"]{
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+  opacity: 1 !important;
+  position: static !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 8px 0 0 !important;
+}
+
+#mfS2 .exportByRow label{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  cursor: pointer;
+}
+
+/* ============================================================
+   FINAL ALIGN FIX — v3 (2026-01-14)
+   Target ONLY these 3 headings on RIGHT item panel:
+   - Model (row-name-model, 2nd field)
+   - QTY   (row-codeqty,    2nd field)
+   - Attach photos (row-export-attach, 2nd field)
+   DO NOT TOUCH Export By.
+   ============================================================ */
+
+/* Make rows start from top so label baselines can match */
+#mfS2 .row.row-name-model,
+#mfS2 .row.row-codeqty,
+#mfS2 .row.row-export-attach{
+  align-items: start !important;
+}
+
+/* Lock the label block height for ONLY the 3 targets */
+#mfS2 .row.row-name-model > .field:nth-child(2) > label,
+#mfS2 .row.row-codeqty    > .field:nth-child(2) > label,
+#mfS2 .row.row-export-attach > .field:nth-child(2) > label{
+  display: block !important;
+  line-height: 1.15 !important;
+  margin: 0 0 6px 0 !important;
+  min-height: 34px !important; /* 2-line EN/TH */
+  padding: 0 !important;
+}
+
+/* Ensure the inputs under those labels align and never overflow */
+#mfS2 .row.row-name-model > .field:nth-child(2),
+#mfS2 .row.row-codeqty    > .field:nth-child(2),
+#mfS2 .row.row-export-attach > .field:nth-child(2){
+  min-width: 0 !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+#mfS2 .row.row-name-model > .field:nth-child(2) input,
+#mfS2 .row.row-codeqty    > .field:nth-child(2) input,
+#mfS2 .row.row-export-attach > .field:nth-child(2) input[type="file"]{
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   FINAL ALIGN — v4 (NO HEIGHT, NO HACK)
+   Goal:
+   - Align Model / QTY / Attach photos by GRID ROW only
+   - DO NOT set min-height / line-height / fake spacing
+   - DO NOT touch Export checkbox
+   ============================================================ */
+
+/* Make the three rows use the SAME grid row alignment */
+#mfS2 .row.row-name-model,
+#mfS2 .row.row-codeqty,
+#mfS2 .row.row-export-attach{
+  align-items: start !important;
+}
+
+/* Ensure labels flow naturally (no forced height) */
+#mfS2 .row.row-name-model label,
+#mfS2 .row.row-codeqty label,
+#mfS2 .row.row-export-attach label{
+  margin-bottom: 6px;
+}
+
+/* Make second column fields line up by grid, not height tricks */
+#mfS2 .row.row-name-model > .field:nth-child(2),
+#mfS2 .row.row-codeqty    > .field:nth-child(2),
+#mfS2 .row.row-export-attach > .field:nth-child(2){
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Nothing else. */
