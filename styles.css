@@ -752,6 +752,12 @@ body { overflow: hidden; }
 /* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
 #mfS2,
 #mfS2 .panel,
+#mfS2 .card,
+#mfS2 .section,
+#mfS2 .items{
+  border-top:none !important;
+}
+
 /* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
 #mfS1 .row{ align-items:flex-start !important; }
 #mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
@@ -2311,6 +2317,12 @@ body { overflow: hidden; }
 /* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
 #mfS2,
 #mfS2 .panel,
+#mfS2 .card,
+#mfS2 .section,
+#mfS2 .items{
+  border-top:none !important;
+}
+
 /* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
 #mfS1 .row{ align-items:flex-start !important; }
 #mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
@@ -3195,30 +3207,47 @@ END – DO NOT EDIT BELOW
 }
 
 /* =========================================================
-   CLEAN FIX — Item card uses SAME orange system as left side
-   Scope: ONLY Item card (#mfS2)
-   No layout changes, no new color hex values
+   HOTFIX: Item # card same orange tone as left blocks
+   (scoped to Request QR Items only)
    ========================================================= */
-#mfS2 .card{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--orange);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 14px;
+#items > .card{
+  background: rgba(255,247,237,.8) !important; /* same as left soft orange */
+  border: 1px solid rgba(249,115,22,.25) !important;
+  box-shadow: none !important;
+  border-radius: 14px !important;
 }
 
-/* ===== Item card header divider (match right side) ===== */
-#mfS2 #items .card .section-title,
-#mfS2 #items .card h3{
-  position: relative;
+/* Orange divider under Item header (matches left section feel) */
+#items > .card .section-title{
+  border-bottom: 1px solid rgba(249,115,22,.25) !important;
+  padding-bottom: 10px !important;
+  margin-bottom: 12px !important;
 }
 
-#mfS2 #items .card .section-title::after,
-#mfS2 #items .card h3::after{
-  content: "";
-  display: block;
-  height: 1px;
-  margin-top: 8px;
-  background: var(--border); /* same divider as right panels */
+/* Ensure inner content doesn't break the rounded border */
+#items > .card .row,
+#items > .card .row.row-codeqty,
+#items > .card .row.row-export-attach{
+  overflow: visible !important;
+}
+
+/* Keep attach controls from overflowing on small widths (do NOT touch QTY layout) */
+@media (max-width: 520px){
+  #items > .card .row.row-export-attach{
+    gap: 12px !important;
+  }
+  #items > .card .row.row-export-attach .field{
+    min-width: 0 !important;
+  }
+  #items > .card .row.row-export-attach input[type="file"]{
+    max-width: 100% !important;
+  }
+  #items > .card .row.itemControls{
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    justify-content: flex-end !important;
+  }
+  #items > .card .row.itemControls > *{
+    max-width: 100% !important;
+  }
 }
