@@ -848,18 +848,19 @@ const itemsEl = $("#items");
           </div>
         </div>
 
-        <div class="field">
+        <div class="field field-attach">
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-          <input class="input" name="photos" type="file" accept="image/*" multiple />
-          <div class="subtext" data-ph-list></div>
+          <div class="attachInner">
+            <input class="input" name="photos" type="file" accept="image/*" multiple />
+            <div class="subtext" data-ph-list></div>
 
-          <div class="row tight itemControls">
-            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
+            <div class="row tight itemControls">
+              <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+              <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
+            </div>
           </div>
-
-          
         </div>
+      </div>
       </div>
       </div>
     `;
