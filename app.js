@@ -953,12 +953,13 @@ const itemsEl = $("#items");
 
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
+  // HARD reset: prevent accidental duplicate Item blocks (e.g., re-render / resize)
+  itemsEl.innerHTML = "";
+  
   addItem();
   renumberItems();
   syncItemControls();
-
-
-  // v24: Preview + submit confirm flow
+// v24: Preview + submit confirm flow
   const submitModal = $("#submitModal");
   const openSubmitModal = ()=>{
     if(!submitModal) return true;
@@ -1542,6 +1543,13 @@ function renderCreatePR(el){
           <div class="input" style="background:#fff7ed80" data-line-total>0.00</div>
         </div>
       </div>
+
+      <div class="field">
+        <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
+        <input class="input" name="photos" type="file" accept="image/*" multiple />
+        <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
+        <div class="subtext" data-ph-list></div>
+      </div>
     `;
     const _rm = block.querySelector("[data-remove]");
     if(_rm) _rm.onclick = ()=>{
@@ -1589,9 +1597,11 @@ function renderCreatePR(el){
   $("#btnAddPRItem").onclick = addItem;
   $("#btnCancelPR").onclick = ()=> location.hash = "#/home";
 
+  // HARD reset: prevent accidental duplicate Item blocks (PR)
+  itemsEl.innerHTML = "";
+  
   addItem();
-
-  $("#frmCreatePR").onsubmit = (e)=>{
+$("#frmCreatePR").onsubmit = (e)=>{
     e.preventDefault();
     const form = e.target;
 
