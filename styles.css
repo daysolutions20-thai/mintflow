@@ -752,12 +752,6 @@ body { overflow: hidden; }
 /* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
 #mfS2,
 #mfS2 .panel,
-#mfS2 .card,
-#mfS2 .section,
-#mfS2 .items{
-  border-top:none !important;
-}
-
 /* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
 #mfS1 .row{ align-items:flex-start !important; }
 #mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
@@ -2317,12 +2311,6 @@ body { overflow: hidden; }
 /* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
 #mfS2,
 #mfS2 .panel,
-#mfS2 .card,
-#mfS2 .section,
-#mfS2 .items{
-  border-top:none !important;
-}
-
 /* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
 #mfS1 .row{ align-items:flex-start !important; }
 #mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
@@ -3206,22 +3194,31 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
-
-
-
 /* =========================================================
-   FIX: Right column Item # card should use same orange style
-        as left soft sections (without touching layout).
-   Scope: only the Item card inside #mfS2 -> #items.
+   CLEAN FIX — Item card uses SAME orange system as left side
+   Scope: ONLY Item card (#mfS2)
+   No layout changes, no new color hex values
    ========================================================= */
-#mfS2 #items .card{
-  background: var(--mf-band-bg) !important;
-  border: 1px solid var(--mf-band-border) !important;
-  border-radius: 14px !important;
-  box-shadow: none !important;
+#mfS2 .card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--orange);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
 }
 
-/* keep inner content from sticking to border on small widths */
-#mfS2 #items .card > *{
-  min-width: 0;
+/* ===== Item card header divider (match right side) ===== */
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  position: relative;
+}
+
+#mfS2 #items .card .section-title::after,
+#mfS2 #items .card h3::after{
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 8px;
+  background: var(--border); /* same divider as right panels */
 }
