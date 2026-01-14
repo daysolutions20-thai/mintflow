@@ -3368,3 +3368,65 @@ END – DO NOT EDIT BELOW
 }
 
 /* Nothing else. */
+
+/* ============================================================
+   FINAL FIX — v5 (2026-01-14)
+   Fixes:
+   1) Desktop: make Name/Model, Code/QTY/Unit, Export/Attach start on same TOP line
+      (no height hacks, only remove stray top padding/margins + align-self)
+   2) Mobile: stop inputs from being pushed outside the Item card
+      (stack rows + force 100% width + hide horizontal overflow only)
+   ============================================================ */
+
+/* --- 1) Straight top alignment inside the three item rows --- */
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field,
+#mfS2 .row.row-export-attach > .field{
+  align-self: start !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#mfS2 .row.row-name-model > .field > label,
+#mfS2 .row.row-codeqty > .field > label,
+#mfS2 .row.row-export-attach > .field > label{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* --- 2) Contain width (never push outside card) --- */
+#mfS2 input,
+#mfS2 select,
+#mfS2 textarea{
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Horizontal overflow should never show; vertical must remain visible */
+#mfS2 #items .card{
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+/* Mobile: stack grids so nothing gets squeezed and pushed out */
+@media (max-width: 640px){
+  #mfS2 .row.row-name-model,
+  #mfS2 .row.row-codeqty,
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Force controls to fill the single column neatly */
+  #mfS2 .row.row-name-model input,
+  #mfS2 .row.row-codeqty input,
+  #mfS2 .row.row-codeqty select,
+  #mfS2 .row.row-export-attach input[type="file"]{
+    width: 100% !important;
+  }
+
+  /* Unit + add button: keep inside */
+  #mfS2 .row.row-codeqty .field{
+    min-width: 0 !important;
+  }
+}
