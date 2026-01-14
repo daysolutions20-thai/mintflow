@@ -3206,50 +3206,92 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
+/* ============================================================
+   MINTFLOW — ALIGN FIX HARD (2026-01-14)
+   - Remove ANY debug outline that may exist from previous tests
+   - Force Code/QTY/Unit grid to 50% | 25% | 25%
+   - Force Export/Attach to 50/50
+   (High specificity + !important)
+   ============================================================ */
 
-
-
-/* ===== HOTFIX: Attach photos mobile overflow + keep inside Item card ===== */
-#mfS2 .row.row-export-attach{
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+/* kill debug border if any */
+#frmCreate #mfS2 .row.row-codeqty{
+  outline: none !important;
+  outline-offset: 0 !important;
 }
-#mfS2 .row.row-export-attach > .field{
-  min-width: 0 !important;
-  overflow: hidden !important;
+
+/* 50% split reference */
+#frmCreate #mfS2 .row.row-name-model{
+  grid-template-columns: 1fr 1fr !important;
 }
-#mfS2 .row.row-export-attach input[type="file"]{
+
+/* FORCE QTY start = 50% line */
+#frmCreate #mfS2 #items .card .row.row-codeqty{
+  grid-template-columns: 1fr .5fr .5fr !important; /* 50% | 25% | 25% */
+}
+
+/* FORCE Export/Attach = 50/50 (no other styling) */
+#frmCreate #mfS2 #items .card .row.row-export-attach{
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* Inputs: only text-like to avoid export checkbox issues */
+#frmCreate #mfS2 input:not([type="checkbox"]):not([type="radio"]),
+#frmCreate #mfS2 select,
+#frmCreate #mfS2 textarea{
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX (QTY NUDGE RIGHT 1 TAP)
+   Scope: ONLY move QTY column slightly to the right
+   Method: margin-left (true position move, no padding)
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(2){
+  margin-left: 4px !important; /* 1 เคาะ ตามสายตา */
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #2 (CODE WIDTH MATCH NAME)
+   Requirement:
+   - Make Code input width visually match Name input (same right edge)
+   - Do NOT touch QTY (already correct)
+   Cause:
+   - QTY column was nudged right by 4px, leaving a 4px visual gap.
+   Fix:
+   - Extend Code field by that gap using negative right margin (visual only).
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1){
+  margin-right: -4px !important; /* เติมช่องว่าง 1 เคาะ */
+}
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1) input{
   width: 100% !important;
-  max-width: 100% !important;
 }
-#mfS2 .row.row-export-attach .subtext{
-  max-width: 100% !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
+
+/* ==== HOTFIX: Export/Attach mobile containment (does NOT touch QTY/Unit rows) ==== */
+#mfS2 .row.row-export-attach .field{ min-width: 0 !important; }
+#mfS2 .row.row-export-attach input[type="file"]{ max-width: 100% !important; }
+
+/* Keep buttons inside the Attach column */
 #mfS2 .row.row-export-attach .itemControls{
-  width: 100% !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 10px !important;
-  justify-content: flex-start !important;
-  align-items: center !important;
-}
-#mfS2 .row.row-export-attach .itemControls button{
   max-width: 100% !important;
-  white-space: nowrap !important;
+  flex-wrap: wrap !important;
 }
 
-/* Mobile: stack Export + Attach and keep buttons inside */
-@media (max-width: 760px){
+/* When screen is narrow, stack Export + Attach to avoid overflow */
+@media (max-width: 820px){
   #mfS2 .row.row-export-attach{
     grid-template-columns: 1fr !important;
-    gap: 14px !important;
   }
-  #mfS2 .row.row-export-attach .itemControls{
-    justify-content: flex-start !important;
-  }
+}
+
+/* Extra small: let buttons fill the row instead of pushing outside */
+@media (max-width: 480px){
   #mfS2 .row.row-export-attach .itemControls button{
     flex: 1 1 auto !important;
-    white-space: nowrap !important;
   }
 }
