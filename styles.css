@@ -3314,3 +3314,16 @@ END – DO NOT EDIT BELOW
 #mfS2 #items .card h3{
   color: #ff8a00;
 }
+/* ===== Item card highlight (match right-side orange) ===== */
+#mfS2 #items .card{
+  border: 1px solid rgba(255, 122, 69, .55);
+  background: rgba(255, 122, 69, .06);
+  border-radius: 14px;
+  box-shadow: none;
+  padding: 14px 16px;
+}
+
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: rgba(255, 122, 69, .9);
+}
