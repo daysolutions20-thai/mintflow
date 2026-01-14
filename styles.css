@@ -3242,3 +3242,13 @@ END – DO NOT EDIT BELOW
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
+
+/* ============================================================
+   MINTFLOW — MICRO FIX (QTY NUDGE RIGHT 1 TAP)
+   Scope: ONLY move QTY column slightly to the right
+   Method: margin-left (true position move, no padding)
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(2){
+  margin-left: 4px !important; /* 1 เคาะ ตามสายตา */
+}
