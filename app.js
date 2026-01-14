@@ -848,19 +848,18 @@ const itemsEl = $("#items");
           </div>
         </div>
 
-        <div class="field field-attach">
+        <div class="field">
           <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-          <div class="attachInner">
-            <input class="input" name="photos" type="file" accept="image/*" multiple />
-            <div class="subtext" data-ph-list></div>
+          <input class="input" name="photos" type="file" accept="image/*" multiple />
+          <div class="subtext" data-ph-list></div>
 
-            <div class="row tight itemControls">
-              <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-              <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
-            </div>
+          <div class="row tight itemControls">
+            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
           </div>
+
+          
         </div>
-      </div>
       </div>
       </div>
     `;
@@ -2368,3 +2367,36 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
+
+/* ============================================================
+   HOTFIX — NORMALIZE ATTACH STRUCTURE (Model-style)
+   Purpose:
+   - Ensure Attach buttons (.itemControls) live INSIDE the same .field
+     as the file input, like Model rows.
+   - Prevent mobile overflow without changing CSS.
+   How:
+   - After render, move any .itemControls that are siblings of
+     .row-export-attach into the preceding .field.
+   Safe:
+   - No effect if structure is already correct.
+   ============================================================ */
+(function normalizeAttachStructure(){
+  try{
+    document.addEventListener('DOMContentLoaded', run);
+    function run(){
+      const rows = document.querySelectorAll('.row.row-export-attach');
+      rows.forEach(row=>{
+        const fields = row.querySelectorAll('.field');
+        if(!fields.length) return;
+        const targetField = fields[fields.length-1];
+        // find itemControls that are direct children rows or siblings
+        const stray = Array.from(row.children).filter(el =>
+          el.classList && el.classList.contains('itemControls')
+        );
+        stray.forEach(ctrl=>{
+          targetField.appendChild(ctrl);
+        });
+      });
+    }
+  }catch(e){}
+})();
