@@ -3207,178 +3207,29 @@ END – DO NOT EDIT BELOW
 }
 
 /* ============================================================
-   MINTFLOW — FINAL STABLE FIX (2026-01-14)
-   Scope:
-   - Fix ONLY Item (Right column)
-   - Export checkbox alignment (restore normal look)
-   - Prevent overflow on narrow screens WITHOUT clipping
-   - Do NOT touch working sections (Name/Model/Detail/etc.)
+   MINTFLOW — FINAL V6 (2026-01-14)  ✅
+   What this fixes (only Item section / #mfS2):
+   1) Desktop: each field in the 3 rows starts at the same top line (no height hack)
+   2) Responsive: prevent "ตกขอบ/หลุดกรอบ" by stacking earlier (<=900px)
+      and forcing min-width:0 + width:100% so controls can shrink.
+   Notes:
+   - DOES NOT style Export checkboxes (no hiding/showing tricks)
+   - Only layout containment + alignment
    ============================================================ */
 
-/* ---------- Item container safety ---------- */
+/* --- Universal shrink-safe inside Item --- */
 #mfS2, #mfS2 *{
   box-sizing: border-box;
   min-width: 0;
 }
 
-/* ---------- Export / Attach row ---------- */
-#mfS2 .row.row-export-attach{
-  overflow: visible;
-  align-items: start;
-}
-
-/* ---------- Export By (checkbox list) ---------- */
-#mfS2 .exportByRow{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-#mfS2 .exportByRow > *{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-}
-
-#mfS2 .exportByRow input[type="checkbox"]{
-  margin: 0;
-  transform: none;
-}
-
-/* ---------- Attach photos ---------- */
-#mfS2 .row.row-export-attach input[type="file"]{
-  max-width: 100%;
-}
-
-/* ---------- Mobile (stack only, never clip) ---------- */
-@media (max-width: 640px){
-  #mfS2 .row.row-codeqty{
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-}
-
-/* ============================================================
-   FINAL STABLE FIX — v2 (2026-01-14)
-   Restore Export By checkboxes visibility + alignment
-   (Some base rules were hiding checkbox inputs; force native)
-   ============================================================ */
-
-#mfS2 .exportByRow{
-  min-height: 44px; /* prevents collapsing when content wraps */
-}
-
-#mfS2 .exportByRow input[type="checkbox"]{
-  -webkit-appearance: auto !important;
-  appearance: auto !important;
-  opacity: 1 !important;
-  position: static !important;
-  width: 16px !important;
-  height: 16px !important;
-  margin: 0 8px 0 0 !important;
-}
-
-#mfS2 .exportByRow label{
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 !important;
-  cursor: pointer;
-}
-
-/* ============================================================
-   FINAL ALIGN FIX — v3 (2026-01-14)
-   Target ONLY these 3 headings on RIGHT item panel:
-   - Model (row-name-model, 2nd field)
-   - QTY   (row-codeqty,    2nd field)
-   - Attach photos (row-export-attach, 2nd field)
-   DO NOT TOUCH Export By.
-   ============================================================ */
-
-/* Make rows start from top so label baselines can match */
+/* --- Top alignment for the 3 rows --- */
 #mfS2 .row.row-name-model,
 #mfS2 .row.row-codeqty,
 #mfS2 .row.row-export-attach{
   align-items: start !important;
 }
 
-/* Lock the label block height for ONLY the 3 targets */
-#mfS2 .row.row-name-model > .field:nth-child(2) > label,
-#mfS2 .row.row-codeqty    > .field:nth-child(2) > label,
-#mfS2 .row.row-export-attach > .field:nth-child(2) > label{
-  display: block !important;
-  line-height: 1.15 !important;
-  margin: 0 0 6px 0 !important;
-  min-height: 34px !important; /* 2-line EN/TH */
-  padding: 0 !important;
-}
-
-/* Ensure the inputs under those labels align and never overflow */
-#mfS2 .row.row-name-model > .field:nth-child(2),
-#mfS2 .row.row-codeqty    > .field:nth-child(2),
-#mfS2 .row.row-export-attach > .field:nth-child(2){
-  min-width: 0 !important;
-  align-items: flex-start !important;
-  text-align: left !important;
-}
-
-#mfS2 .row.row-name-model > .field:nth-child(2) input,
-#mfS2 .row.row-codeqty    > .field:nth-child(2) input,
-#mfS2 .row.row-export-attach > .field:nth-child(2) input[type="file"]{
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* ============================================================
-   FINAL ALIGN — v4 (NO HEIGHT, NO HACK)
-   Goal:
-   - Align Model / QTY / Attach photos by GRID ROW only
-   - DO NOT set min-height / line-height / fake spacing
-   - DO NOT touch Export checkbox
-   ============================================================ */
-
-/* Make the three rows use the SAME grid row alignment */
-#mfS2 .row.row-name-model,
-#mfS2 .row.row-codeqty,
-#mfS2 .row.row-export-attach{
-  align-items: start !important;
-}
-
-/* Ensure labels flow naturally (no forced height) */
-#mfS2 .row.row-name-model label,
-#mfS2 .row.row-codeqty label,
-#mfS2 .row.row-export-attach label{
-  margin-bottom: 6px;
-}
-
-/* Make second column fields line up by grid, not height tricks */
-#mfS2 .row.row-name-model > .field:nth-child(2),
-#mfS2 .row.row-codeqty    > .field:nth-child(2),
-#mfS2 .row.row-export-attach > .field:nth-child(2){
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-/* Nothing else. */
-
-/* ============================================================
-   FINAL FIX — v5 (2026-01-14)
-   Fixes:
-   1) Desktop: make Name/Model, Code/QTY/Unit, Export/Attach start on same TOP line
-      (no height hacks, only remove stray top padding/margins + align-self)
-   2) Mobile: stop inputs from being pushed outside the Item card
-      (stack rows + force 100% width + hide horizontal overflow only)
-   ============================================================ */
-
-/* --- 1) Straight top alignment inside the three item rows --- */
 #mfS2 .row.row-name-model > .field,
 #mfS2 .row.row-codeqty > .field,
 #mfS2 .row.row-export-attach > .field{
@@ -3394,39 +3245,42 @@ END – DO NOT EDIT BELOW
   padding-top: 0 !important;
 }
 
-/* --- 2) Contain width (never push outside card) --- */
-#mfS2 input,
-#mfS2 select,
-#mfS2 textarea{
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Horizontal overflow should never show; vertical must remain visible */
+/* --- Containment: never leak outside the Item card --- */
 #mfS2 #items .card{
   overflow-x: hidden !important;
   overflow-y: visible !important;
 }
 
-/* Mobile: stack grids so nothing gets squeezed and pushed out */
-@media (max-width: 640px){
-  #mfS2 .row.row-name-model,
-  #mfS2 .row.row-codeqty,
+#mfS2 .field .input,
+#mfS2 input,
+#mfS2 select,
+#mfS2 textarea{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Responsive: stack earlier to stop squeeze pushing out of the card --- */
+@media (max-width: 900px){
+  #mfS2 .row.row-name-model{
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 12px !important;
+  }
+  #mfS2 .row.row-codeqty{
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 12px !important;
+  }
   #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important;
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
     gap: 12px !important;
   }
 
-  /* Force controls to fill the single column neatly */
-  #mfS2 .row.row-name-model input,
-  #mfS2 .row.row-codeqty input,
-  #mfS2 .row.row-codeqty select,
-  #mfS2 .row.row-export-attach input[type="file"]{
+  /* file input can be extra-wide in some UIs; hard cap it */
+  #mfS2 input[type="file"]{
     width: 100% !important;
-  }
-
-  /* Unit + add button: keep inside */
-  #mfS2 .row.row-codeqty .field{
-    min-width: 0 !important;
+    max-width: 100% !important;
   }
 }
