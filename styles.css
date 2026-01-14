@@ -3295,3 +3295,22 @@ END – DO NOT EDIT BELOW
     flex: 1 1 auto !important;
   }
 }
+/* ===== Item card highlight (orange) ===== */
+/* ครอบทั้ง Item # ให้เป็นก้อนเดียว */
+#mfS2 #items .card{
+  border: 1.5px solid #ff8a00;          /* เส้นส้ม */
+  background: #fff7ee;                  /* ส้มอ่อน */
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(255,138,0,.12);
+}
+
+/* เว้นระยะในก้อนให้ดูเป็นหัวเรื่องเดียว */
+#mfS2 #items .card{
+  padding: 14px 16px;
+}
+
+/* หัว Item # ให้เด่นขึ้นนิดเดียว (ไม่บังคับ) */
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: #ff8a00;
+}
