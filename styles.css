@@ -3206,286 +3206,60 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
-/* =====================================================================
-   MintFlow HOTFIX (2026-01-13) — RIGHT column straight grid (v2)
-   Fix:
-   - Remove any vertical drift between left/right fields in the same row
-   - Lock label baseline for Name/Model, Code/QTY/Unit, Export/Attach
-   ===================================================================== */
-
-/* Row containers: always align from top */
-#mfS2 .row.row-name-model,
-#mfS2 .row.row-codeqty,
-#mfS2 .row.row-export-attach{
-  align-items: start !important;
-}
-
-/* Fields: no hidden top margin/padding that causes "เอียง" */
-#mfS2 .row.row-name-model > .field,
-#mfS2 .row.row-codeqty > .field,
-#mfS2 .row.row-export-attach > .field{
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-  min-width: 0 !important;
-}
-
-/* Labels: same block height so baselines match */
-#mfS2 .row.row-name-model .field > label,
-#mfS2 .row.row-codeqty .field > label,
-#mfS2 .row.row-export-attach .field > label{
-  display: block !important;
-  line-height: 1.15 !important;
-  margin: 0 0 6px 0 !important;
-  padding-top: 0 !important;
-  min-height: 34px !important; /* 2-line (EN/TH) */
-}
-
-/* Inputs: fill column, no overflow */
-#mfS2 .row.row-name-model input,
-#mfS2 .row.row-name-model select,
-#mfS2 .row.row-codeqty input,
-#mfS2 .row.row-codeqty select,
-#mfS2 .row.row-export-attach input,
-#mfS2 .row.row-export-attach select{
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Export checkboxes: force left align (no centering drift) */
-#mfS2 .row.row-export-attach .exportByRow{
-  align-items: flex-start !important;
-  margin-top: 0 !important;
-}
-
-/* 1) Normalize label block height across right-side rows */
-#mfS2 .row.row-name-model .field > label,
-#mfS2 .row.row-codeqty .field > label,
-#mfS2 .row.row-export-attach .field > label{
-  display: block !important;
-  line-height: 1.15 !important;
-  margin: 0 0 6px 0 !important;
-  min-height: 34px !important; /* locks 2-line (EN/TH) label baseline */
-}
-
-/* 2) Prevent any field from forcing column overflow (keeps vertical grid straight) */
-#mfS2 .row.row-name-model .field,
-#mfS2 .row.row-codeqty .field,
-#mfS2 .row.row-export-attach .field{
-  min-width: 0 !important;
-}
-
-/* 3) Ensure inputs fill their column cleanly */
-#mfS2 .row.row-name-model input,
-#mfS2 .row.row-name-model select,
-#mfS2 .row.row-codeqty input,
-#mfS2 .row.row-codeqty select,
-#mfS2 .row.row-export-attach input,
-#mfS2 .row.row-export-attach select{
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* 4) Optional: make sure the QTY/Unit row stretches evenly (header align stability) */
-#mfS2 .row.row-codeqty{
-  align-items: start !important;
-}
-
-/* =====================================================================
-   MintFlow HOTFIX (2026-01-13) — Attach photos column NOT centered (v3)
-   Symptom:
-   - "Attach photos" block (label + file input + buttons) sits centered,
-     making the right column look "เอียง/กระเท่เร่" compared to other fields.
-   Fix:
-   - Force the RIGHT field in row-export-attach to left-align like Model/QTY.
-   ===================================================================== */
-
-/* Right-side (Attach) field: keep everything left-aligned */
-#mfS2 .row.row-export-attach > .field:last-child{
-  align-items: flex-start !important;
-  text-align: left !important;
-}
-
-/* Make the file input stretch full width (so it visually aligns with other inputs) */
-#mfS2 .row.row-export-attach > .field:last-child input[type="file"],
-#mfS2 .row.row-export-attach > .field:last-child .input{
-  width: 100% !important;
-  align-self: stretch !important;
-  box-sizing: border-box !important;
-}
-
-/* Buttons under Attach: left aligned under the file input */
-#mfS2 .row.row-export-attach > .field:last-child .itemControls{
-  width: 100% !important;
-  justify-content: flex-start !important;
-}
-
-/* =====================================================================
-   PATCH v50 (2026-01-13) — FIX: Item card overflow on narrow width
-   Symptom:
-   - When screen is narrow, Unit / Attach photos "leak" outside the item card.
-   Cause (typical):
-   - Grid columns stay multi-col with fixed min widths / children not allowed to shrink.
-   Fix:
-   - Force min-width:0 everywhere inside item card
-   - Make rows stack on small screens (no horizontal overflow)
-   - Keep file input and buttons contained
-   ===================================================================== */
-
-/* Let content shrink inside the item card */
-#mfS2, #mfS2 *{
-  min-width: 0 !important;
-}
-
-/* Safety: never allow inner blocks to paint outside the card */
-#mfS2 .card,
-#mfS2 .item,
-#mfS2 .items,
-#mfS2 .items-panel,
-#mfS2 .items-wrapper{
-  overflow: hidden !important;
-}
-
-/* Contain long controls */
-#mfS2 input, #mfS2 select, #mfS2 textarea, #mfS2 button{
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Desktop/tablet: keep your intended grids */
-#mfS2 .row.row-name-model{ overflow: hidden; }
-#mfS2 .row.row-codeqty{ overflow: hidden; }
-#mfS2 .row.row-export-attach{ overflow: hidden; }
-
-/* Mobile: stack to prevent leakage */
-@media (max-width: 640px){
-  #mfS2 .row.row-name-model{
-    grid-template-columns: 1fr !important;
-  }
-  #mfS2 .row.row-codeqty{
-    grid-template-columns: 1fr !important; /* Code, QTY, Unit stack */
-  }
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important; /* Export then Attach stack */
-  }
-
-  /* File input row full width */
-  #mfS2 .row.row-export-attach input[type="file"]{
-    width: 100% !important;
-  }
-
-  /* Buttons wrap, stay inside */
-  #mfS2 .itemControls{
-    flex-wrap: wrap !important;
-  }
-}
-
-/* =====================================================================
-   PATCH v51 (2026-01-13) — Mobile: Export checkbox alignment + stop clipping
-   Fixes:
-   1) Export By checkboxes: checkbox + text baseline straight (no weird drift)
-   2) On narrow width, right-side blocks were getting CLIPPED (cut text/buttons)
-      -> remove over-aggressive overflow:hidden and use overflow-x hidden only.
-   ===================================================================== */
-
-/* ---- 1) Export By: checkbox + label alignment ---- */
-#mfS2 .exportByRow{
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-  align-items: flex-start !important;
-}
-
-#mfS2 .exportByRow .chkLine{
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 10px !important;
-  margin: 0 !important;
-}
-
-#mfS2 .exportByRow .chkLine input[type="checkbox"]{
-  flex: 0 0 auto !important;
-  margin: 0 !important;
-  transform: translateY(1px); /* tiny optical baseline fix */
-}
-
-/* ---- 2) Stop clipping inside the Item card ---- */
-/* Replace previous overflow:hidden with x-only hiding (keeps content visible) */
-#mfS2 .card,
-#mfS2 .item,
-#mfS2 .items,
-#mfS2 .items-panel,
-#mfS2 .items-wrapper{
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
-}
-
-/* Rows: do NOT hide overflow (it was cutting Unit/Attach on small screens) */
-#mfS2 .row.row-name-model,
-#mfS2 .row.row-codeqty,
-#mfS2 .row.row-export-attach{
-  overflow: visible !important;
-}
-
-/* Mobile stacking: keep padding/width sane so nothing gets cut */
-@media (max-width: 640px){
-  #mfS2 .row.row-name-model,
-  #mfS2 .row.row-codeqty,
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  /* Ensure the last column controls never exceed the card width */
-  #mfS2 .row.row-export-attach input[type="file"],
-  #mfS2 .row.row-export-attach .itemControls,
-  #mfS2 .row.row-export-attach button{
-    max-width: 100% !important;
-  }
-
-  /* Prevent long file control from clipping */
-  #mfS2 .row.row-export-attach .field:last-child{
-    padding-right: 0 !important;
-  }
-}
-
-/* =====================================================================
-   PATCH v52 (2026-01-13) — Export By checkbox FIX (DO NOT TOUCH OTHER PARTS)
-   Goal:
-   - Make the three Export By lines look normal again:
-     checkbox + text on the same baseline, no weird indent/center.
+/* ============================================================
+   MINTFLOW — FINAL STABLE FIX (2026-01-14)
    Scope:
-   - ONLY inside right column (#mfS2) and ONLY lines that contain a checkbox.
-   ===================================================================== */
+   - Fix ONLY Item (Right column)
+   - Export checkbox alignment (restore normal look)
+   - Prevent overflow on narrow screens WITHOUT clipping
+   - Do NOT touch working sections (Name/Model/Detail/etc.)
+   ============================================================ */
 
-/* Target any line inside Export By that contains a checkbox */
-#mfS2 .exportByRow :is(label, .chkLine, .chk-line, .line, .rowline):has(input[type="checkbox"]),
-#mfS2 .exportByRow :is(div, p, li, span):has(> input[type="checkbox"]){
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 10px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  text-align: left !important;
+/* ---------- Item container safety ---------- */
+#mfS2, #mfS2 *{
+  box-sizing: border-box;
+  min-width: 0;
 }
 
-/* If Export By is rendered as a list, kill list indent */
-#mfS2 .exportByRow ul,
-#mfS2 .exportByRow ol{
-  list-style: none !important;
-  padding-left: 0 !important;
-  margin: 0 !important;
+/* ---------- Export / Attach row ---------- */
+#mfS2 .row.row-export-attach{
+  overflow: visible;
+  align-items: start;
 }
 
-/* Checkbox itself: reset any transforms/margins */
+/* ---------- Export By (checkbox list) ---------- */
+#mfS2 .exportByRow{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+#mfS2 .exportByRow > *{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
 #mfS2 .exportByRow input[type="checkbox"]{
-  margin: 0 !important;
-  transform: none !important;
-  flex: 0 0 auto !important;
+  margin: 0;
+  transform: none;
 }
 
-/* Text next to checkbox: keep on one baseline */
-#mfS2 .exportByRow :is(label, .chkLine, .chk-line, .line, .rowline):has(input[type="checkbox"]) *{
-  line-height: 1.2 !important;
+/* ---------- Attach photos ---------- */
+#mfS2 .row.row-export-attach input[type="file"]{
+  max-width: 100%;
+}
+
+/* ---------- Mobile (stack only, never clip) ---------- */
+@media (max-width: 640px){
+  #mfS2 .row.row-codeqty{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
