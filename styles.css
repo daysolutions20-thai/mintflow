@@ -3252,3 +3252,22 @@ END – DO NOT EDIT BELOW
 #frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(2){
   margin-left: 4px !important; /* 1 เคาะ ตามสายตา */
 }
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #2 (CODE WIDTH MATCH NAME)
+   Requirement:
+   - Make Code input width visually match Name input (same right edge)
+   - Do NOT touch QTY (already correct)
+   Cause:
+   - QTY column was nudged right by 4px, leaving a 4px visual gap.
+   Fix:
+   - Extend Code field by that gap using negative right margin (visual only).
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1){
+  margin-right: -4px !important; /* เติมช่องว่าง 1 เคาะ */
+}
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1) input{
+  width: 100% !important;
+}
