@@ -3329,3 +3329,59 @@ END – DO NOT EDIT BELOW
     max-width: 100% !important;
   }
 }
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #5 (ATTACH OVERFLOW + FORCE STACK)
+   Problem seen:
+   - On narrow screen, Export/Attach still behaves like 2 cols sometimes
+   - "+ เพิ่มรายการ" spills outside the card
+   Fix (narrow only):
+   - Force row-export-attach to 1 column at <=900px (same as other rows)
+   - Make itemControls a 1-col grid and buttons full-width so nothing can overflow
+   - Keep horizontal overflow hidden at card level (no vertical clipping)
+   ============================================================ */
+
+@media (max-width: 900px){
+  /* 1) FORCE stack Export + Attach */
+  #frmCreate #mfS2 #items .card .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* 2) Prevent any horizontal spill from the card */
+  #frmCreate #mfS2 #items .card{
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+
+  /* 3) File input & controls must not define their own width */
+  #frmCreate #mfS2 #items .card .row.row-export-attach input[type="file"]{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 4) Buttons area: always fit */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* cover buttons/inputs/anchors used as buttons */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls button,
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls .btn,
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls input[type="button"],
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls input[type="submit"],
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls a{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+}
