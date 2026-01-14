@@ -3206,41 +3206,177 @@ END – DO NOT EDIT BELOW
   overflow-wrap: normal !important;
 }
 
+/* ============================================================
+   MINTFLOW — ALIGN FIX HARD (2026-01-14)
+   - Remove ANY debug outline that may exist from previous tests
+   - Force Code/QTY/Unit grid to 50% | 25% | 25%
+   - Force Export/Attach to 50/50
+   (High specificity + !important)
+   ============================================================ */
+
+/* kill debug border if any */
+#frmCreate #mfS2 .row.row-codeqty{
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
+/* 50% split reference */
+#frmCreate #mfS2 .row.row-name-model{
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* FORCE QTY start = 50% line */
+#frmCreate #mfS2 #items .card .row.row-codeqty{
+  grid-template-columns: 1fr .5fr .5fr !important; /* 50% | 25% | 25% */
+}
+
+/* FORCE Export/Attach = 50/50 (no other styling) */
+#frmCreate #mfS2 #items .card .row.row-export-attach{
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* Inputs: only text-like to avoid export checkbox issues */
+#frmCreate #mfS2 input:not([type="checkbox"]):not([type="radio"]),
+#frmCreate #mfS2 select,
+#frmCreate #mfS2 textarea{
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX (QTY NUDGE RIGHT 1 TAP)
+   Scope: ONLY move QTY column slightly to the right
+   Method: margin-left (true position move, no padding)
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(2){
+  margin-left: 4px !important; /* 1 เคาะ ตามสายตา */
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #2 (CODE WIDTH MATCH NAME)
+   Requirement:
+   - Make Code input width visually match Name input (same right edge)
+   - Do NOT touch QTY (already correct)
+   Cause:
+   - QTY column was nudged right by 4px, leaving a 4px visual gap.
+   Fix:
+   - Extend Code field by that gap using negative right margin (visual only).
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1){
+  margin-right: -4px !important; /* เติมช่องว่าง 1 เคาะ */
+}
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1) input{
+  width: 100% !important;
+}
+
+/* ==== HOTFIX: Export/Attach mobile containment (does NOT touch QTY/Unit rows) ==== */
+#mfS2 .row.row-export-attach .field{ min-width: 0 !important; }
+#mfS2 .row.row-export-attach input[type="file"]{ max-width: 100% !important; }
+
+/* Keep buttons inside the Attach column */
+#mfS2 .row.row-export-attach .itemControls{
+  max-width: 100% !important;
+  flex-wrap: wrap !important;
+}
+
+/* When screen is narrow, stack Export + Attach to avoid overflow */
+@media (max-width: 820px){
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extra small: let buttons fill the row instead of pushing outside */
+@media (max-width: 480px){
+  #mfS2 .row.row-export-attach .itemControls button{
+    flex: 1 1 auto !important;
+  }
+}
+/* ===== Item card highlight (orange) ===== */
+/* ครอบทั้ง Item # ให้เป็นก้อนเดียว */
+#mfS2 #items .card{
+  border: 1.5px solid #ff8a00;          /* เส้นส้ม */
+  background: #fff7ee;                  /* ส้มอ่อน */
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(255,138,0,.12);
+}
+
+/* เว้นระยะในก้อนให้ดูเป็นหัวเรื่องเดียว */
+#mfS2 #items .card{
+  padding: 14px 16px;
+}
+
+/* หัว Item # ให้เด่นขึ้นนิดเดียว (ไม่บังคับ) */
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: #ff8a00;
+}
+/* ===== Item card highlight (match right-side orange) ===== */
+#mfS2 #items .card{
+  border: 1px solid rgba(255, 122, 69, .55);
+  background: rgba(255, 122, 69, .06);
+  border-radius: 14px;
+  box-shadow: none;
+  padding: 14px 16px;
+}
+
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: rgba(255, 122, 69, .9);
+}
 
 
-/* ================================
-   FINAL OVERRIDES (Item # card)
-   ================================ */
+/* =========================================================
+   FINAL HOTFIX (do not edit above)
+   - Reset base .card (some previous patches accidentally tinted all cards)
+   - Apply orange "big item frame" ONLY to the Item card in Request QR
+   - Add orange divider bar to the Item title (like left-side cards)
+   ========================================================= */
 
-/* 1) Remove the unexpected underline/line under "Item #" */
-#mfS2 .card .hr{display:none !important;}
-#mfS2 .card h4{border-bottom:0 !important; box-shadow:none !important;}
-#mfS2 .card h4::after{content:none !important;}
+/* 1) Base card reset (prevents random orange/bg overrides) */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
 
-/* 2) Export/Attach: keep inside Item card and align as 2 columns (desktop), stack on mobile */
-#mfS2 .row.row-export-attach{
-  display:grid !important;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+/* 2) Item big frame (ONLY right-side item card) */
+#mfS2 #items > .card{
+  background: rgba(249,115,22,.08);
+  border: 1px solid rgba(249,115,22,.25);
+  box-shadow: none;
+}
+
+/* 3) Remove any accidental underline/divider coming from generic title styles */
+#mfS2 #items .section-title{
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 12px;
+}
+
+/* 4) Orange divider bar before "Item #..." title (match left card vibe) */
+#mfS2 #items .section-title h3{
+  position: relative;
+  padding-left: 12px;
+}
+#mfS2 #items .section-title h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:3px;
+  width:4px;
+  height:18px;
+  border-radius: 4px;
+  background: var(--orange); /* uses existing variable */
+}
+
+/* 5) Safety: keep item grids intact (do NOT touch QTY widths / align) */
+#mfS2 #items .row.row2,
+#mfS2 #items .row.row-product{
   align-items: start;
-}
-#mfS2 .row.row-export-attach > .field{min-width:0;}
-#mfS2 .row.row-export-attach input[type="file"]{
-  width:100%;
-  max-width:100%;
-  box-sizing:border-box;
-}
-
-/* Keep the Delete/Add buttons from overflowing */
-#mfS2 .row.itemControls{
-  display:flex !important;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:flex-end;
-}
-#mfS2 .row.itemControls .btn{white-space:nowrap;}
-
-@media (max-width: 760px){
-  #mfS2 .row.row-export-attach{grid-template-columns:1fr !important;}
-  #mfS2 .row.itemControls{justify-content:flex-start !important;}
 }
