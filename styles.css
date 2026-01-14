@@ -3301,3 +3301,31 @@ END – DO NOT EDIT BELOW
     margin-left: 0 !important;
   }
 }
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #4 (ATTACH STILL OFF ON VERY NARROW)
+   If it "still looks the same", it means the layout is staying 2 columns
+   at this screen width, so Attach gets squeezed + looks shifted.
+   Solution: ONLY on very narrow screens, stack Export/Attach to 1 column.
+   Desktop & mid-width remain unchanged.
+   ============================================================ */
+
+@media (max-width: 760px){
+  /* Stack Export + Attach for clean alignment */
+  #frmCreate #mfS2 #items .card .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Keep Attach controls inside and readable */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls{
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  /* Buttons shouldn't overflow */
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls button,
+  #frmCreate #mfS2 #items .card .row.row-export-attach .itemControls .btn{
+    max-width: 100% !important;
+  }
+}
