@@ -3207,80 +3207,90 @@ END – DO NOT EDIT BELOW
 }
 
 /* ============================================================
-   MINTFLOW — FINAL V6 (2026-01-14)  ✅
-   What this fixes (only Item section / #mfS2):
-   1) Desktop: each field in the 3 rows starts at the same top line (no height hack)
-   2) Responsive: prevent "ตกขอบ/หลุดกรอบ" by stacking earlier (<=900px)
-      and forcing min-width:0 + width:100% so controls can shrink.
-   Notes:
-   - DOES NOT style Export checkboxes (no hiding/showing tricks)
-   - Only layout containment + alignment
+   MINTFLOW — FINAL V7 (2026-01-14)
+   Fix:
+   - Prevent our layout rules from breaking Export checkboxes
+   - Apply width:100% ONLY to text-like controls (not checkbox/radio)
+   - Keep Item rows contained / responsive stack (<=900px)
+   Scope: #frmCreate #mfS2 only
    ============================================================ */
 
-/* --- Universal shrink-safe inside Item --- */
-#mfS2, #mfS2 *{
+#frmCreate #mfS2, 
+#frmCreate #mfS2 *{
   box-sizing: border-box;
   min-width: 0;
 }
 
-/* --- Top alignment for the 3 rows --- */
-#mfS2 .row.row-name-model,
-#mfS2 .row.row-codeqty,
-#mfS2 .row.row-export-attach{
+/* Top align rows */
+#frmCreate #mfS2 .row.row-name-model,
+#frmCreate #mfS2 .row.row-codeqty,
+#frmCreate #mfS2 .row.row-export-attach{
   align-items: start !important;
 }
 
-#mfS2 .row.row-name-model > .field,
-#mfS2 .row.row-codeqty > .field,
-#mfS2 .row.row-export-attach > .field{
+#frmCreate #mfS2 .row.row-name-model > .field,
+#frmCreate #mfS2 .row.row-codeqty > .field,
+#frmCreate #mfS2 .row.row-export-attach > .field{
   align-self: start !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-#mfS2 .row.row-name-model > .field > label,
-#mfS2 .row.row-codeqty > .field > label,
-#mfS2 .row.row-export-attach > .field > label{
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* --- Containment: never leak outside the Item card --- */
-#mfS2 #items .card{
+/* Contain inside item card (no clipping vertically) */
+#frmCreate #mfS2 #items .card{
   overflow-x: hidden !important;
   overflow-y: visible !important;
 }
 
-#mfS2 .field .input,
-#mfS2 input,
-#mfS2 select,
-#mfS2 textarea{
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+/* Full-width ONLY for text-like controls (DO NOT touch checkbox/radio) */
+#frmCreate #mfS2 input:not([type="checkbox"]):not([type="radio"]),
+#frmCreate #mfS2 select,
+#frmCreate #mfS2 textarea{
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* --- Responsive: stack earlier to stop squeeze pushing out of the card --- */
-@media (max-width: 900px){
-  #mfS2 .row.row-name-model{
-    display: grid !important;
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 12px !important;
-  }
-  #mfS2 .row.row-codeqty{
-    display: grid !important;
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 12px !important;
-  }
-  #mfS2 .row.row-export-attach{
-    display: grid !important;
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 12px !important;
-  }
+/* File input can be wide; cap it */
+#frmCreate #mfS2 input[type="file"]{
+  width: 100% !important;
+  max-width: 100% !important;
+}
 
-  /* file input can be extra-wide in some UIs; hard cap it */
-  #mfS2 input[type="file"]{
-    width: 100% !important;
-    max-width: 100% !important;
+/* Export By checkbox alignment (minimal, safe) */
+#frmCreate #mfS2 .exportByRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  align-items: flex-start !important;
+}
+#frmCreate #mfS2 .exportByRow > *{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+#frmCreate #mfS2 .exportByRow input[type="checkbox"]{
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* Stack earlier to stop squeeze overflow */
+@media (max-width: 900px){
+  #frmCreate #mfS2 .row.row-name-model,
+  #frmCreate #mfS2 .row.row-codeqty,
+  #frmCreate #mfS2 .row.row-export-attach{
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 12px !important;
   }
+}
+
+/* DEBUG: comment out after confirmed
+   If this border does NOT appear, you're not loading the file you think you are.
+*/
+#frmCreate #mfS2 .row.row-codeqty{
+  outline: 1px dashed rgba(255,0,0,.6);
+  outline-offset: 2px;
 }
