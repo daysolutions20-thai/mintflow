@@ -3389,47 +3389,36 @@ END – DO NOT EDIT BELOW
    - <=900px: force 2-column grid like Name/Model
    ========================================================= */
 
-@media (max-width: 900px){
-  #mfS2 .row.row-export-attach{
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    column-gap: 16px;
-    align-items: start;
-  }
-
-  #mfS2 .row.row-export-attach > .field{
-    min-width: 0;
-  }
-}
-
-/* =========================================================
-   PATCH v43 — Responsive lock for Export By / Attach photos
-   Goal: on mobile/tablet, stack Attach photos under Export By
-   - Keep desktop 50/50 layout untouched
-   - Scope: ONLY .row.row-export-attach when viewport shrinks
-   ========================================================= */
 @media (max-width: 980px){
+  /* Responsive lock: stack Export By + Attach photos so left edges align */
   #mfS2 .row.row-export-attach,
   #frmCreate .row.row-export-attach{
-    grid-template-columns: 1fr !important;   /* stack */
+    display: grid !important;
+    grid-template-columns: 1fr !important;
     gap: 12px !important;
+    align-items: start !important;
   }
 
+  /* Prevent any inner control from overflowing the card */
   #mfS2 .row.row-export-attach > .field,
   #frmCreate .row.row-export-attach > .field{
+    min-width: 0 !important;
     width: 100% !important;
-    min-width: 0 !important; /* prevent overflow */
   }
-
   #mfS2 .row.row-export-attach input[type="file"],
   #frmCreate .row.row-export-attach input[type="file"]{
     width: 100% !important;
     max-width: 100% !important;
   }
-
   #mfS2 .row.row-export-attach .itemControls,
   #frmCreate .row.row-export-attach .itemControls{
+    width: 100% !important;
+    max-width: 100% !important;
     justify-content: flex-start !important;
-    flex-wrap: wrap !important;
+  }
+}
+
+#mfS2 .row.row-export-attach > .field{
+    min-width: 0;
   }
 }
