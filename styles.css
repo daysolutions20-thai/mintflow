@@ -3273,19 +3273,46 @@ END – DO NOT EDIT BELOW
 }
 
 /* ==== HOTFIX: Export/Attach mobile containment (does NOT touch QTY/Unit rows) ==== */
+/* Keep the Export/Attach area from overflowing on small screens, without touching other rows. */
 #mfS2 .row.row-export-attach .field{ min-width: 0 !important; }
+
+/* File widget should never exceed its column */
 #mfS2 .row.row-export-attach input[type="file"]{ max-width: 100% !important; }
+#mfS2 .row.row-export-attach .file{ width: 100% !important; max-width: 100% !important; }
 
 /* Keep buttons inside the Attach column */
 #mfS2 .row.row-export-attach .itemControls{
   max-width: 100% !important;
+  width: 100% !important;
   flex-wrap: wrap !important;
+  justify-content: flex-start !important;
 }
 
-/* When screen is narrow, stack Export + Attach to avoid overflow */
+/* When screen is narrow, stack Export + Attach and force Attach to align to the same left edge */
 @media (max-width: 820px){
   #mfS2 .row.row-export-attach{
     grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  /* Ensure the 2nd field (Attach) spans full width and aligns left like Export */
+  #mfS2 .row.row-export-attach > .field:nth-child(2){
+    width: 100% !important;
+    justify-self: stretch !important;
+    align-self: start !important;
+  }
+
+  /* File widget: stack its inner content so it won't overflow */
+  #mfS2 .row.row-export-attach .file{
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  #mfS2 .row.row-export-attach .file .meta{ width: 100% !important; }
+  #mfS2 .row.row-export-attach .file button,
+  #mfS2 .row.row-export-attach .file .btn{
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -3295,6 +3322,7 @@ END – DO NOT EDIT BELOW
     flex: 1 1 auto !important;
   }
 }
+
 /* ===== Item card highlight (orange) ===== */
 /* ครอบทั้ง Item # ให้เป็นก้อนเดียว */
 #mfS2 #items .card{
