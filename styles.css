@@ -3381,18 +3381,23 @@ END – DO NOT EDIT BELOW
   align-items: start;
 }
 
+/* =========================================================
+   FINAL LOCK — Export / Attach alignment (SAFE)
+   Scope: ONLY .row.row-export-attach
+   Rule:
+   - Desktop: unchanged
+   - <=900px: force 2-column grid like Name/Model
+   ========================================================= */
 
-/* === HOTFIX: lock Export/Attach row alignment on narrow screens (attach only) === */
-@media (max-width: 760px){
-  .row.rowExportAttach{display:grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items:start;}
-  .row.rowExportAttach > .field{min-width:0;}
-  .row.rowExportAttach > .field:last-child{justify-self:stretch;}
-  .row.rowExportAttach label{display:block;}
-  .row.rowExportAttach input[type="file"],
-  .row.rowExportAttach .input[type="file"]{width:100%; max-width:100%; box-sizing:border-box;}
-  .row.rowExportAttach .subtext{display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .row.rowExportAttach .subtext:empty{display:none;}
-}
-@media (max-width: 520px){
-  .row.rowExportAttach{grid-template-columns: 1fr;}
+@media (max-width: 900px){
+  #mfS2 .row.row-export-attach{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  #mfS2 .row.row-export-attach > .field{
+    min-width: 0;
+  }
 }
