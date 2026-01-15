@@ -3380,44 +3380,19 @@ END – DO NOT EDIT BELOW
 #mfS2 #items .row.row-product{
   align-items: start;
 }
-/* ============================================================
-   PATCH v50 — MOBILE ONLY: keep Attach photos aligned & inside box
-   Scope: ONLY Export/Attach row (.row-export-attach) in RIGHT column (#mfS2)
-   Goal:
-   - When screen is narrow, stack Export + Attach cleanly (no drift / no overflow)
-   - Keep file input and buttons full-width and left-aligned
-   - DO NOT touch QTY/Unit/other rows
-   ============================================================ */
+
+
+/* === HOTFIX: lock Export/Attach row alignment on narrow screens (attach only) === */
+@media (max-width: 760px){
+  .row.rowExportAttach{display:grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items:start;}
+  .row.rowExportAttach > .field{min-width:0;}
+  .row.rowExportAttach > .field:last-child{justify-self:stretch;}
+  .row.rowExportAttach label{display:block;}
+  .row.rowExportAttach input[type="file"],
+  .row.rowExportAttach .input[type="file"]{width:100%; max-width:100%; box-sizing:border-box;}
+  .row.rowExportAttach .subtext{display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .row.rowExportAttach .subtext:empty{display:none;}
+}
 @media (max-width: 520px){
-  /* Stack into one column on narrow screens */
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  /* Each field takes full width */
-  #mfS2 .row.row-export-attach > .field{
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  /* File input and any input inside Attach: never exceed the card */
-  #mfS2 .row.row-export-attach input[type="file"],
-  #mfS2 .row.row-export-attach .input,
-  #mfS2 .row.row-export-attach input,
-  #mfS2 .row.row-export-attach select,
-  #mfS2 .row.row-export-attach textarea{
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Buttons under Attach: keep aligned (not pushed to the far right) */
-  #mfS2 .row.row-export-attach .itemControls{
-    justify-content: flex-start !important;
-    align-items: center !important;
-    width: 100% !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-  }
+  .row.rowExportAttach{grid-template-columns: 1fr;}
 }
