@@ -3401,3 +3401,45 @@ END – DO NOT EDIT BELOW
     min-width: 0;
   }
 }
+
+/* ============================================================
+   PATCH v50 — Mobile/Tablet: Align Attach photos with Export By (NO overflow)
+   Scope: ONLY .row.row-export-attach on smaller screens
+   - Stack to 1 column so Attach photos stays inside card
+   - Do NOT touch Name/Model, Code/QTY/Unit, or desktop layout
+   ============================================================ */
+@media (max-width: 820px){
+  /* Stack Export + Attach vertically */
+  #mfS2 .row.row-export-attach,
+  #frmCreate .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Ensure columns can shrink and never push outside */
+  #mfS2 .row.row-export-attach > .field,
+  #frmCreate .row.row-export-attach > .field{
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* File input must not overflow */
+  #mfS2 .row.row-export-attach input[type="file"],
+  #frmCreate .row.row-export-attach input[type="file"],
+  #mfS2 .row.row-export-attach .input,
+  #frmCreate .row.row-export-attach .input{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Buttons under Attach: wrap and stay inside */
+  #mfS2 .row.row-export-attach .itemControls,
+  #frmCreate .row.row-export-attach .itemControls{
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
