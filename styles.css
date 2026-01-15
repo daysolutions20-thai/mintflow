@@ -3401,17 +3401,40 @@ END – DO NOT EDIT BELOW
     min-width: 0;
   }
 }
-
-
-
-/* FORCE FIX: lock Attach photos alignment on mobile/tablet */
+/* ============================================================
+   PATCH v43 - Mobile/Tablet lock: Export By + Attach photos aligned
+   Scope: ONLY #mfS2 .row.row-export-attach responsive behavior
+   Goal: When viewport is narrower (tablet / split-screen / mobile),
+         stack Export By and Attach photos and prevent overflow.
+   ============================================================ */
 @media (max-width: 1200px){
-  .row.row-export-attach{
+  /* Force 1-column stack so Attach cannot stay on the right */
+  #mfS2 .row.row-export-attach{
     grid-template-columns: 1fr !important;
-    align-items: flex-start !important;
+    gap: 16px !important;
+    align-items: start !important;
   }
-  .row.row-export-attach > *{
+
+  /* Ensure both blocks stretch to the same left edge and never overflow */
+  #mfS2 .row.row-export-attach > .field{
     width: 100% !important;
-    justify-self: start !important;
+    max-width: 100% !important;
+    justify-self: stretch !important;
+    min-width: 0 !important;
+  }
+
+  /* File input area: keep inside card */
+  #mfS2 .row.row-export-attach input[type="file"],
+  #mfS2 .row.row-export-attach .fileInput,
+  #mfS2 .row.row-export-attach .fileBox{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Controls under Attach: wrap instead of pushing layout */
+  #mfS2 .row.row-export-attach .itemControls{
+    flex-wrap: wrap !important;
+    width: 100% !important;
   }
 }
