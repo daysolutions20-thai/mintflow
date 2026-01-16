@@ -1369,6 +1369,8 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
+#mfS2 .row.row-export-attach .exportByRow{ margin-top: 0 !important; }
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -1400,13 +1402,13 @@ small.req, span.req, em.req{
   margin-bottom: 8px;
 }
 
-
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Move the "Export By / Attach photos" headings down ~1cm
+   - Add ~1cm gap between Detail row and Export/Attach row
+   - DO NOT touch Export checkbox spacing inside
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
+  margin-top: 10mm !important; /* ~1cm */
 }
 
 
@@ -2934,6 +2936,9 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
+
+
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -2968,10 +2973,10 @@ small.req, span.req, em.req{
 
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Move the "Export By / Attach photos" headings down ~1cm
+   - Add ~1cm gap between Detail row and Export/Attach row
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
+  margin-top: 10mm !important; /* ~1cm */
 }
 
 
