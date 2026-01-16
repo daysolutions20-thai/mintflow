@@ -3381,59 +3381,60 @@ END – DO NOT EDIT BELOW
   align-items: start;
 }
 
-
 /* =========================================================
    FINAL LOCK — Export / Attach alignment (SAFE)
    Scope: ONLY .row.row-export-attach
-   Goal (mobile/tablet/split-screen):
-   - Stack Export By + Attach photos to ONE column when narrow
-   - Align left (same start edge)
-   - Prevent file input / buttons from overflowing the card
-   - Desktop remains unchanged
+   Rule:
+   - Desktop: unchanged
+   - <=900px: force 2-column grid like Name/Model
    ========================================================= */
 
-/* Tablet / split-screen and smaller: stack into one column */
+/* Tablet / split-screen: keep two columns but align content like the same row */
 @media (max-width: 1200px){
   #mfS2 .row.row-export-attach{
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    column-gap: 0 !important;
-    row-gap: 14px !important;
     align-items: start !important;
   }
-
-  #mfS2 .row.row-export-attach > .field{
-    width: 100% !important;
-    min-width: 0 !important;
+  #mfS2 .row.row-export-attach .exportByRow{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
-
-  /* Keep Export checkboxes left aligned */
-  #mfS2 .row.row-export-attach .exportByRow,
-  #mfS2 .row.row-export-attach .chkLine{
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-  }
-
-  /* File control must never exceed the column */
   #mfS2 .row.row-export-attach input[type="file"]{
+    max-width: 100% !important;
     width: 100% !important;
-    max-width: 100% !important;
     box-sizing: border-box !important;
-    display: block !important;
-  }
-
-  /* Buttons stay inside and wrap if needed */
-  #mfS2 .row.row-export-attach .itemControls{
-    max-width: 100% !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-start !important;
   }
 }
 
-/* Very small screens: make buttons fill line to avoid pushing out */
-@media (max-width: 520px){
-  #mfS2 .row.row-export-attach .itemControls button{
-    flex: 1 1 140px !important;
+@media (max-width: 900px){
+  #mfS2 .row.row-export-attach{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  #mfS2 .row.row-export-attach > .field{
+    min-width: 0;
+  }
+
+  /* Align Export checkboxes with Attach input (ONLY this row) */
+  #mfS2 .row.row-export-attach .exportByRow{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Make file control respect column width */
+  #mfS2 .row.row-export-attach input[type="file"]{
     max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Extra-small screens: stack Export + Attach to avoid overflow */
+@media (max-width: 560px){
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+    row-gap: 14px !important;
   }
 }
