@@ -3381,51 +3381,59 @@ END – DO NOT EDIT BELOW
   align-items: start;
 }
 
+
 /* =========================================================
    FINAL LOCK — Export / Attach alignment (SAFE)
-   Scope: ONLY .row.row-export-attach (responsive only)
-   Rule:
-   - Desktop (>1200px): unchanged
-   - <=1200px: stack Export + Attach (same left start)
-   - Extra-small: prevent file input spilling outside card
+   Scope: ONLY .row.row-export-attach
+   Goal (mobile/tablet/split-screen):
+   - Stack Export By + Attach photos to ONE column when narrow
+   - Align left (same start edge)
+   - Prevent file input / buttons from overflowing the card
+   - Desktop remains unchanged
    ========================================================= */
 
+/* Tablet / split-screen and smaller: stack into one column */
 @media (max-width: 1200px){
   #mfS2 .row.row-export-attach{
     display: grid !important;
     grid-template-columns: 1fr !important;
-    row-gap: 12px;
-    align-items: start;
-    justify-items: stretch;
+    column-gap: 0 !important;
+    row-gap: 14px !important;
+    align-items: start !important;
   }
 
   #mfS2 .row.row-export-attach > .field{
-    min-width: 0 !important;
     width: 100% !important;
+    min-width: 0 !important;
   }
 
+  /* Keep Export checkboxes left aligned */
+  #mfS2 .row.row-export-attach .exportByRow,
+  #mfS2 .row.row-export-attach .chkLine{
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+  }
+
+  /* File control must never exceed the column */
   #mfS2 .row.row-export-attach input[type="file"]{
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    min-width: 0 !important;
-    display: block;
+    display: block !important;
   }
 
+  /* Buttons stay inside and wrap if needed */
   #mfS2 .row.row-export-attach .itemControls{
-    width: 100% !important;
     max-width: 100% !important;
     flex-wrap: wrap !important;
+    justify-content: flex-start !important;
   }
 }
 
+/* Very small screens: make buttons fill line to avoid pushing out */
 @media (max-width: 520px){
-  /* Absolute safety: nothing spills outside the card */
-  #mfS2 .row.row-export-attach > .field{
-    overflow: hidden;
-  }
-
   #mfS2 .row.row-export-attach .itemControls button{
-    flex: 1 1 auto !important;
+    flex: 1 1 140px !important;
+    max-width: 100% !important;
   }
 }
