@@ -3389,6 +3389,22 @@ END – DO NOT EDIT BELOW
    - <=900px: force 2-column grid like Name/Model
    ========================================================= */
 
+/* Tablet / split-screen: keep two columns but align content like the same row */
+@media (max-width: 1200px){
+  #mfS2 .row.row-export-attach{
+    align-items: start !important;
+  }
+  #mfS2 .row.row-export-attach .exportByRow{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  #mfS2 .row.row-export-attach input[type="file"]{
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
 @media (max-width: 900px){
   #mfS2 .row.row-export-attach{
     display: grid !important;
@@ -3400,84 +3416,25 @@ END – DO NOT EDIT BELOW
   #mfS2 .row.row-export-attach > .field{
     min-width: 0;
   }
-}
 
-/* ============================================================
-   PATCH v50 — Mobile/Tablet: Align Attach photos with Export By (NO overflow)
-   Scope: ONLY .row.row-export-attach on smaller screens
-   - Stack to 1 column so Attach photos stays inside card
-   - Do NOT touch Name/Model, Code/QTY/Unit, or desktop layout
-   ============================================================ */
-@media (max-width: 820px){
-  /* Stack Export + Attach vertically */
-  #mfS2 .row.row-export-attach,
-  #frmCreate .row.row-export-attach{
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
+  /* Align Export checkboxes with Attach input (ONLY this row) */
+  #mfS2 .row.row-export-attach .exportByRow{
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
-  /* Ensure columns can shrink and never push outside */
-  #mfS2 .row.row-export-attach > .field,
-  #frmCreate .row.row-export-attach > .field{
-    min-width: 0 !important;
-    width: 100% !important;
+  /* Make file control respect column width */
+  #mfS2 .row.row-export-attach input[type="file"]{
     max-width: 100% !important;
-  }
-
-  /* File input must not overflow */
-  #mfS2 .row.row-export-attach input[type="file"],
-  #frmCreate .row.row-export-attach input[type="file"],
-  #mfS2 .row.row-export-attach .input,
-  #frmCreate .row.row-export-attach .input{
     width: 100% !important;
-    max-width: 100% !important;
     box-sizing: border-box !important;
   }
-
-  /* Buttons under Attach: wrap and stay inside */
-  #mfS2 .row.row-export-attach .itemControls,
-  #frmCreate .row.row-export-attach .itemControls{
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 }
 
-/* ============================================================
-   FIX 2026-01-16B — Export By gap close + stack earlier
-   Scope: ONLY .row.row-export-attach
-   ============================================================ */
-
-/* Bring Export checkbox list closer to the "Export By" heading */
-#frmCreate #mfS2 #items .card .row.row-export-attach .exportByRow{
-  margin-top: 2px !important;
-  padding-top: 0 !important;
-}
-
-/* Keep each checkbox line tight (match other blocks) */
-#frmCreate #mfS2 #items .card .row.row-export-attach .exportByRow .chkLine{
-  margin-top: 0 !important;
-}
-
-/* Tablet / split-screen: stack Export + Attach so left edges align */
-@media (max-width: 1200px){
-  #frmCreate #mfS2 #items .card .row.row-export-attach{
+/* Extra-small screens: stack Export + Attach to avoid overflow */
+@media (max-width: 560px){
+  #mfS2 .row.row-export-attach{
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    align-items: start !important;
-  }
-}
-
-/* Extra small: hard containment for native file input */
-@media (max-width: 520px){
-  #frmCreate #mfS2 #items .card .row.row-export-attach > .field{
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-  #frmCreate #mfS2 #items .card .row.row-export-attach input[type="file"]{
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    row-gap: 14px !important;
   }
 }
