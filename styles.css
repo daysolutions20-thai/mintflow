@@ -1370,7 +1370,7 @@ small.req, span.req, em.req{
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 /* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
-#mfS2 .row.row-export-attach .exportByRow{ margin-top: 0 !important; }
+#mfS2 .row.row-export-attach .exportByRow{ margin-top: -1mm !important; }
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -1408,7 +1408,7 @@ small.req, span.req, em.req{
    - DO NOT touch Export checkbox spacing inside
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 10mm !important; /* ~1cm */
+  margin-top: 8mm !important; /* ~1cm */
 }
 
 
@@ -2976,7 +2976,7 @@ small.req, span.req, em.req{
    - Add ~1cm gap between Detail row and Export/Attach row
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 10mm !important; /* ~1cm */
+  margin-top: 8mm !important; /* ~1cm */
 }
 
 
@@ -3400,7 +3400,7 @@ END – DO NOT EDIT BELOW
     align-items: start !important;
   }
   #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: 0 !important;
+    margin-top: -1mm !important;
     padding-top: 0 !important;
   }
   #mfS2 .row.row-export-attach input[type="file"]{
@@ -3424,7 +3424,7 @@ END – DO NOT EDIT BELOW
 
   /* Align Export checkboxes with Attach input (ONLY this row) */
   #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: 0 !important;
+    margin-top: -1mm !important;
     padding-top: 0 !important;
   }
 
