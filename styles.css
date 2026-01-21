@@ -3443,3 +3443,62 @@ END – DO NOT EDIT BELOW
     row-gap: 14px !important;
   }
 }
+
+/* ============================================================
+   PATCH v39 — Export By: horizontal on desktop, vertical on mobile
+   + Mobile: Export row and Attach photos become separate rows (stack)
+   Scope: ONLY #mfS2 .row.row-export-attach + children
+   ============================================================ */
+
+/* Desktop/tablet: keep Export + Attach side-by-side, but make export options horizontal */
+#mfS2 .row.row-export-attach .exportByRow{
+  display: flex !important;
+  flex-direction: row !important;      /* horizontal */
+  flex-wrap: wrap !important;           /* allow wrap if tight */
+  gap: 14px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin-top: -1mm !important;          /* keep approved baseline */
+}
+
+/* Ensure each checkbox line stays compact in horizontal layout */
+#mfS2 .row.row-export-attach .exportByRow .chkLine{
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+/* Always prevent file input from overflowing its column/container */
+#mfS2 .row.row-export-attach input[type="file"],
+#mfS2 .row.row-export-attach .file-input,
+#mfS2 .row.row-export-attach .input[type="file"]{
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Mobile / split-screen: stack Export and Attach into separate rows */
+@media (max-width: 980px){
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;  /* Export row then Attach row */
+    gap: 12px !important;
+  }
+
+  /* Mobile: export options vertical */
+  #mfS2 .row.row-export-attach .exportByRow{
+    flex-direction: column !important;     /* vertical */
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-top: -1mm !important;          /* keep baseline */
+  }
+
+  /* In case any child tries to stretch weirdly */
+  #mfS2 .row.row-export-attach > .field{
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
