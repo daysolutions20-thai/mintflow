@@ -1369,8 +1369,6 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
-#mfS2 .row.row-export-attach .exportByRow{ margin-top: -1mm !important; }
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -1402,13 +1400,13 @@ small.req, span.req, em.req{
   margin-bottom: 8px;
 }
 
+
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Add ~1cm gap between Detail row and Export/Attach row
-   - DO NOT touch Export checkbox spacing inside
+   - Move the "Export By / Attach photos" headings down ~1cm
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 8mm !important; /* ~1cm */
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
 }
 
 
@@ -2936,9 +2934,6 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
-
-
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -2973,10 +2968,10 @@ small.req, span.req, em.req{
 
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Add ~1cm gap between Detail row and Export/Attach row
+   - Move the "Export By / Attach photos" headings down ~1cm
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 8mm !important; /* ~1cm */
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
 }
 
 
@@ -3394,22 +3389,6 @@ END – DO NOT EDIT BELOW
    - <=900px: force 2-column grid like Name/Model
    ========================================================= */
 
-/* Tablet / split-screen: keep two columns but align content like the same row */
-@media (max-width: 1200px){
-  #mfS2 .row.row-export-attach{
-    align-items: start !important;
-  }
-  #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: -1mm !important;
-    padding-top: 0 !important;
-  }
-  #mfS2 .row.row-export-attach input[type="file"]{
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-}
-
 @media (max-width: 900px){
   #mfS2 .row.row-export-attach{
     display: grid !important;
@@ -3421,92 +3400,26 @@ END – DO NOT EDIT BELOW
   #mfS2 .row.row-export-attach > .field{
     min-width: 0;
   }
-
-  /* Align Export checkboxes with Attach input (ONLY this row) */
-  #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: -1mm !important;
-    padding-top: 0 !important;
-  }
-
-  /* Make file control respect column width */
-  #mfS2 .row.row-export-attach input[type="file"]{
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
 }
-
-/* Extra-small screens: stack Export + Attach to avoid overflow */
-@media (max-width: 560px){
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important;
-    row-gap: 14px !important;
-  }
-}
-
 
 
 /* =========================================================
-   PATCH v52 — FINAL: Export row + Attach row (stacked)
-   - Export stays horizontal on wide screens
-   - Export becomes vertical on small screens
-   - Attach is ALWAYS on its own row and full width (no overflow)
-   Scope: ONLY #mfS2 .row.row-export-attach (+ related children)
+   PATCH v54 — Remove extra wrapper box around Project/Subject field
+   Reason: prior :has() styling was boxing the FIELD itself (double box)
+   Scope: ONLY #mfS1 project/subject fields
    ========================================================= */
 
-#mfS2 .row.row-export-attach,
-#mfS2 .row-export-attach{
-  display: grid !important;
-  grid-template-columns: 1fr !important; /* STACK: Export row then Attach row */
-  gap: 12px !important;
-  align-items: start !important;
-}
-
-/* Export checkboxes: horizontal by default */
-#mfS2 .row.row-export-attach .exportByRow,
-#mfS2 .row-export-attach .exportByRow{
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  gap: 18px !important;
-  align-items: flex-start !important;
-  margin-top: 0 !important; /* keep locked spacing */
-}
-
-/* Keep each checkbox line neat */
-#mfS2 .row.row-export-attach .exportByRow .chkLine,
-#mfS2 .row-export-attach .exportByRow .chkLine{
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 !important;
-}
-
-/* Attach: always full width + prevent file input overflow */
-#mfS2 .row.row-export-attach input[type="file"],
-#mfS2 .row-export-attach input[type="file"]{
-  max-width: 100% !important;
-}
-
-#mfS2 .row.row-export-attach .field,
-#mfS2 .row-export-attach .field{
-  min-width: 0 !important;
-}
-
-#mfS2 .row.row-export-attach .itemControls,
-#mfS2 .row-export-attach .itemControls{
-  display: flex !important;
-  gap: 10px !important;
-  justify-content: flex-start !important;
-  align-items: center !important;
-  margin-top: 12px !important;
-}
-
-/* Small screens: export options vertical */
-@media (max-width: 560px){
-  #mfS2 .row.row-export-attach .exportByRow,
-  #mfS2 .row-export-attach .exportByRow{
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
+#mfS1 .field:has(#project),
+#mfS1 .field:has([name="project"]),
+#mfS1 .field:has(#subject),
+#mfS1 .field:has([name="subject"]),
+#mfS1 .form-group:has(#project),
+#mfS1 .form-group:has([name="project"]),
+#mfS1 .form-group:has(#subject),
+#mfS1 .form-group:has([name="subject"]){
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
