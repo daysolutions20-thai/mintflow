@@ -653,9 +653,15 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <div class="field">
-            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+          <div class="row">
+            <div class="field">
+              <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+            </div>
+            <div class="field">
+              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
+              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+            </div>
           </div>
 
           <div class="row">
