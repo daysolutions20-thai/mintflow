@@ -3404,55 +3404,53 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   PATCH v57 — FIX VERSION DRIFT
-   1) Remove extra inner box on Project/Subject (and For Customer) fields
-   2) Align FOR Repair/Sale input start + placeholder alignment
-   Scope: ONLY #mfS1 (left form panel)
+   PATCH v58 — Mobile Sidebar Drawer + Overlay
+   Goal: On mobile/tablet, sidebar is a drawer (hidden by default),
+         opened via ☰ button, with overlay click-to-close.
+   Scope: layout shell only (.app / .sidebar / .topbar)
    ========================================================= */
 
-/* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
-  background: transparent !important;
-  border: 0 !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+.sidebar{
+  transition: transform .18s ease;
 }
 
-/* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
-  width: 100% !important;
-  box-sizing: border-box !important;
+.sidebar-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 19; /* below sidebar (20) */
 }
 
-/* ---------- 2) FOR: Make Repair/Sale lines perfectly aligned ---------- */
-#mfS1 .for-list .for-line{
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
+.sidebar-overlay.show{
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Fix label width so both Repair/Sale inputs start at same x */
-#mfS1 .for-list .for-line > label.chk{
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  min-width: 92px !important; /* locks input start */
-  margin: 0 !important;
+@media (max-width: 980px){
+  .sidebar{
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    z-index: 20;
+    transform: translateX(-110%); /* hidden default on small screens */
+  }
+  .sidebar.open{
+    transform: translateX(0);
+  }
 }
 
-/* Input takes the remaining space */
-#mfS1 .for-list .for-line > input.input{
-  flex: 1 1 auto !important;
-  width: auto !important;
-  max-width: none !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-  line-height: normal !important;
+/* Keep desktop behavior unchanged */
+@media (min-width: 981px){
+  .sidebar{
+    position: static;
+    transform: none;
+  }
+  .sidebar-overlay{
+    display: none;
+  }
 }
+
+
+body.no-scroll{overflow:hidden;}
