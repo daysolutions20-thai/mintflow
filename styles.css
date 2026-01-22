@@ -3367,3 +3367,85 @@ END – DO NOT EDIT BELOW
   background: #fff !important;
   border: 1px solid var(--border) !important;
 }
+/* ================================
+   MintFlow CSS PATCH V64 (append-only)
+   - Fix double border on Project/Subject row (remove nested "field card" styling from PATCH v27)
+   - Make FOR (Repair/Sale) input columns align
+   - Left-align Export By / Attach photos blocks + buttons
+   - Make warnBox wrap instead of overflowing
+   ================================= */
+
+/* 1) Project/Subject (and For Customer) double frame:
+      Old patches style BOTH the row-card and the inner .field -> looks like "กรอบซ้อน".
+      We keep the ROW card, and neutralize the inner .field wrapper. */
+#mfS1 .field:has(#project),
+#mfS1 .field:has(#forCustomer){
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* In case the patch also injected left accent into the inner field label */
+#mfS1 .field:has(#project) > label:first-of-type::before,
+#mfS1 .field:has(#forCustomer) > label:first-of-type::before{
+  content: none !important;
+}
+
+/* 2) FOR (Repair/Sale) alignment:
+      Fix input start position by giving checkbox label a fixed width
+      and forcing the input to flex-fill equally. */
+.for-list .for-line{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.for-list .for-line .chk{
+  width: 92px;          /* keeps Repair/Sale aligned */
+  flex: 0 0 92px;
+  justify-content: flex-start;
+}
+
+.for-list .for-line input[type="text"],
+.for-list .for-line .input{
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+/* 3) Export By / Attach photos should be left-aligned (desktop + mobile) */
+.exportBlock,
+.attachBlock{
+  text-align: left;
+}
+
+.exportOptions{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.exportOptions label{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Attach controls: keep buttons left */
+.itemControls{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 4) Warning box text wrap (no overflow / no single-line) */
+.warnBox{
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  line-height: 1.35;
+}
