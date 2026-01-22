@@ -652,19 +652,18 @@ function renderCreateQR(el){
               </select>
             </div>
           </div>
+          <div class="row rowProjectCustomer">
+            <div class="field">
+              <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+            </div>
+            <div class="field">
+              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
+              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+            </div>
+          </div>
 
-          <div class="row row-project-customer">
-  <div class="field">
-    <label>${biLabel("Project / Subject","โครงการ / หัวข้อ")}</label>
-    <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" autocomplete="off" />
-  </div>
-  <div class="field">
-    <label>${biLabel("For Customer","สำหรับลูกค้า")}</label>
-    <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" autocomplete="off" />
-  </div>
-</div>
-
-<div class="row">
+          <div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
@@ -844,25 +843,28 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-            <div class="field exportBlock">
-        <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-        <div class="exportByRow">
-          <label class="chkLine"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-          <label class="chkLine"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-          <label class="chkLine"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+      <div class="row row-export-attach">
+        <div class="field">
+          <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+          <div class="exportByRow">
+            <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+          </div>
         </div>
-      </div>
 
-      <div class="field attachBlock">
-        <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-        <input class="input" name="photos" type="file" accept="image/*" multiple />
-        <div class="subtext" data-ph-list></div>
+        <div class="field">
+          <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
+          <input class="input" name="photos" type="file" accept="image/*" multiple />
+          <div class="subtext" data-ph-list></div>
 
-        <div class="itemControls">
-          <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-          <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
+          <div class="itemControls">
+            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
+          </div>
+
+          
         </div>
-      </div>
       </div>
       </div>
     `;
@@ -1177,7 +1179,6 @@ const itemsEl = $("#items");
       docDate: getFormVal("docDate"),
       urgency: getFormVal("urgency"),
       project: getTrim("project"),
-        forCustomer: getTrim("forCustomer"),
       subject: getTrim("subject"),
       requester, phone,
       forBy,
@@ -2197,7 +2198,7 @@ function filterRequests(reqs, q){
   const qq = q.toLowerCase();
   return reqs.filter(r=>{
     const hay = [
-      r.docNo, r.docDate, r.project, r.forCustomer, r.requester, r.phone, r.status, r.urgency, r.note
+      r.docNo, r.docDate, r.project, r.requester, r.phone, r.status, r.urgency, r.note
     ].filter(Boolean).join(" ").toLowerCase();
 
     if(hay.includes(qq)) return true;
@@ -2349,35 +2350,10 @@ function bindGlobal(){
     if(r === "summary-qr" || r === "summary-pr") renderRoute();
   });
 
-  // sidebar (mobile off-canvas)
-  const sb = $(".sidebar");
-  const mqSb = window.matchMedia("(max-width: 980px)");
-
-  const syncSidebar = ()=>{
-    if(mqSb.matches){
-      // mobile: start hidden, open via burger
-      sb.classList.add("hidden");
-    }else{
-      // desktop: always visible
-      sb.classList.remove("hidden");
-    }
-  };
-
-  // run once + on resize (debounced-ish)
-  syncSidebar();
-  window.addEventListener("resize", ()=> syncSidebar());
-
   $("#btnToggleSidebar").onclick = ()=>{
-    if(!mqSb.matches) return; // desktop: do nothing
+    const sb = $(".sidebar");
     sb.classList.toggle("hidden");
   };
-
-  // mobile: tap a menu link -> close
-  sb.addEventListener("click", (e)=>{
-    if(!mqSb.matches) return;
-    const a = e.target.closest("a");
-    if(a) sb.classList.add("hidden");
-  });
 
   // admin mode demo
   const adminBtn = $("#btnAdminSet");
