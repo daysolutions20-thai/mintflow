@@ -2344,9 +2344,7 @@ function bindGlobal(){
     const { r } = route();
     if(r === "summary-qr" || r === "summary-pr") renderRoute();
   });
-
-  $("#
-// mobile sidebar drawer
+// mobile sidebar drawer (tablet/mobile) + overlay
 const btnSide = $("#btnToggleSidebar");
 const sb = $(".sidebar");
 const ov = $("#sidebarOverlay");
@@ -2375,14 +2373,12 @@ const toggleSidebar = ()=>{
   else openSidebar();
 };
 
-// default state based on viewport
 const syncSidebarShell = ()=>{
   if(!sb) return;
   if(isMobileShell()){
-    // keep closed by default on mobile
-    closeSidebar();
+    closeSidebar(); // default closed on mobile
   }else{
-    // desktop: always visible
+    // desktop: sidebar is visible; overlay disabled
     sb.classList.remove("open");
     if(ov) ov.classList.remove("show");
     if(btnSide) btnSide.setAttribute("aria-expanded","false");
@@ -2398,7 +2394,19 @@ if(ov){
 }
 window.addEventListener("resize", syncSidebarShell);
 
-  // admin mode demo
+// auto-close sidebar after selecting a menu (mobile)
+const nav = $(".sidebar .nav");
+if(nav){
+  nav.addEventListener("click", (e)=>{
+    const a = e.target && e.target.closest ? e.target.closest("a.nav-item") : null;
+    if(a && isMobileShell()) closeSidebar();
+  });
+}
+
+// initial sync
+syncSidebarShell();
+
+// admin mode demo
   const adminBtn = $("#btnAdminSet");
   if(adminBtn){
     adminBtn.onclick = ()=>{
