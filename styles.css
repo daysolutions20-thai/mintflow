@@ -1200,85 +1200,8 @@ small.req, span.req, em.req{
 }
 
 /* =========================================================
-   PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
-   ========================================================= */
-
-/* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
-  background: var(--mf-band-bg);
-  border: 1px solid var(--mf-band-border);
-  border-radius: 14px;
-  padding: 14px 16px;
-}
-
-/* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
-  position: relative;
-  padding-left: 14px;
-  font-weight: 600;
-  color: var(--mf-band-fg);
-}
-
-/* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:.15em;
-  width:4px;
-  height:1.1em;
-  border-radius:2px;
-  background: var(--mf-band-accent);
-}
-
-/* =========================================================
-   PATCH v28 — Reduce spacing BETWEEN section cards only
+   /* PATCH v27 removed (was causing double borders / wrapper conflicts) */
+PATCH v28 — Reduce spacing BETWEEN section cards only
    From ~1cm to ~0.5cm
    (Do NOT touch inner padding or field spacing)
    ========================================================= */
@@ -3402,58 +3325,25 @@ END – DO NOT EDIT BELOW
   }
 }
 
-/* =========================
-   PATCH V62 (layout fixes)
-   ========================= */
+/* PATCH V63 - layout fixes (FOR inputs align, Export/Attach left, warnBox wrap) */
+#mfS1 .for-line, #mfS1 .for-line2{ align-items:center; }
+#mfS1 .for-line .chk{ min-width: 86px; } /* makes Repair/Sale inputs start same x */
+#mfS1 .for-line .input{ flex: 1; min-width: 0; }
+#mfS1 .for-line2 .input{ flex: 1; min-width: 0; }
 
-/* Project / Subject + For Customer in one row */
-#mfS1 .rowProjectCustomer{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-@media (max-width: 820px){
-  #mfS1 .rowProjectCustomer{ grid-template-columns: 1fr; }
-}
+/* Export + Attach area: keep everything left-aligned */
+#mfS2 .row-export-attach{ align-items:flex-start; }
+#mfS2 .exportByRow{ align-items:flex-start; justify-content:flex-start; }
+#mfS2 .exportByRow .chkLine{ justify-content:flex-start; }
+#mfS2 .attachWrap{ align-items:flex-start; }
+#mfS2 .itemControls{ justify-content:flex-start !important; }
 
-/* FOR block: align Repair/Sale inputs to same start */
-#mfS1 .forList .forLine .chk{ min-width: 76px; }
-#mfS1 .forList .forLine input{ flex: 1; min-width: 0; }
-
-/* Export By: keep left aligned, horizontal on wide, vertical on narrow */
-#mfS2 .exportByRow{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 14px 18px;
-  align-items: center;
-  justify-content: flex-start;
-}
-#mfS2 .exportByRow .chkLine{ margin-top: 0; }
-@media (max-width: 520px){
+/* Hint / warn box wrap */
+.warnBox{ white-space: normal; overflow-wrap:anywhere; word-break: break-word; }
+@media (min-width: 900px){
   #mfS2 .exportByRow{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
   }
-}
-
-/* Ensure export/attach columns stay left aligned within the grid */
-#mfS2 .row-export-attach{
-  align-items: start;
-}
-#mfS2 .row-export-attach .exportByCol,
-#mfS2 .row-export-attach .attachCol{
-  justify-self: stretch;
-}
-
-/* Attach photos controls: buttons align left */
-#mfS2 .itemControls{
-  justify-content: flex-start !important;
-}
-
-/* Warning box: allow wrapping, prevent overflow */
-.warnBox{
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
 }
