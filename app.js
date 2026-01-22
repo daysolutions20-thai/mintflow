@@ -653,15 +653,9 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
-            </div>
-            <div class="field">
-              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
-            </div>
+          <div class="field">
+            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
 
           <div class="row">
@@ -844,31 +838,29 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-      <div class="row row-export-attach row-export-only">
-  <div class="field">
-    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-    <div class="exportByRow">
-      <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-    </div>
-  </div>
-</div>
+      <div class="row row-export-attach">
+        <div class="field">
+          <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+          <div class="exportByRow">
+            <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+            <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
+          </div>
+        </div>
 
-<div class="row row-export-attach row-attach-only">
-  <div class="field">
-    <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-    <input class="input" name="photos" type="file" accept="image/*" multiple />
-    <div class="subtext" data-ph-list></div>
+        <div class="field">
+          <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
+          <input class="input" name="photos" type="file" accept="image/*" multiple />
+          <div class="subtext" data-ph-list></div>
 
-    <div class="itemControls">
-      <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-      <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
-    </div>
+          <div class="itemControls">
+            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
+          </div>
 
-
-  </div>
-</div>
+          
+        </div>
+      </div>
       </div>
     `;
     const _rm = block.querySelector("[data-remove]");
@@ -2353,10 +2345,58 @@ function bindGlobal(){
     if(r === "summary-qr" || r === "summary-pr") renderRoute();
   });
 
-  $("#btnToggleSidebar").onclick = ()=>{
-    const sb = $(".sidebar");
-    sb.classList.toggle("hidden");
-  };
+  $("#
+// mobile sidebar drawer
+const btnSide = $("#btnToggleSidebar");
+const sb = $(".sidebar");
+const ov = $("#sidebarOverlay");
+
+const isMobileShell = ()=> window.matchMedia("(max-width: 980px)").matches;
+
+const closeSidebar = ()=>{
+  if(!sb) return;
+  sb.classList.remove("open");
+  if(ov) ov.classList.remove("show");
+  if(btnSide) btnSide.setAttribute("aria-expanded","false");
+  document.body.classList.remove("no-scroll");
+};
+
+const openSidebar = ()=>{
+  if(!sb) return;
+  sb.classList.add("open");
+  if(ov) ov.classList.add("show");
+  if(btnSide) btnSide.setAttribute("aria-expanded","true");
+  document.body.classList.add("no-scroll");
+};
+
+const toggleSidebar = ()=>{
+  if(!sb) return;
+  if(sb.classList.contains("open")) closeSidebar();
+  else openSidebar();
+};
+
+// default state based on viewport
+const syncSidebarShell = ()=>{
+  if(!sb) return;
+  if(isMobileShell()){
+    // keep closed by default on mobile
+    closeSidebar();
+  }else{
+    // desktop: always visible
+    sb.classList.remove("open");
+    if(ov) ov.classList.remove("show");
+    if(btnSide) btnSide.setAttribute("aria-expanded","false");
+    document.body.classList.remove("no-scroll");
+  }
+};
+
+if(btnSide){
+  btnSide.onclick = ()=> toggleSidebar();
+}
+if(ov){
+  ov.onclick = ()=> closeSidebar();
+}
+window.addEventListener("resize", syncSidebarShell);
 
   // admin mode demo
   const adminBtn = $("#btnAdminSet");
