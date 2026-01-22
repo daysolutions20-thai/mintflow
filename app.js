@@ -1,4 +1,3 @@
-/* PATCH v60 — keep For Customer + Export/Attach logic + Mobile Drawer (safe syntax) */
 /**
  * Quotation Request Prototype (static HTML)
  * - No backend. Uses localStorage as a fake database.
@@ -654,12 +653,18 @@ function renderCreateQR(el){
             </div>
           </div>
 
-          <div class="field">
-            <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-            <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
-          </div>
+          <div class="row row-project-customer">
+  <div class="field">
+    <label>${biLabel("Project / Subject","โครงการ / หัวข้อ")}</label>
+    <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" autocomplete="off" />
+  </div>
+  <div class="field">
+    <label>${biLabel("For Customer","สำหรับลูกค้า")}</label>
+    <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" autocomplete="off" />
+  </div>
+</div>
 
-          <div class="row">
+<div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
@@ -839,28 +844,25 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-      <div class="row row-export-attach">
-        <div class="field">
-          <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-          <div class="exportByRow">
-            <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-            <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-            <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-          </div>
+            <div class="field exportBlock">
+        <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
+        <div class="exportByRow">
+          <label class="chkLine"><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
+          <label class="chkLine"><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
+          <label class="chkLine"><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
         </div>
+      </div>
 
-        <div class="field">
-          <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-          <input class="input" name="photos" type="file" accept="image/*" multiple />
-          <div class="subtext" data-ph-list></div>
+      <div class="field attachBlock">
+        <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
+        <input class="input" name="photos" type="file" accept="image/*" multiple />
+        <div class="subtext" data-ph-list></div>
 
-          <div class="itemControls">
-            <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-            <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
-          </div>
-
-          
+        <div class="itemControls">
+          <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
+          <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
         </div>
+      </div>
       </div>
       </div>
     `;
@@ -1175,6 +1177,7 @@ const itemsEl = $("#items");
       docDate: getFormVal("docDate"),
       urgency: getFormVal("urgency"),
       project: getTrim("project"),
+        forCustomer: getTrim("forCustomer"),
       subject: getTrim("subject"),
       requester, phone,
       forBy,
@@ -2194,7 +2197,7 @@ function filterRequests(reqs, q){
   const qq = q.toLowerCase();
   return reqs.filter(r=>{
     const hay = [
-      r.docNo, r.docDate, r.project, r.requester, r.phone, r.status, r.urgency, r.note
+      r.docNo, r.docDate, r.project, r.forCustomer, r.requester, r.phone, r.status, r.urgency, r.note
     ].filter(Boolean).join(" ").toLowerCase();
 
     if(hay.includes(qq)) return true;
@@ -2345,69 +2348,38 @@ function bindGlobal(){
     const { r } = route();
     if(r === "summary-qr" || r === "summary-pr") renderRoute();
   });
-// mobile sidebar drawer (tablet/mobile) + overlay
-const btnSide = $("#btnToggleSidebar");
-const sb = $(".sidebar");
-const ov = $("#sidebarOverlay");
 
-const isMobileShell = ()=> window.matchMedia("(max-width: 980px)").matches;
+  // sidebar (mobile off-canvas)
+  const sb = $(".sidebar");
+  const mqSb = window.matchMedia("(max-width: 980px)");
 
-const closeSidebar = ()=>{
-  if(!sb) return;
-  sb.classList.remove("open");
-  if(ov) ov.classList.remove("show");
-  if(btnSide) btnSide.setAttribute("aria-expanded","false");
-  document.body.classList.remove("no-scroll");
-};
+  const syncSidebar = ()=>{
+    if(mqSb.matches){
+      // mobile: start hidden, open via burger
+      sb.classList.add("hidden");
+    }else{
+      // desktop: always visible
+      sb.classList.remove("hidden");
+    }
+  };
 
-const openSidebar = ()=>{
-  if(!sb) return;
-  sb.classList.add("open");
-  if(ov) ov.classList.add("show");
-  if(btnSide) btnSide.setAttribute("aria-expanded","true");
-  document.body.classList.add("no-scroll");
-};
+  // run once + on resize (debounced-ish)
+  syncSidebar();
+  window.addEventListener("resize", ()=> syncSidebar());
 
-const toggleSidebar = ()=>{
-  if(!sb) return;
-  if(sb.classList.contains("open")) closeSidebar();
-  else openSidebar();
-};
+  $("#btnToggleSidebar").onclick = ()=>{
+    if(!mqSb.matches) return; // desktop: do nothing
+    sb.classList.toggle("hidden");
+  };
 
-const syncSidebarShell = ()=>{
-  if(!sb) return;
-  if(isMobileShell()){
-    closeSidebar(); // default closed on mobile
-  }else{
-    // desktop: sidebar is visible; overlay disabled
-    sb.classList.remove("open");
-    if(ov) ov.classList.remove("show");
-    if(btnSide) btnSide.setAttribute("aria-expanded","false");
-    document.body.classList.remove("no-scroll");
-  }
-};
-
-if(btnSide){
-  btnSide.onclick = ()=> toggleSidebar();
-}
-if(ov){
-  ov.onclick = ()=> closeSidebar();
-}
-window.addEventListener("resize", syncSidebarShell);
-
-// auto-close sidebar after selecting a menu (mobile)
-const nav = $(".sidebar .nav");
-if(nav){
-  nav.addEventListener("click", (e)=>{
-    const a = e.target && e.target.closest ? e.target.closest("a.nav-item") : null;
-    if(a && isMobileShell()) closeSidebar();
+  // mobile: tap a menu link -> close
+  sb.addEventListener("click", (e)=>{
+    if(!mqSb.matches) return;
+    const a = e.target.closest("a");
+    if(a) sb.classList.add("hidden");
   });
-}
 
-// initial sync
-syncSidebarShell();
-
-// admin mode demo
+  // admin mode demo
   const adminBtn = $("#btnAdminSet");
   if(adminBtn){
     adminBtn.onclick = ()=>{
