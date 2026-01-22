@@ -1369,8 +1369,6 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
-#mfS2 .row.row-export-attach .exportByRow{ margin-top: -1mm !important; }
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -1402,13 +1400,13 @@ small.req, span.req, em.req{
   margin-bottom: 8px;
 }
 
+
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Add ~1cm gap between Detail row and Export/Attach row
-   - DO NOT touch Export checkbox spacing inside
+   - Move the "Export By / Attach photos" headings down ~1cm
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 8mm !important; /* ~1cm */
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
 }
 
 
@@ -2936,9 +2934,6 @@ small.req, span.req, em.req{
 #mfS2 .row-export-attach .field{ margin: 0; }
 
 #mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-/* PATCH v50 - lock Export checkbox block spacing (do NOT drift) */
-
-
 #mfS2 .exportByRow .chkLine{
   display: flex;
   justify-content: flex-start !important;
@@ -2973,10 +2968,10 @@ small.req, span.req, em.req{
 
 /* ============================================================
    PATCH v48 - Add top spacing before Export/Attach row (Right)
-   - Add ~1cm gap between Detail row and Export/Attach row
+   - Move the "Export By / Attach photos" headings down ~1cm
    ============================================================ */
 #frmCreate .row.row-export-attach{
-  margin-top: 8mm !important; /* ~1cm */
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
 }
 
 
@@ -3394,22 +3389,6 @@ END – DO NOT EDIT BELOW
    - <=900px: force 2-column grid like Name/Model
    ========================================================= */
 
-/* Tablet / split-screen: keep two columns but align content like the same row */
-@media (max-width: 1200px){
-  #mfS2 .row.row-export-attach{
-    align-items: start !important;
-  }
-  #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: -1mm !important;
-    padding-top: 0 !important;
-  }
-  #mfS2 .row.row-export-attach input[type="file"]{
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-}
-
 @media (max-width: 900px){
   #mfS2 .row.row-export-attach{
     display: grid !important;
@@ -3421,50 +3400,59 @@ END – DO NOT EDIT BELOW
   #mfS2 .row.row-export-attach > .field{
     min-width: 0;
   }
-
-  /* Align Export checkboxes with Attach input (ONLY this row) */
-  #mfS2 .row.row-export-attach .exportByRow{
-    margin-top: -1mm !important;
-    padding-top: 0 !important;
-  }
-
-  /* Make file control respect column width */
-  #mfS2 .row.row-export-attach input[type="file"]{
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
 }
 
-/* Extra-small screens: stack Export + Attach to avoid overflow */
-@media (max-width: 560px){
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: 1fr !important;
-    row-gap: 14px !important;
-  }
-}
-\n\n
+
 /* =========================================================
-   PATCH v56 — Align FOR inputs (Repair / Sale) perfectly
-   Goal: Sale input must align with Repair input (no forward protrusion)
-   Scope: ONLY FOR section inputs
+   PATCH v57 — FIX VERSION DRIFT
+   1) Remove extra inner box on Project/Subject (and For Customer) fields
+   2) Align FOR Repair/Sale input start + placeholder alignment
+   Scope: ONLY #mfS1 (left form panel)
    ========================================================= */
 
-#mfS1 .for-line{
-  display: grid !important;
-  grid-template-columns: auto 1fr !important;
-  column-gap: 8px !important;
-  align-items: center !important;
+/* ---------- 1) Kill double-box on Project/Subject row ---------- */
+#mfS1 .field:has(input[name="project"]),
+#mfS1 .field:has(input#project),
+#mfS1 .field:has(input[name="forCustomer"]),
+#mfS1 .field:has(input#forCustomer){
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-#mfS1 .for-line input.input{
+/* Ensure inputs still look correct inside the row container */
+#mfS1 .field:has(input[name="project"]) input.input,
+#mfS1 .field:has(input#project) input.input,
+#mfS1 .field:has(input[name="forCustomer"]) input.input,
+#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
-  max-width: none !important;
-  margin-left: 0 !important;
   box-sizing: border-box !important;
 }
 
-#mfS1 .for-line .inputPlus,
-#mfS1 .for-line .input{
-  padding-left: inherit !important;
+/* ---------- 2) FOR: Make Repair/Sale lines perfectly aligned ---------- */
+#mfS1 .for-list .for-line{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Fix label width so both Repair/Sale inputs start at same x */
+#mfS1 .for-list .for-line > label.chk{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 92px !important; /* locks input start */
+  margin: 0 !important;
+}
+
+/* Input takes the remaining space */
+#mfS1 .for-list .for-line > input.input{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: normal !important;
 }
