@@ -3347,3 +3347,23 @@ END – DO NOT EDIT BELOW
     gap: 16px;
   }
 }
+
+/* =========================================================
+   PATCH BASELINE FIX — Remove double box on Project/Subject
+   Scope: ONLY Project/Subject row (left form)
+   ========================================================= */
+
+#mfS1 .row.row-project,
+#mfS1 .row:has(input[name="project"]),
+#mfS1 .row:has(#project){
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#mfS1 .row:has(input[name="project"]) .input,
+#mfS1 .row:has(#project) .input{
+  background: #fff !important;
+  border: 1px solid var(--border) !important;
+}
