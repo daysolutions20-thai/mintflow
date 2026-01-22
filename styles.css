@@ -1200,8 +1200,85 @@ small.req, span.req, em.req{
 }
 
 /* =========================================================
-   /* PATCH v27 removed (was causing double borders / wrapper conflicts) */
-PATCH v28 — Reduce spacing BETWEEN section cards only
+   PATCH v27 — Project/Subject block (NOT inside .row) theme
+   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
+   ========================================================= */
+
+/* Card wrapper for Project/Subject regardless of structure */
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]),
+#mfS1 .col:has(#project),
+#mfS1 .col:has([name="project"]),
+#mfS1 .col:has(#subject),
+#mfS1 .col:has([name="subject"]),
+#mfS1 .field:has(#project),
+#mfS1 .field:has([name="project"]),
+#mfS1 .field:has(#subject),
+#mfS1 .field:has([name="subject"]),
+#mfS1 .form-group:has(#project),
+#mfS1 .form-group:has([name="project"]),
+#mfS1 .form-group:has(#subject),
+#mfS1 .form-group:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Heading/label inside the Project/Subject card */
+#mfS1 > *:has(#project) > label:first-of-type,
+#mfS1 > *:has([name="project"]) > label:first-of-type,
+#mfS1 > *:has(#subject) > label:first-of-type,
+#mfS1 > *:has([name="subject"]) > label:first-of-type,
+#mfS1 .col:has(#project) label:first-of-type,
+#mfS1 .col:has([name="project"]) label:first-of-type,
+#mfS1 .col:has(#subject) label:first-of-type,
+#mfS1 .col:has([name="subject"]) label:first-of-type,
+#mfS1 .field:has(#project) label:first-of-type,
+#mfS1 .field:has([name="project"]) label:first-of-type,
+#mfS1 .field:has(#subject) label:first-of-type,
+#mfS1 .field:has([name="subject"]) label:first-of-type,
+#mfS1 .form-group:has(#project) label:first-of-type,
+#mfS1 .form-group:has([name="project"]) label:first-of-type,
+#mfS1 .form-group:has(#subject) label:first-of-type,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar */
+#mfS1 > *:has(#project) > label:first-of-type::before,
+#mfS1 > *:has([name="project"]) > label:first-of-type::before,
+#mfS1 > *:has(#subject) > label:first-of-type::before,
+#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
+#mfS1 .col:has(#project) label:first-of-type::before,
+#mfS1 .col:has([name="project"]) label:first-of-type::before,
+#mfS1 .col:has(#subject) label:first-of-type::before,
+#mfS1 .col:has([name="subject"]) label:first-of-type::before,
+#mfS1 .field:has(#project) label:first-of-type::before,
+#mfS1 .field:has([name="project"]) label:first-of-type::before,
+#mfS1 .field:has(#subject) label:first-of-type::before,
+#mfS1 .field:has([name="subject"]) label:first-of-type::before,
+#mfS1 .form-group:has(#project) label:first-of-type::before,
+#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
+#mfS1 .form-group:has(#subject) label:first-of-type::before,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v28 — Reduce spacing BETWEEN section cards only
    From ~1cm to ~0.5cm
    (Do NOT touch inner padding or field spacing)
    ========================================================= */
@@ -3325,127 +3402,57 @@ END – DO NOT EDIT BELOW
   }
 }
 
-/* PATCH V63 - layout fixes (FOR inputs align, Export/Attach left, warnBox wrap) */
-#mfS1 .for-line, #mfS1 .for-line2{ align-items:center; }
-#mfS1 .for-line .chk{ min-width: 86px; } /* makes Repair/Sale inputs start same x */
-#mfS1 .for-line .input{ flex: 1; min-width: 0; }
-#mfS1 .for-line2 .input{ flex: 1; min-width: 0; }
-
-/* Export + Attach area: keep everything left-aligned */
-#mfS2 .row-export-attach{ align-items:flex-start; }
-#mfS2 .exportByRow{ align-items:flex-start; justify-content:flex-start; }
-#mfS2 .exportByRow .chkLine{ justify-content:flex-start; }
-#mfS2 .attachWrap{ align-items:flex-start; }
-#mfS2 .itemControls{ justify-content:flex-start !important; }
-
-/* Hint / warn box wrap */
-.warnBox{ white-space: normal; overflow-wrap:anywhere; word-break: break-word; }
-@media (min-width: 900px){
-  #mfS2 .exportByRow{
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-}
 
 /* =========================================================
-   PATCH BASELINE FIX — Remove double box on Project/Subject
-   Scope: ONLY Project/Subject row (left form)
+   PATCH v57 — FIX VERSION DRIFT
+   1) Remove extra inner box on Project/Subject (and For Customer) fields
+   2) Align FOR Repair/Sale input start + placeholder alignment
+   Scope: ONLY #mfS1 (left form panel)
    ========================================================= */
 
-#mfS1 .row.row-project,
-#mfS1 .row:has(input[name="project"]),
-#mfS1 .row:has(#project){
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-#mfS1 .row:has(input[name="project"]) .input,
-#mfS1 .row:has(#project) .input{
-  background: #fff !important;
-  border: 1px solid var(--border) !important;
-}
-/* ================================
-   MintFlow CSS PATCH V64 (append-only)
-   - Fix double border on Project/Subject row (remove nested "field card" styling from PATCH v27)
-   - Make FOR (Repair/Sale) input columns align
-   - Left-align Export By / Attach photos blocks + buttons
-   - Make warnBox wrap instead of overflowing
-   ================================= */
-
-/* 1) Project/Subject (and For Customer) double frame:
-      Old patches style BOTH the row-card and the inner .field -> looks like "กรอบซ้อน".
-      We keep the ROW card, and neutralize the inner .field wrapper. */
-#mfS1 .field:has(#project),
-#mfS1 .field:has(#forCustomer){
+/* ---------- 1) Kill double-box on Project/Subject row ---------- */
+#mfS1 .field:has(input[name="project"]),
+#mfS1 .field:has(input#project),
+#mfS1 .field:has(input[name="forCustomer"]),
+#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
-  box-shadow: none !important;
   border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-/* In case the patch also injected left accent into the inner field label */
-#mfS1 .field:has(#project) > label:first-of-type::before,
-#mfS1 .field:has(#forCustomer) > label:first-of-type::before{
-  content: none !important;
+/* Ensure inputs still look correct inside the row container */
+#mfS1 .field:has(input[name="project"]) input.input,
+#mfS1 .field:has(input#project) input.input,
+#mfS1 .field:has(input[name="forCustomer"]) input.input,
+#mfS1 .field:has(input#forCustomer) input.input{
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* 2) FOR (Repair/Sale) alignment:
-      Fix input start position by giving checkbox label a fixed width
-      and forcing the input to flex-fill equally. */
-.for-list .for-line{
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ---------- 2) FOR: Make Repair/Sale lines perfectly aligned ---------- */
+#mfS1 .for-list .for-line{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
 }
 
-.for-list .for-line .chk{
-  width: 92px;          /* keeps Repair/Sale aligned */
-  flex: 0 0 92px;
-  justify-content: flex-start;
+/* Fix label width so both Repair/Sale inputs start at same x */
+#mfS1 .for-list .for-line > label.chk{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 92px !important; /* locks input start */
+  margin: 0 !important;
 }
 
-.for-list .for-line input[type="text"],
-.for-list .for-line .input{
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-}
-
-/* 3) Export By / Attach photos should be left-aligned (desktop + mobile) */
-.exportBlock,
-.attachBlock{
-  text-align: left;
-}
-
-.exportOptions{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-.exportOptions label{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Attach controls: keep buttons left */
-.itemControls{
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-/* 4) Warning box text wrap (no overflow / no single-line) */
-.warnBox{
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-  line-height: 1.35;
+/* Input takes the remaining space */
+#mfS1 .for-list .for-line > input.input{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: normal !important;
 }
