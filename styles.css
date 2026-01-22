@@ -3404,6 +3404,60 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
+   PATCH v57 — FIX VERSION DRIFT
+   1) Remove extra inner box on Project/Subject (and For Customer) fields
+   2) Align FOR Repair/Sale input start + placeholder alignment
+   Scope: ONLY #mfS1 (left form panel)
+   ========================================================= */
+
+/* ---------- 1) Kill double-box on Project/Subject row ---------- */
+#mfS1 .field:has(input[name="project"]),
+#mfS1 .field:has(input#project),
+#mfS1 .field:has(input[name="forCustomer"]),
+#mfS1 .field:has(input#forCustomer){
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure inputs still look correct inside the row container */
+#mfS1 .field:has(input[name="project"]) input.input,
+#mfS1 .field:has(input#project) input.input,
+#mfS1 .field:has(input[name="forCustomer"]) input.input,
+#mfS1 .field:has(input#forCustomer) input.input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ---------- 2) FOR: Make Repair/Sale lines perfectly aligned ---------- */
+#mfS1 .for-list .for-line{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Fix label width so both Repair/Sale inputs start at same x */
+#mfS1 .for-list .for-line > label.chk{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 92px !important; /* locks input start */
+  margin: 0 !important;
+}
+
+/* Input takes the remaining space */
+#mfS1 .for-list .for-line > input.input{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: normal !important;
+}
+
+/* =========================================================
    PATCH v58 — Mobile Sidebar Drawer + Overlay
    Goal: On mobile/tablet, sidebar is a drawer (hidden by default),
          opened via ☰ button, with overlay click-to-close.
