@@ -3460,24 +3460,25 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   PATCH — (STEP 1 ONLY - HARD FIX OVERFLOW)
-   Goal: Attach photos never overflow the card on any width
-   Scope: RIGHT column only (Export/Attach row)
+   PATCH — (STEP 1 ONLY - SELECTOR FIX + HARD OVERFLOW STOP)
+   Issue: previous rules likely NOT applied because section id is #mfs2 (lowercase) in your CSS/DOM.
+   Goal: Attach photos never overflow the card on any width.
+   Scope: ONLY Export/Attach row in RIGHT section (#mfS2 or #mfs2)
    ========================================================= */
 
-/* Make grid columns truly shrinkable (like other rows) */
-#mfS2 .row.row-export-attach{
+:is(#mfS2, #mfs2) .row.row-export-attach{
+  /* make columns truly shrinkable */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  overflow: hidden !important; /* stop any child from painting outside */
 }
 
-/* Ensure grid children can shrink */
-#mfS2 .row.row-export-attach > .field{
+:is(#mfS2, #mfs2) .row.row-export-attach > .field{
   min-width: 0 !important;
   overflow: hidden !important;
 }
 
-/* File input: shrink and never exceed column */
-#mfS2 .row.row-export-attach input[type="file"]{
+/* File input: force shrink and stay inside */
+:is(#mfS2, #mfs2) .row.row-export-attach input[type="file"]{
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -3486,13 +3487,13 @@ END – DO NOT EDIT BELOW
 }
 
 /* Safety: any wrapper inside Attach field cannot exceed column */
-#mfS2 .row.row-export-attach .field,
-#mfS2 .row.row-export-attach .field *{
+:is(#mfS2, #mfs2) .row.row-export-attach .field *{
   max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 @media (max-width: 768px){
-  #mfS2 .row.row-export-attach{
-    grid-template-columns: minmax(0, 1fr) !important;
+  :is(#mfS2, #mfs2) .row.row-export-attach{
+    grid-template-columns: minmax(0, 1fr) !important; /* stack */
   }
 }
