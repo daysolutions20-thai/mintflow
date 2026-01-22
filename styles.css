@@ -3460,24 +3460,24 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   PATCH — (STEP 1 ONLY - SELECTOR FIX + HARD OVERFLOW STOP)
-   Issue: previous rules likely NOT applied because section id is #mfs2 (lowercase) in your CSS/DOM.
-   Goal: Attach photos never overflow the card on any width.
+   PATCH — (STEP 1 ONLY - NO CLIP, NO OVERFLOW)
+   Status: overflow fixed but borders/outline got clipped.
+   Fix: remove overflow:hidden (it clips borders/box-shadow),
+        keep shrink rules (minmax(0,1fr), min-width:0, max-width:100%).
    Scope: ONLY Export/Attach row in RIGHT section (#mfS2 or #mfs2)
    ========================================================= */
 
 :is(#mfS2, #mfs2) .row.row-export-attach{
-  /* make columns truly shrinkable */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-  overflow: hidden !important; /* stop any child from painting outside */
+  /* IMPORTANT: do NOT clip children */
+  overflow: visible !important;
 }
 
 :is(#mfS2, #mfs2) .row.row-export-attach > .field{
-  min-width: 0 !important;
-  overflow: hidden !important;
+  min-width: 0 !important;          /* allow shrink in grid */
+  overflow: visible !important;     /* keep borders/outline visible */
 }
 
-/* File input: force shrink and stay inside */
 :is(#mfS2, #mfs2) .row.row-export-attach input[type="file"]{
   display: block !important;
   width: 100% !important;
@@ -3486,14 +3486,15 @@ END – DO NOT EDIT BELOW
   box-sizing: border-box !important;
 }
 
-/* Safety: any wrapper inside Attach field cannot exceed column */
-:is(#mfS2, #mfs2) .row.row-export-attach .field *{
+/* Keep wrappers from exceeding column WITHOUT clipping visuals */
+:is(#mfS2, #mfs2) .row.row-export-attach .field{
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
+/* Mobile: stack to 1 column */
 @media (max-width: 768px){
   :is(#mfS2, #mfs2) .row.row-export-attach{
-    grid-template-columns: minmax(0, 1fr) !important; /* stack */
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
