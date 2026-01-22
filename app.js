@@ -1,3 +1,4 @@
+/* PATCH v60 — keep For Customer + Export/Attach logic + Mobile Drawer (safe syntax) */
 /**
  * Quotation Request Prototype (static HTML)
  * - No backend. Uses localStorage as a fake database.
