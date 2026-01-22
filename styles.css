@@ -3456,3 +3456,18 @@ END – DO NOT EDIT BELOW
   box-sizing: border-box !important;
   line-height: normal !important;
 }
+
+
+
+/* =========================================================
+   PATCH — (STEP 1 ONLY) Attach photos width = other fields
+   Scope: RIGHT column only (Export/Attach row)
+   NOTE: No other changes in this step.
+   ========================================================= */
+
+#mfS2 .row.row-export-attach input[type="file"],
+#mfS2 .row.row-export-attach .file-input,
+#mfS2 .row.row-export-attach .attach input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
