@@ -3460,14 +3460,29 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   PATCH — (STEP 1 ONLY) Attach photos width = other fields
+   PATCH — (STEP 1 ONLY - FIX MOBILE OVERFLOW)
+   Goal: Attach photos not overflow on small screens
    Scope: RIGHT column only (Export/Attach row)
-   NOTE: No other changes in this step.
    ========================================================= */
 
+/* Ensure grid children can shrink */
+#mfS2 .row.row-export-attach > .field{
+  min-width: 0 !important;
+}
+
+/* File input should never exceed its container */
 #mfS2 .row.row-export-attach input[type="file"],
 #mfS2 .row.row-export-attach .file-input,
 #mfS2 .row.row-export-attach .attach input{
   width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box !important;
+  display: block !important;
+}
+
+/* On narrow screens, stack Export/Attach to avoid overflow */
+@media (max-width: 768px){
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+  }
 }
