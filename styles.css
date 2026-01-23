@@ -3928,3 +3928,50 @@ END – DO NOT EDIT BELOW
 #mfS1 .for-line [class*="cover"]{
   pointer-events: none !important;
 }
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN (target real containers)
+   A) Left "Please add product spec..." (dashed .pill) must WRAP
+      Root cause: .pill is inline-flex (shrink-to-fit) in base CSS.
+      Fix: override ONLY in left column container.
+   B) Sale/Repair inputs clickable/typeable (CSS-only best effort)
+   ========================================================= */
+
+/* A) Wrap ONLY in left column (Layout A) */
+.layout-a .layout-col.left .pill{
+  display: block !important;        /* stop shrink-to-fit */
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* If pill sits inside flex wrappers in left column, allow shrink */
+.layout-a .layout-col.left *{
+  min-width: 0;
+}
+
+/* B) Inputs: ensure nothing blocks interaction */
+#mfS1 #forSaleTxt,
+#mfS1 #forRepairTxt{
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Prevent checkbox label/cluster from stretching over inputs */
+#mfS1 .for-line .chk{
+  flex: 0 0 auto !important;
+}
+
+/* Ensure the input area can take remaining width */
+#mfS1 .for-line input#forSaleTxt,
+#mfS1 .for-line input#forRepairTxt{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
