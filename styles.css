@@ -3631,6 +3631,18 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
-  margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
+
+
+
+/* =====================================================================
+   MICRO FIX v6 — Export By vs Detail spacing ONLY
+   Goal:
+   - Space between Detail field and Export By field = 1 cm (was ~1.5 cm)
+   Action:
+   - Reduce TOP margin of Export By field by 5mm
+   Scope: ONLY Export By field container
+   ===================================================================== */
+
+#mfS2 .row.row-export-attach .field:has(.exportByRow){
+  margin-top: 5mm !important; /* 1 cm total from Detail */
 }
