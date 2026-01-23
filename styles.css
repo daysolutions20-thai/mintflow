@@ -3614,3 +3614,20 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
+
+
+
+/* =====================================================================
+   MICRO FIX v4 — Export By spacing (CORRECT DIRECTION)
+   Clarification:
+   - Need to MOVE CHECKBOX ROW UP by 2mm (from ~7mm to ~5mm)
+   - Do NOT move the heading down
+   Action:
+   - Reduce TOP margin of exportByRow by 2mm
+   Scope: ONLY Export By checkbox row
+   ===================================================================== */
+
+/* Move checkbox row UP by 2mm */
+#mfS2 .row.row-export-attach .exportByRow{
+  margin-top: -2mm !important;
+}
