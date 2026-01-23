@@ -3645,3 +3645,43 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN / FOR checkbox alignment
+   Baseline: latest approved file (keeps right column untouched)
+   Goal:
+   - Checkbox and label text vertically aligned
+   - Balanced spacing
+   Scope:
+   - LEFT column only (FOR section)
+   ========================================================= */
+
+/* FOR checkbox rows: align box + text */
+#mfS1 .for-line,
+#mfS1 .for-list label{
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  line-height: 1.2 !important;
+}
+
+/* Checkbox: remove drift */
+#mfS1 .for-line input[type="checkbox"],
+#mfS1 .for-list input[type="checkbox"]{
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* Text: keep centered with checkbox */
+#mfS1 .for-line label,
+#mfS1 .for-list label span,
+#mfS1 .for-list label{
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
