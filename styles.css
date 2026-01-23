@@ -3631,3 +3631,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
+}
