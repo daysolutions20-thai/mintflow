@@ -3755,3 +3755,22 @@ END – DO NOT EDIT BELOW
 #mfS1 .field.for-field input:not([type]){
   max-width: 100% !important;
 }
+
+
+
+/* =========================================================
+   FIX ONLY — Left note text wrapping (Please add product spec...)
+   Symptom: message in left column doesn't wrap on narrow screens
+   Likely element uses .pill (inline-flex) -> prevents wrapping.
+   Scope: LEFT column only (#mfS1). Do NOT touch right column.
+   ========================================================= */
+
+#mfS1 .pill{
+  display: block !important;          /* allow normal wrapping */
+  width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
