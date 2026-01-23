@@ -3573,3 +3573,18 @@ END – DO NOT EDIT BELOW
     white-space: normal !important;
   }
 }
+
+
+
+/* =====================================================================
+   MICRO FIX — Export By spacing ONLY
+   Goal:
+   - Distance between "Export By :" label and first checkbox row = 0.5 cm
+   - Match other headings (NO other changes)
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+/* Normalize gap under Export By heading */
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 5mm !important; /* 0.5 cm */
+}
