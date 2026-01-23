@@ -3588,3 +3588,16 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
+
+
+
+/* =====================================================================
+   MICRO FIX v2 — Export By spacing ONLY
+   Goal:
+   - Reduce gap under "Export By :" to ~0.25 cm (match other headings visually)
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 2.5mm !important; /* ~0.25 cm */
+}
