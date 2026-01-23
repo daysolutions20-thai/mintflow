@@ -3808,3 +3808,52 @@ END – DO NOT EDIT BELOW
 #mfS1 .pill > *{
   min-width: 0 !important;
 }
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN
+   1) "Please add product spec..." must WRAP on narrow screens
+   2) Sale/Repair inputs must be typeable + width aligned
+   Scope: LEFT column (#mfS1) only
+   ========================================================= */
+
+/* (1) Force pill to be a normal block so text can wrap (inline-flex prevents wrapping due to shrink-to-fit) */
+#mfS1 .pill{
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* If pill sits inside a flex row, allow it to shrink/wrap */
+#mfS1 .pill{
+  min-width: 0 !important;
+}
+
+/* (2) Sale/Repair inputs: remove hard max-width + make sure they sit above label hit-area */
+#mfS1 #forRepairTxt,
+#mfS1 #forSaleTxt{
+  max-width: none !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure the checkbox label doesn't cover the input */
+#mfS1 .for-line .chk{
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Keep row layout: label cluster + input */
+#mfS1 .for-line{
+  align-items: center !important;
+}
