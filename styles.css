@@ -3601,3 +3601,16 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
+
+
+
+/* =====================================================================
+   MICRO FIX v3 — Export By spacing ONLY
+   Target:
+   - Current ~7mm → move up 2mm → final ~5mm
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 5mm !important; /* final target */
+}
