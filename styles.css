@@ -3460,92 +3460,119 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   PATCH — (STEP 2 FINAL FINAL) Export By clean baseline
-   Fix EXACT problems seen:
-   - Checkbox native box + pseudo-icon were overlapping baseline
-   - Line-height / inline flow caused icon to float down
-   Solution:
-   - Make EACH option a mini flex-row
-   - Move icon to a dedicated pseudo element on .chkLine (NOT checkbox)
-   - Reserve space explicitly so nothing overlaps
-   Scope: ONLY Export By block
+   PATCH — (STEP 2 ONLY - FIX ORDER + SIZE, NO FONT SHRINK)
+   User requirements:
+   - Desktop/PC: Export By options in ONE HORIZONTAL ROW
+   - Icon AFTER checkbox but BEFORE text (NOT after text)
+   - Icon size should match theme (not tiny); keep text readable (NO font shrink)
+   - Mobile/tablet: stack vertically (<=768px)
+   Notes:
+   - Previous attempt used ::after on chkLine which placed icon AFTER text.
+   - New approach: use ::before as a flex item and control order:
+       checkbox (0) -> icon (1) -> text (2)
+   Scope: ONLY Export By block (RIGHT section, row-export-attach)
    ========================================================= */
 
 :root{ --mf-ico: rgba(249,115,22,.95); }
 
-/* Desktop: horizontal row */
+/* --- Desktop default: FORCE horizontal row (override baseline column rules) --- */
 :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow{
   display:flex !important;
   flex-direction:row !important;
-  gap:24px !important;
-  align-items:flex-start !important;
+  flex-wrap:nowrap !important;
+  gap:18px !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
 }
 
-/* Each option = controlled flex row */
+/* Each option line as flex-row */
 :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine{
   display:flex !important;
   align-items:center !important;
   gap:8px !important;
-  line-height:1 !important;
   white-space:nowrap !important;
+  line-height:1.2 !important;
   position:relative !important;
 }
 
-/* Normalize checkbox */
+/* Kill any previous icon implementations to avoid duplicates */
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine::after{
+  content:none !important;
+  display:none !important;
+}
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine span::before{
+  content:none !important;
+  display:none !important;
+}
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine input[type="checkbox"]::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Checkbox first */
 :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine input[type="checkbox"]{
   margin:0 !important;
   flex:0 0 auto !important;
+  order:0 !important;
 }
 
-/* Dedicated icon slot AFTER checkbox */
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine::after{
-  content:"";
-  width:16px;
-  height:16px;
-  display:inline-block;
-  background-color:var(--mf-ico);
-  margin-left:4px;
-  margin-right:2px;
-
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:contain;
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:contain;
-}
-
-/* Text baseline */
+/* Text last (works whether you have label or span) */
 :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine label,
 :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine span{
-  line-height:1 !important;
+  order:2 !important;
+  line-height:1.2 !important;
 }
 
-/* SEA */
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-sea::after,
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(1)::after{
+/* Icon slot: AFTER checkbox, BEFORE text */
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine::before{
+  content:"" !important;
+  order:1 !important;
+
+  width:16px !important;
+  height:16px !important;
+  display:inline-block !important;
+  margin-left:2px !important;
+  margin-right:2px !important;
+
+  background-color:var(--mf-ico) !important;
+  -webkit-mask-repeat:no-repeat !important;
+  -webkit-mask-position:center !important;
+  -webkit-mask-size:contain !important;
+  mask-repeat:no-repeat !important;
+  mask-position:center !important;
+  mask-size:contain !important;
+}
+
+/* SEA — side-view boat */
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-sea::before,
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(1)::before{
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11h-2V9c0-.6-.4-1-1-1h-2V6h-4V4h4l4 4v3h1c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1ZM3 16l9 3 9-3v2l-9 3-9-3v-2Zm1-3h17l-1 2-8 3-8-3-1-2Z'/%3E%3C/svg%3E");
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11h-2V9c0-.6-.4-1-1-1h-2V6h-4V4h4l4 4v3h1c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1ZM3 16l9 3 9-3v2l-9 3-9-3v-2Zm1-3h17l-1 2-8 3-8-3-1-2Z'/%3E%3C/svg%3E");
 }
 
-/* LAND */
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-land::after,
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(2)::after{
+/* LAND — truck */
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-land::before,
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(2)::before{
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7h11v9H3V7Zm13 3h3l2 3v3h-5v-6ZM6.5 18.5A1.5 1.5 0 1 0 6.5 21a1.5 1.5 0 0 0 0-2.5Zm11 0A1.5 1.5 0 1 0 17.5 21a1.5 1.5 0 0 0 0-2.5Z'/%3E%3C/svg%3E");
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7h11v9H3V7Zm13 3h3l2 3v3h-5v-6ZM6.5 18.5A1.5 1.5 0 1 0 6.5 21a1.5 1.5 0 0 0 0-2.5Zm11 0A1.5 1.5 0 1 0 17.5 21a1.5 1.5 0 0 0 0-2.5Z'/%3E%3C/svg%3E");
 }
 
-/* AIR */
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-air::after,
-:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(3)::after{
+/* AIR — plane */
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine.by-air::before,
+:is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine:nth-child(3)::before{
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5Z'/%3E%3C/svg%3E");
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5Z'/%3E%3C/svg%3E");
 }
 
-/* Mobile stack */
+/* Mobile/tablet: stack vertically only when small */
 @media (max-width:768px){
   :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow{
     flex-direction:column !important;
+    align-items:flex-start !important;
     gap:12px !important;
+  }
+  :is(#mfS2, #mfs2) .row.row-export-attach .exportByRow .chkLine{
+    width:100% !important;
+    white-space:normal !important;
   }
 }
