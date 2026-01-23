@@ -3638,9 +3638,10 @@ END – DO NOT EDIT BELOW
 
 
 /* =========================================================
-   FIX ONLY — Detail → Export By spacing = 1 cm
-   (Do not change anything else)
+   FIX ONLY — Detail → Export By spacing
+   Target effective gap = 10mm (1cm)
+   Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
 #mfS2 .row.row-export-attach .field:has(.exportByRow){
-  margin-top: 10mm !important; /* 1 cm */
+  margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
