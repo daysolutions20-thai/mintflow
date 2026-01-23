@@ -3774,3 +3774,37 @@ END – DO NOT EDIT BELOW
   word-break: break-word !important;
   text-align: center !important;
 }
+
+
+
+/* =========================================================
+   FIX ONLY — Left submit note wrap (Please add product spec...)
+   Why previous didn't work:
+   - .pill is inline-flex; some browsers keep flex items unwrapping unless flex-wrap enabled + max-width set.
+   Fix:
+   - Force block-level flex with wrapping and width constraints (LEFT ONLY)
+   Scope: LEFT column only (#mfS1)
+   ========================================================= */
+
+#mfS1 .pill.submit-note,
+#mfS1 .pill{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* Allow flex text nodes to shrink/wrap */
+#mfS1 .pill.submit-note > *,
+#mfS1 .pill > *{
+  min-width: 0 !important;
+}
