@@ -3857,3 +3857,74 @@ END – DO NOT EDIT BELOW
 #mfS1 .for-line{
   align-items: center !important;
 }
+
+
+
+/* =========================================================
+   HARD FIX (LEFT ONLY) — wrap + typeable inputs
+   Scope: ONLY #mfS1 (left column)
+   ========================================================= */
+
+/* A) Wrap: force any hint/warn/pill box in left column to wrap */
+#mfS1 .pill,
+#mfS1 .submit-note,
+#mfS1 .submitNote,
+#mfS1 .hint,
+#mfS1 .hint-box,
+#mfS1 .hintBox,
+#mfS1 .notice,
+#mfS1 .warning,
+#mfS1 .warn,
+#mfS1 .msg,
+#mfS1 .message,
+#mfS1 .dash,
+#mfS1 .dashed,
+#mfS1 [class*="note"],
+#mfS1 [class*="hint"],
+#mfS1 [class*="warn"],
+#mfS1 [class*="pill"]{
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* Ensure parents allow shrinking */
+#mfS1 .field,
+#mfS1 .row,
+#mfS1 .card,
+#mfS1 .panel{
+  min-width: 0 !important;
+}
+
+/* B) Inputs: ensure they are on top and clickable */
+#mfS1 input[type="text"],
+#mfS1 input[type="search"],
+#mfS1 input:not([type]){
+  position: relative !important;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+
+/* Put row/label behind inputs if covering */
+#mfS1 .for-line,
+#mfS1 .for-list label,
+#mfS1 .for-list > label{
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Disable any overlay hit-testing in FOR rows */
+#mfS1 .for-line .overlay,
+#mfS1 .for-line .mask,
+#mfS1 .for-line .cover,
+#mfS1 .for-line [class*="overlay"],
+#mfS1 .for-line [class*="mask"],
+#mfS1 .for-line [class*="cover"]{
+  pointer-events: none !important;
+}
