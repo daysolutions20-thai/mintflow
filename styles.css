@@ -3685,3 +3685,73 @@ END – DO NOT EDIT BELOW
   display: flex !important;
   align-items: center !important;
 }
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN / FOR order + checkbox usability + input width
+   Requirements:
+   1) Order: Sale, Repair, Stock
+   2) Checkbox must be usable (clickable) and look like real checkbox
+   3) Sale/Repair input width align with other inputs (full row)
+   Scope: LEFT column FOR block only (#mfS1)
+   ========================================================= */
+
+/* Make each FOR row a flex item so we can reorder */
+#mfS1 .for-list,
+#mfS1 .for-lines{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+/* Reorder (assumes existing order: Stock(1), Repair(2), Sale(3)) */
+#mfS1 .for-line:nth-child(1),
+#mfS1 .for-list > label:nth-child(1){ order: 3 !important; } /* Stock -> last */
+#mfS1 .for-line:nth-child(2),
+#mfS1 .for-list > label:nth-child(2){ order: 2 !important; } /* Repair -> middle */
+#mfS1 .for-line:nth-child(3),
+#mfS1 .for-list > label:nth-child(3){ order: 1 !important; } /* Sale -> first */
+
+/* Checkbox usability: restore native checkbox and ensure clickable */
+#mfS1 input[type="checkbox"]{
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  margin: 0 !important;
+}
+
+/* Make label/row clickable (helps even if checkbox small) */
+#mfS1 .for-line,
+#mfS1 .for-list > label{
+  cursor: pointer !important;
+}
+
+/* Layout of a row: left cluster (checkbox+text) and right input (if any) */
+#mfS1 .for-line,
+#mfS1 .for-list > label{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* If row contains a text input (Sale/Repair), make it stretch to align with other fields */
+#mfS1 .for-line input[type="text"],
+#mfS1 .for-line input[type="search"],
+#mfS1 .for-line input:not([type]),
+#mfS1 .for-list > label input[type="text"],
+#mfS1 .for-list > label input[type="search"]{
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Prevent inputs from looking shorter due to max-width constraints inside FOR */
+#mfS1 .field.for-field input[type="text"],
+#mfS1 .field.for-field input[type="search"],
+#mfS1 .field.for-field input:not([type]){
+  max-width: 100% !important;
+}
