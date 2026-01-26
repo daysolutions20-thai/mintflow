@@ -11,6 +11,129 @@ const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
 const LS_KEY = "qr_proto_db_v1";
 const LS_ADMIN = "qr_proto_admin";
+// PR: Model list (editable)
+const LS_PR_MODEL_LIST = "pr_model_list_v1";
+function loadPrModelList(){
+  try{
+    const raw = localStorage.getItem("pr_model_list_v1");
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function savePrModelList(arr){
+  try{ localStorage.setItem("pr_model_list_v1", JSON.stringify(arr || [])); }catch(e){}
+}
+function ensureDefaultPrModels(){
+  const list = loadPrModelList();
+  if(list.length) return;
+  savePrModelList(["XR280E","XR320E","XR360E"]);
+}
+
+function renderPrModelDropdown(frm){
+  const dd = frm.querySelector('[data-role="prModelDropdown"]');
+  const inp = frm.querySelector('input[name="prModel"]');
+  if(!dd || !inp) return;
+
+  const q = (inp.value || "").trim().toLowerCase();
+  const list = loadPrModelList();
+  const filtered = q ? list.filter(v => String(v).toLowerCase().includes(q)) : list;
+
+  if(!filtered.length){
+    dd.style.display = "none";
+    dd.innerHTML = "";
+    return;
+  }
+
+  dd.innerHTML = filtered.map(v => `
+    <div data-pick-model="${escapeHtml(v)}"
+      style="display:flex; align-items:center; justify-content:space-between; gap:10px;
+             padding:8px 10px; border-radius:10px; cursor:pointer;">
+      <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(v)}</span>
+      <button type="button" data-remove-model="${escapeHtml(v)}"
+        style="border:0; background:transparent; cursor:pointer; padding:0 4px; line-height:1; font-size:16px; opacity:.7">×</button>
+    </div>
+  `).join("");
+
+  dd.style.display = "block";
+
+  // hover effect (inline, no CSS touching)
+  Array.from(dd.children).forEach(row => {
+    row.addEventListener("mouseenter", ()=> row.style.background="rgba(255,135,70,.12)");
+    row.addEventListener("mouseleave", ()=> row.style.background="transparent");
+  });
+}
+
+function hidePrModelDropdown(frm){
+  const dd = frm.querySelector('[data-role="prModelDropdown"]');
+  if(dd){ dd.style.display = "none"; }
+}
+
+function initPrModelManager(frm){
+  if(!frm) return;
+  ensureDefaultPrModels();
+
+  const inp = frm.querySelector('input[name="prModel"]');
+  const dd = frm.querySelector('[data-role="prModelDropdown"]');
+  if(!inp || !dd) return;
+
+  // open on focus / typing
+  inp.addEventListener("focus", () => renderPrModelDropdown(frm));
+  inp.addEventListener("input", () => renderPrModelDropdown(frm));
+
+  // add button
+  frm.addEventListener("click", (e) => {
+    const btnAdd = e.target.closest('[data-action="addPrModel"]');
+    if(btnAdd){
+      const val = (inp.value || "").trim();
+      if(!val) return;
+      const list = loadPrModelList();
+      const exists = list.some(x => String(x).toLowerCase() === val.toLowerCase());
+      if(!exists){
+        list.unshift(val);
+        savePrModelList(list.slice(0, 50));
+      }
+      renderPrModelDropdown(frm);
+      inp.focus();
+      return;
+    }
+
+    const rm = e.target.closest('[data-remove-model]');
+    if(rm){
+      const v = rm.getAttribute("data-remove-model") || "";
+      const list = loadPrModelList().filter(x => String(x).toLowerCase() !== v.toLowerCase());
+      savePrModelList(list);
+      renderPrModelDropdown(frm);
+      e.stopPropagation();
+      return;
+    }
+
+    const pick = e.target.closest('[data-pick-model]');
+    if(pick){
+      const v = pick.getAttribute("data-pick-model") || "";
+      inp.value = v;
+      hidePrModelDropdown(frm);
+      inp.focus();
+      return;
+    }
+  });
+
+  // click outside closes dropdown
+  document.addEventListener("click", (e) => {
+    if(!frm.isConnected) return;
+    if(frm.contains(e.target)) {
+      // click inside but not on the model wrap should still close if needed
+      const wrap = e.target.closest(".prModelWrap");
+      if(!wrap) hidePrModelDropdown(frm);
+      return;
+    }
+    hidePrModelDropdown(frm);
+  }, true);
+
+  // escape closes dropdown
+  inp.addEventListener("keydown", (e) => {
+    if(e.key === "Escape"){ hidePrModelDropdown(frm); inp.blur(); }
+  });
+}
 
 function nowISO(){ return new Date().toISOString(); }
 
@@ -815,637 +938,13 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Model", "รุ่น")}</label>
-          <input class="input" name="item_model" placeholder="XR280E / XR320E ..." />
-        </div>
-      </div>
-      <div class="row row-codeqty">
-        <div class="field">
-          <label>${biLabel("Code", "รหัสสินค้า")}</label>
-          <input class="input" name="item_code" placeholder="ถ้ามี" />
-        </div>
-        <div class="field">
-          <label>${biLabel("QTY", "จำนวน (จำเป็น)")}</label>
-          <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
-        </div>
-        <div class="field">
-          <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus">
-            <input class="input" name="unit" list="unitList" style="flex:1" />
-            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
-        <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
-      </div>
-      <div class="row row-export-attach row-export-only">
-  <div class="field">
-    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-    <div class="exportByRow">
-      <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-    </div>
-  </div>
-</div>
-
-<div class="row row-export-attach row-attach-only">
-  <div class="field">
-    <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
-    <input class="input" name="photos" type="file" accept="image/*" multiple />
-    <div class="subtext" data-ph-list></div>
-
-    <div class="itemControls">
-      <button class="btn btn-danger btn-small" type="button" data-action="delItem">ลบ</button>
-      <button class="btn btn-ghost" type="button" data-action="addItem">+ เพิ่มรายการ</button>
-    </div>
-
-
-  </div>
-</div>
-      </div>
-    `;
-    const _rm = block.querySelector("[data-remove]");
-    if(_rm) _rm.onclick = ()=>{
-      block.remove();
-      renumberItems();
-    };
-    const fileInput = block.querySelector('input[name="photos"]');
-    const phList = block.querySelector("[data-ph-list]");
-    fileInput.onchange = ()=>{
-      const names = Array.from(fileInput.files||[]).map(f=>f.name);
-      phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
-    };
-    // "+" add unit (append to datalist + persist in localStorage)
-    const addUnitBtn = block.querySelector('[data-add-unit]');
-    if(addUnitBtn){
-      addUnitBtn.addEventListener("click", () => {
-        const v = prompt("Add new unit", "");
-        const unit = (v || "").trim();
-        if(!unit) return;
-        const custom = getCustomUnits();
-        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
-        ensureUnitList();
-        const unitInput = block.querySelector('[name="unit"]');
-        if(unitInput) unitInput.value = unit;
-      });
-    }
-
-    itemsEl.appendChild(block);
-  };
-
-  const renumberItems = ()=>{
-    Array.from(itemsEl.children).forEach((c, i)=>{
-      const h3 = c.querySelector("h3");
-      if(h3) h3.textContent = `Item #${i+1}`;
-    });
-  };
-  // Item controls (Add / Delete) - delegated (stable even after re-render)
-  const syncItemControls = ()=>{
-    const cards = $$("#items > .card");
-    cards.forEach((c, i)=>{
-      const controls = c.querySelector(".itemControls");
-      if(!controls) return;
-      controls.style.display = (i === cards.length-1) ? "flex" : "none";
-    });
-  };
-
-  itemsEl.addEventListener("click", (e)=>{
-    const btn = e.target.closest('button[data-action]');
-    if(!btn) return;
-
-    const action = btn.getAttribute("data-action");
-    if(action === "addItem"){
-      addItem();
-      renumberItems();
-      syncItemControls();
-      return;
-    }
-    if(action === "delItem"){
-      const cards = $$("#items > .card");
-      if(cards.length <= 1) return;
-      cards[cards.length-1].remove();
-      renumberItems();
-      syncItemControls();
-      return;
-    }
-  });
-
-
-// FOR: enable detail inputs only when checked
-  const repairChk = $("#forRepairChk");
-  const saleChk = $("#forSaleChk");
-  const repairTxt = $("#forRepairTxt");
-  const saleTxt = $("#forSaleTxt");
-  const syncFor = () => {
-    if(repairChk && repairTxt){
-      repairTxt.disabled = !repairChk.checked;
-      repairTxt.required = !!repairChk.checked;
-      if(!repairChk.checked) repairTxt.value = "";
-    }
-    if(saleChk && saleTxt){
-      saleTxt.disabled = !saleChk.checked;
-      saleTxt.required = !!saleChk.checked;
-      if(!saleChk.checked) saleTxt.value = "";
-    }
-  };
-  if(repairChk) repairChk.addEventListener("change", syncFor);
-  if(saleChk) saleChk.addEventListener("change", syncFor);
-  syncFor();
-
-  $("#btnCancel").onclick = ()=> location.hash = "#/home";
-
-  addItem();
-  renumberItems();
-  syncItemControls();
-
-
-  // v24: Preview + submit confirm flow
-  const submitModal = $("#submitModal");
-  const openSubmitModal = ()=>{
-    if(!submitModal) return true;
-    submitModal.classList.add("is-open");
-    submitModal.setAttribute("aria-hidden","false");
-    return false;
-  };
-  const closeSubmitModal = ()=>{
-    if(!submitModal) return;
-    submitModal.classList.remove("is-open");
-    submitModal.setAttribute("aria-hidden","true");
-  };
-
-  // build preview as "real document" inside modal (FlowAccount-ish, no required enforcement)
-  const renderPreviewFromData = (data)=>{
-    const __pvTarget = $("#previewBody") || $("#preview");
-    if(!__pvTarget) return;
-
-    // Inject preview-doc CSS once (scoped to .mfPreviewDoc*)
-    (function injectPreviewDocCSS(){
-      if(document.querySelector('style[data-mintflow="preview-doc"]')) return;
-      const css = `
-        .mfPreviewDocPaper{
-          width: 794px; max-width: 100%;
-          margin: 0 auto;
-          background:#fff;
-          border: 1px solid rgba(0,0,0,.08);
-          border-radius: 14px;
-          padding: 18px 18px 16px;
-          box-shadow: 0 10px 28px rgba(0,0,0,.10);
-          color:#111;
-        }
-        .mfPreviewDocHeader{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px;}
-        .mfPreviewDocTitle{font-weight:900;letter-spacing:.3px;font-size:18px;line-height:1.1;margin:0;}
-        .mfPreviewDocMeta{font-size:12px;color:rgba(0,0,0,.62);line-height:1.3;}
-        .mfPreviewDocGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
-        .mfPreviewDocBlock{padding:10px 12px;border:1px solid rgba(0,0,0,.08);border-radius:12px;}
-        .mfPreviewDocBlock h3{margin:0 0 8px;font-size:12px;letter-spacing:.2px;color:rgba(0,0,0,.55);}
-        .mfPreviewDocLine{display:flex;gap:8px;line-height:1.25;margin:6px 0;font-size:13px;}
-        .mfPreviewDocLine b{min-width:92px;display:inline-block;color:rgba(0,0,0,.72);}
-        .mfPreviewDocNote{white-space:pre-wrap;}
-        .mfPreviewDocTable{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;}
-        .mfPreviewDocTable th,.mfPreviewDocTable td{border:1px solid rgba(0,0,0,.10);padding:6px 7px;vertical-align:top;}
-        .mfPreviewDocTable th{background:rgba(0,0,0,.035);text-align:left;font-weight:800;color:rgba(0,0,0,.72);}
-        .mfPreviewDocFooter{margin-top:10px;font-size:12px;color:rgba(0,0,0,.55);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-        .mfPreviewDocPill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed rgba(255,153,102,.55);background:rgba(255,153,102,.08);border-radius:999px;font-weight:800;color:#c23b22;}
-        @media (max-width: 980px){
-          .mfPreviewDocGrid{grid-template-columns:1fr;}
-        }
-        @media print{
-          body *{visibility:hidden !important;}
-          #previewModal, #previewModal *{visibility:visible !important;}
-          #previewModal{position:static !important; inset:auto !important;}
-          #previewModal .mfModal__backdrop{display:none !important;}
-          #previewModal .mfModal__panel{position:static !important; left:auto !important; top:auto !important; transform:none !important; box-shadow:none !important; width:100% !important; padding:0 !important;}
-          #previewModal .row, #previewModal .hr{display:none !important;} /* hide modal chrome */
-          .mfPreviewDocPaper{border:none !important; box-shadow:none !important; padding:0 !important;}
-        }
-      `;
-      const style = document.createElement("style");
-      style.setAttribute("data-mintflow","preview-doc");
-      style.textContent = css;
-      document.head.appendChild(style);
-    })();
-
-    const val = (v)=> (v==null || String(v).trim()==="" ? "" : String(v));
-    const line = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div>${escapeHtml(v)}</div></div>` : "";
-    const noteLine = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div class="mfPreviewDocNote">${escapeHtml(v)}</div></div>` : "";
-
-    const docDate = val(data.docDate);
-    const urgency = val(data.urgency);
-    const project = val(data.project);
-    const requester = val(data.requester);
-    const phone = val(data.phone);
-    const forMode = val(data.forMode || data.for); // tolerate legacy key
-    const note = val(data.note);
-    const exportBy = Array.isArray(data.exportBy) ? data.exportBy.filter(Boolean) : (val(data.exportBy) ? [val(data.exportBy)] : []);
-    const attachCount = data.attachCount != null ? String(data.attachCount) : "";
-
-    const items = Array.isArray(data.items) ? data.items : [];
-    const itemsRows = items.map((it, i)=>{
-      const c = (x)=> escapeHtml(val(x));
-      return `
-        <tr>
-          <td style="width:34px">${i+1}</td>
-          <td>${c(it.name)}</td>
-          <td>${c(it.model)}</td>
-          <td>${c(it.code)}</td>
-          <td style="width:70px">${c(it.qty)}</td>
-          <td style="width:80px">${c(it.unit)}</td>
-          <td>${c(it.detail)}</td>
-        </tr>
-      `;
-    }).join("");
-
-    __pvTarget.innerHTML = `
-      <div class="mfPreviewDocPaper" id="mfPreviewDocPaper">
-        <div class="mfPreviewDocHeader">
-          <div>
-            <div class="mfPreviewDocTitle">Quotation Request</div>
-            <div class="mfPreviewDocMeta">Preview only (ยังไม่ส่งจริง)</div>
-          </div>
-          <div class="mfPreviewDocMeta" style="text-align:right">
-            ${docDate ? `Doc Date: ${escapeHtml(docDate)}<br>` : ``}
-            ${urgency ? `Urgency: ${escapeHtml(urgency)}<br>` : ``}
-            ${data.docNo ? `Doc No: ${escapeHtml(data.docNo)}<br>` : ``}
-          </div>
-        </div>
-
-        <div class="mfPreviewDocGrid">
-          <div class="mfPreviewDocBlock">
-            <h3>Section 1</h3>
-            ${line("Project", project)}
-            ${line("Requester", requester)}
-            ${line("Phone", phone)}
-            ${line("FOR", forMode)}
-            ${noteLine("Note", note)}
-          </div>
-
-          <div class="mfPreviewDocBlock">
-            <h3>Section 2</h3>
-            ${exportBy.length ? `<div class="mfPreviewDocLine"><b>Export By</b><div>${escapeHtml(exportBy.join(", "))}</div></div>` : ``}
-            ${attachCount ? line("Attach", attachCount) : ``}
-            <div class="mfPreviewDocLine"><b>Items</b><div>${items.length} รายการ</div></div>
-            <div class="mfPreviewDocPill" style="margin-top:10px;">ตรวจสอบก่อน Submit</div>
-          </div>
-        </div>
-
-        ${items.length ? `
-          <table class="mfPreviewDocTable" aria-label="Items table">
-            <thead>
-              <tr>
-                <th style="width:34px">#</th>
-                <th>Name</th>
-                <th>Model</th>
-                <th>Code</th>
-                <th style="width:70px">QTY</th>
-                <th style="width:80px">Unit</th>
-                <th>Detail</th>
-              </tr>
-            </thead>
-            <tbody>${itemsRows}</tbody>
-          </table>
-        ` : `<div class="mfPreviewDocFooter"><div>ยังไม่มีรายการ Items</div></div>`}
-
-        <div class="mfPreviewDocFooter">
-          <div>${requester ? `Prepared by: ${escapeHtml(requester)}` : ``}</div>
-          <div>${nowISO ? `Generated: ${escapeHtml(nowISO().slice(0,19).replace("T"," "))}` : ``}</div>
-        </div>
-      </div>
-    `;
-
-    $("#previewModal")?.classList.add("is-open");
-  };
-
-  const collectQRFromForm = ({strict=true}={}) => {
-    const form = $("#frmCreate");
-    if(!form) throw new Error("Form not ready");
-
-    const getFormVal = (name)=>{
-      const el = form.elements ? form.elements[name] : null;
-      return (el && typeof el.value === "string") ? el.value : (el && el.value != null ? String(el.value) : "");
-    };
-    const getTrim = (name)=> (getFormVal(name) || "").trim();
-
-    const requester = getTrim("requester");
-    const phone = getTrim("phone");
-
-    const itemsBlocks = itemsEl ? Array.from(itemsEl.children) : [];
-    const items = itemsBlocks.map((blk, idx)=>{
-      const q = (sel)=> blk ? blk.querySelector(sel) : null;
-      const v = (sel)=> {
-        const el = q(sel);
-        return el && el.value != null ? String(el.value) : "";
-      };
-      const t = (sel)=> (v(sel) || "").trim();
-
-      const name = t('input[name="item_name"]');
-      const model = t('input[name="item_model"]');
-      const code = t('input[name="item_code"]');
-
-      const qtyRaw = v('input[name="qty"]');
-      const qty = Number(qtyRaw || 0);
-
-      // unit can be select or input; always query by [name="unit"]
-      const unit = (t('[name="unit"]') || "");
-
-      const detailEl = q('textarea[name="detail"], input[name="detail"]');
-      const detail = (detailEl && detailEl.value != null ? String(detailEl.value) : "").trim();
-
-      const sea = !!q('input[name="exportSea"]')?.checked;
-      const land = !!q('input[name="exportLand"]')?.checked;
-      const air = !!q('input[name="exportAir"]')?.checked;
-
-      const exportParts = [];
-      if(sea) exportParts.push("By Sea");
-      if(land) exportParts.push("By Land");
-      if(air) exportParts.push("By Air");
-
-      const remarkInput = q('input[name="remark"]');
-      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput && remarkInput.value != null ? String(remarkInput.value) : "").trim());
-
-      const photosInput = q('input[name="photos"]');
-      const photos = photosInput && photosInput.files ? Array.from(photosInput.files).map(f=>f.name) : [];
-
-      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos, exportBy: exportParts };
-    });
-
-    const forListEl = $("#forList");
-    const forBy = forListEl ? Array.from(forListEl.querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value) : [];
-
-    return {
-      docDate: getFormVal("docDate"),
-      urgency: getFormVal("urgency"),
-      project: getTrim("project"),
-      subject: getTrim("subject"),
-      requester, phone,
-      forBy,
-      note: getTrim("note"),
-      items
-    };
-  };
-
-
-  // Helpers: treat a completely blank form as "no preview"
-  // We consider "blank" = user hasn't typed anything meaningful.
-  // Default values like docDate, urgency, qty=1, unit default don't count as meaningful.
-  const isAllEmptyQR = (d)=>{
-    if(!d) return true;
-
-    const anyTop = !!((d.project||"").trim() || (d.subject||"").trim() || (d.requester||"").trim() || (d.phone||"").trim() || (d.note||"").trim());
-    const anyFor = Array.isArray(d.forBy) && d.forBy.length>0;
-
-    const anyItems = Array.isArray(d.items) && d.items.some(it=>{
-      const hasText = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim());
-      const hasRemark = !!((it.remark||"").trim());
-      const hasPhotos = Array.isArray(it.photos) && it.photos.length>0;
-      const hasExport = Array.isArray(it.exportBy) && it.exportBy.length>0;
-      // qty/unit alone doesn't count
-      return hasText || hasRemark || hasPhotos || hasExport;
-    });
-
-    return !(anyTop || anyFor || anyItems);
-  };
-
-
-
-  // Wire Preview button
-  const btnPreview = $("#btnPreview");
-  if(btnPreview){
-    btnPreview.onclick = ()=>{
-      try{
-        const data = collectQRFromForm({strict:false});
-        if(isAllEmptyQR(data)){
-          toast("กรุณากรอกข้อมูลก่อนพรีวิว");
-          // try focus requester field if exists
-          const f = $("#frmCreate");
-          if(f && f.requester) f.requester.focus();
-          return;
-        }
-        renderPreviewFromData(data);
-        toast("เปิดพรีวิวแล้ว");
-      }catch(err){
-        toast(err?.message || "Preview error");
-      }
-    };
-  }
-
-  // Modal wiring
-  if(submitModal){
-    submitModal.addEventListener("click", (ev)=>{
-      const t = ev.target;
-      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
-    });
-  }
-
-  const previewModal = $("#previewModal");
-  const closePreviewModal = ()=> previewModal?.classList.remove("is-open");
-  if(previewModal){
-    previewModal.addEventListener("click",(ev)=>{
-      const t = ev.target;
-      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closePreviewModal(); }
-    });
-  }
-  const btnClosePreview = $("#btnClosePreview");
-  if(btnClosePreview) btnClosePreview.onclick = ()=> closePreviewModal();
-
-
-  const btnPrintPreview = $("#btnPrintPreview");
-  if(btnPrintPreview){
-    btnPrintPreview.onclick = ()=>{
-      try{
-        // print the preview document only
-        $("#previewModal")?.classList.add("is-open");
-        window.print();
-      }catch(e){
-        toast("Print error");
-      }
-    };
-  }
-
-
-  const btnCancelSubmit = $("#btnCancelSubmit");
-  if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
-
-  $("#frmCreate").onsubmit = (e)=>{
-    e.preventDefault();
-    // show Preview reminder before submit
-    openSubmitModal();
-  };
-
-  // Confirm submit -> run the original submit logic
-  const btnConfirmSubmit = $("#btnConfirmSubmit");
-  if(btnConfirmSubmit){
-    btnConfirmSubmit.onclick = ()=>{
-      closeSubmitModal();
-      const form = $("#frmCreate");
-          const requester = form.requester.value.trim();
-          const phone = form.phone.value.trim();
-          if(!requester || !phone){
-            toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
-            return;
-          }
-
-          const itemBlocks = Array.from(itemsEl.children);
-          if(!itemBlocks.length){
-            toast("ต้องมีอย่างน้อย 1 รายการ");
-            return;
-          }
-
-          const items = itemBlocks.map((blk, idx)=>{
-            const name = blk.querySelector('input[name="item_name"]').value.trim();
-            const model = blk.querySelector('input[name="item_model"]').value.trim();
-            const code = blk.querySelector('input[name="item_code"]').value.trim();
-            const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
-            const unit = blk.querySelector('[name="unit"]').value.trim();
-            const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
-            const detail = (detailEl ? detailEl.value : "").trim();
-
-            // Export By (checkboxes) -> store into remark (backward compatible)
-            const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
-            const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
-            const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
-            const exportParts = [];
-            if(sea) exportParts.push("By Sea");
-            if(land) exportParts.push("By Land");
-            if(air) exportParts.push("By Air");
-
-            const remarkInput = blk.querySelector('input[name="remark"]');
-            const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput ? remarkInput.value : "").trim());
-            const photos = Array.from(blk.querySelector('input[name="photos"]').files || []).map(f=>f.name);
-
-            if(!name || !(qty > 0)){
-              throw new Error(`รายการที่ ${idx+1} ต้องมี Name และ QTY>0`);
-            }
-            return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos };
-          });
-
-          try{
-            items.forEach((it, i)=>{
-              if(!it.name || !(it.qty>0) || !it.unit) throw new Error(`รายการที่ ${i+1} ไม่ครบ`);
-            });
-          }catch(err){
-            toast(err.message);
-            return;
-          }
-
-          const docDate = form.docDate.value;
-          const docNo = newDocNo("QR", docDate);
-          const db = loadDB();
-          db.qr = db.qr || [];
-
-          const reqObj = {
-            kind: "QR",
-            id: nanoid(12),
-            docNo,
-            docDate,
-            project: form.project.value.trim(),
-            requester,
-            phone,
-            forStock: !!form.forStock?.checked,
-            forRepair: !!form.forRepair?.checked,
-            forRepairTxt: (form.forRepairTxt?.value || "").trim(),
-            forSale: !!form.forSale?.checked,
-            forSaleTxt: (form.forSaleTxt?.value || "").trim(),
-            urgency: form.urgency.value,
-            note: form.note.value.trim(),
-            status: "Submitted",
-            editToken: nanoid(24),
-            createdAt: nowISO(),
-            updatedAt: nowISO(),
-            items: items.map(it=> ({...it, photos: it.photos.map(n=> ({ name:n, addedAt: nowISO() }))})),
-            files: { quotation: [], po: [], shipping: [] },
-            activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
-    };
-  }
-
-    db.qr.unshift(reqObj);
-    saveDB(db);
-
-    $("#preview").innerHTML = `
-      <div class="pill">สร้างคำขอสำเร็จ: <b class="mono">${docNo}</b></div>
-      <div class="hr"></div>
-      <div><b>Project:</b> ${escapeHtml(reqObj.project||"-")}</div>
-      <div><b>Requester:</b> ${escapeHtml(reqObj.requester)} (${escapeHtml(reqObj.phone)})</div>
-      <div><b>Items:</b> ${reqObj.items.length}</div>
-      <div class="hr"></div>
-      <button class="btn btn-primary" id="btnGoDetail">เปิดเคสนี้</button>
-    `;
-
-    $("#btnGoDetail").onclick = ()=> location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-    toast("สร้าง QR สำเร็จ: " + docNo);
-  };
-}
-
-function renderCreatePR(el){
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
-  const today = new Date().toISOString().slice(0,10);
-
-  el.innerHTML = `    <div class="grid cols-2 pr-cols">
-      <!-- LEFT: PR Header / Meta -->
-      <div class="card">
-        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
-        <div class="subtext">* โปรโตไทป์นี้บันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตา/โฟลว์</div>
-        <div class="hr"></div>
-
-        <form class="form" id="frmCreatePR">
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" value="${today}" />
-            </div>
-            <div class="field">
-              <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
-              <select class="input" name="subject" required>
-                <option value="">-- Select --</option>
-                <option value="Petty cash">Petty cash</option>
-                <option value="Work order">Work order</option>
-              </select>
-            </div>
-                        <div class="field">
-              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select class="input" name="urgency">
-                <option>Normal</option>
-                <option>Urgent</option>
-                <option>Very Urgent</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("For job", "ใช้กับงาน")}</label>
-              <select class="input" name="forJob" required>
-                <option value="">-- Select --</option>
-                <option value="HDD">HDD</option>
-                <option value="Rental">Rental</option>
-                <option value="EXT-RP (งานนอก)">EXT-RP (งานนอก)</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          <div class="field">
-              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
-            </div>
-          </div>
-
-          
-          <div class="row">
-            <div class="field">
-              
-<label>${biLabel("Model", "รุ่น")}</label>
-<div class="inputPlus">
-  <input class="input" id="prModelInput" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" autocomplete="off" />
-  <button type="button" class="miniBtn" data-add-prmodel title="Add model" aria-label="Add model">+</button>
-</div>
-<datalist id="prModelList">
-  <option value="XR280E"></option>
-  <option value="XR320E"></option>
-  <option value="XR360E"></option>
-</datalist>
-<div class="chipRow" id="prModelChips" aria-label="Model list"></div>
-
+              <div class="prModelWrap" style="position:relative">
+                <div style="display:flex; gap:8px; align-items:center">
+                  <input class="input" name="prModel" placeholder="เลือกหรือพิมพ์เพิ่มเอง" style="flex:1; min-width:0" autocomplete="off" />
+                  <button type="button" class="btn" data-action="addPrModel" style="padding:10px 14px; line-height:1">+</button>
+                </div>
+                <div data-role="prModelDropdown" style="position:absolute; left:0; right:0; top:100%; margin-top:6px; background:#fff; border:1px solid rgba(0,0,0,.10); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.08); padding:6px; display:none; z-index:50; max-height:240px; overflow:auto"></div>
+              </div>
             </div>
             <div class="field">
               <label>${biLabel("S/N", "S/N")}</label>
@@ -1530,94 +1029,7 @@ function renderCreatePR(el){
     $("#prGrandTotal").textContent = fmt(sum);
   };
 
-  
-  // ===== PR Model: add/remove list (same idea as "Unit +" UI) =====
-  const PR_MODEL_KEY = "mf_pr_models_v1";
-  const PR_MODEL_DEFAULT = ["XR280E","XR320E","XR360E"];
-
-  const prModelNorm = (s)=> (s||"").trim().replace(/\s+/g," ");
-  const prModelUniq = (arr)=> Array.from(new Set((arr||[]).map(prModelNorm).filter(Boolean)));
-
-  const loadPrModels = ()=>{
-    try{
-      const raw = localStorage.getItem(PR_MODEL_KEY);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? prModelUniq(arr) : [];
-    }catch(e){ return []; }
-  };
-  const savePrModels = (arr)=>{
-    try{ localStorage.setItem(PR_MODEL_KEY, JSON.stringify(prModelUniq(arr))); }catch(e){}
-  };
-
-  const prModelsInit = prModelUniq([...PR_MODEL_DEFAULT, ...loadPrModels()]);
-  savePrModels(prModelsInit);
-
-  const prModelInput = $("#prModelInput");
-  const prModelList = $("#prModelList");
-  const prModelChips = $("#prModelChips");
-  const prModelAddBtn = $('[data-add-prmodel]');
-
-  const renderPrModelUI = (models)=>{
-    if(prModelList){
-      prModelList.innerHTML = models.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
-    }
-    if(prModelChips){
-      prModelChips.innerHTML = models.map(v=>`
-        <span class="chip" data-chip="${escapeHtml(v)}">
-          <span class="chipText">${escapeHtml(v)}</span>
-          <button type="button" class="chipX" data-del="${escapeHtml(v)}" aria-label="Remove ${escapeHtml(v)}">×</button>
-        </span>
-      `).join("");
-    }
-  };
-
-  let prModels = prModelsInit.slice();
-  renderPrModelUI(prModels);
-
-  const addPrModel = ()=>{
-    const v = prModelNorm(prModelInput ? prModelInput.value : "");
-    if(!v) return;
-    if(!prModels.includes(v)){
-      prModels.push(v);
-      prModels = prModelUniq(prModels);
-      savePrModels(prModels);
-      renderPrModelUI(prModels);
-    }
-    if(prModelInput) prModelInput.value = "";
-  };
-
-  const delPrModel = (v)=>{
-    const nv = prModelNorm(v);
-    if(!nv) return;
-    prModels = prModels.filter(x=>x!==nv);
-    // keep at least defaults
-    PR_MODEL_DEFAULT.forEach(d=>{ if(!prModels.includes(d)) prModels.unshift(d); });
-    prModels = prModelUniq(prModels);
-    savePrModels(prModels);
-    renderPrModelUI(prModels);
-  };
-
-  if(prModelAddBtn){
-    prModelAddBtn.addEventListener("click", addPrModel);
-  }
-  if(prModelInput){
-    prModelInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){
-        e.preventDefault();
-        addPrModel();
-      }
-    });
-  }
-  if(prModelChips){
-    prModelChips.addEventListener("click", (e)=>{
-      const btn = e.target.closest("[data-del]");
-      if(!btn) return;
-      delPrModel(btn.getAttribute("data-del"));
-    });
-  }
-  // ================================================================
-const addItem = ()=>{
+  const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
@@ -1720,6 +1132,8 @@ const addItem = ()=>{
 
   addItem();
 
+  initPrModelManager($("#frmCreatePR"));
+
   $("#frmCreatePR").onsubmit = (e)=>{
     e.preventDefault();
     const form = e.target;
@@ -1766,6 +1180,10 @@ const addItem = ()=>{
       docDate,
       subject: form.subject.value.trim(),
       forJob: form.forJob.value.trim(),
+      forCustomer: (form.forCustomer?.value || "").trim(),
+      urgency: (form.urgency?.value || "").trim(),
+      prModel: (form.prModel?.value || "").trim(),
+      prSN: (form.prSN?.value || "").trim(),
       requester,
       phone,
       remark: form.remark.value.trim(),
