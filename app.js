@@ -11,6 +11,80 @@ const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
 const LS_KEY = "qr_proto_db_v1";
 const LS_ADMIN = "qr_proto_admin";
+// PR: Model list (editable)
+const LS_PR_MODEL_LIST = "pr_model_list_v1";
+function loadPrModelList(){
+  try{
+    const raw = localStorage.getItem(LS_PR_MODEL_LIST);
+    const arr = raw ? JSON.parse(raw) : null;
+    if(Array.isArray(arr) && arr.length) return arr.map(s=>String(s).trim()).filter(Boolean);
+  }catch(e){}
+  return ["XR280E","XR320E","XR360E"];
+}
+function savePrModelList(list){
+  try{ localStorage.setItem(LS_PR_MODEL_LIST, JSON.stringify(list)); }catch(e){}
+}
+function renderPrModelUI(frm){
+  const dl = frm.querySelector("#prModelList");
+  const tags = frm.querySelector('[data-role="prModelTags"]');
+  if(!dl || !tags) return;
+
+  const list = loadPrModelList();
+  dl.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
+
+  // tags (click to remove)
+  tags.innerHTML = list.map(v => (
+    `<span class="chip" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid #f0c7a6; background:#fff; font-size:12px">
+      <span>${escapeHtml(v)}</span>
+      <button type="button" data-remove-model="${escapeHtml(v)}"
+        style="border:0; background:transparent; cursor:pointer; padding:0 2px; line-height:1; font-size:14px">×</button>
+    </span>`
+  )).join("");
+}
+function initPrModelManager(frm){
+  if(!frm) return;
+  renderPrModelUI(frm);
+
+  frm.addEventListener("click", (e) => {
+    const btnAdd = e.target.closest('[data-action="addPrModel"]');
+    if(btnAdd){
+      const inp = frm.querySelector('input[name="prModel"]');
+      const val = (inp?.value || "").trim();
+      if(!val) return;
+      const list = loadPrModelList();
+      const exists = list.some(x => x.toLowerCase() === val.toLowerCase());
+      if(!exists){
+        list.push(val);
+        savePrModelList(list);
+        renderPrModelUI(frm);
+      }
+      // keep value as-is
+      return;
+    }
+    const rm = e.target.closest("[data-remove-model]");
+    if(rm){
+      const v = rm.getAttribute("data-remove-model");
+      const list = loadPrModelList().filter(x => x !== v);
+      savePrModelList(list.length ? list : ["XR280E","XR320E","XR360E"]);
+      renderPrModelUI(frm);
+      const inp = frm.querySelector('input[name="prModel"]');
+      if(inp && inp.value.trim() === v) inp.value = "";
+    }
+  });
+
+  // Enter to add
+  const inp = frm.querySelector('input[name="prModel"]');
+  if(inp){
+    inp.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        const btn = frm.querySelector('[data-action="addPrModel"]');
+        btn?.click();
+      }
+    });
+  }
+}
+
 
 function nowISO(){ return new Date().toISOString(); }
 
@@ -918,7 +992,8 @@ const itemsEl = $("#items");
 
     const action = btn.getAttribute("data-action");
     if(action === "addItem"){
-      addItem();
+  addItem();
+  initPrModelManager($("#frmCreatePR"));
       renumberItems();
       syncItemControls();
       return;
@@ -1434,12 +1509,12 @@ function renderCreatePR(el){
           <div class="row">
             <div class="field">
               <label>${biLabel("Model", "รุ่น")}</label>
-              <input class="input" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" />
-              <datalist id="prModelList">
-                <option value="XR280E"></option>
-                <option value="XR320E"></option>
-                <option value="XR360E"></option>
-              </datalist>
+              <div style="display:flex; gap:8px; align-items:center">
+                <input class="input" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" style="flex:1; min-width:0" />
+                <button type="button" class="btn" data-action="addPrModel" style="padding:10px 14px; line-height:1">+</button>
+              </div>
+              <div data-role="prModelTags" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px"></div>
+              <datalist id="prModelList"></datalist>
             </div>
             <div class="field">
               <label>${biLabel("S/N", "S/N")}</label>
@@ -1673,6 +1748,10 @@ function renderCreatePR(el){
       docDate,
       subject: form.subject.value.trim(),
       forJob: form.forJob.value.trim(),
+      forCustomer: (form.forCustomer?.value || "").trim(),
+      urgency: (form.urgency?.value || "").trim(),
+      prModel: (form.prModel?.value || "").trim(),
+      prSN: (form.prSN?.value || "").trim(),
       requester,
       phone,
       remark: form.remark.value.trim(),
