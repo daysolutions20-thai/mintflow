@@ -1400,7 +1400,7 @@ function renderCreatePR(el){
               <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
-              <label>${biLabel("Subject / Project Name", "หัวข้อ / ชื่องาน")}</label>
+              <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
               <select class="input" name="subject" required>
                 <option value="">-- Select --</option>
                 <option value="Petty cash">Petty cash</option>
