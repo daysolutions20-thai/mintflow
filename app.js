@@ -1386,8 +1386,8 @@ function renderCreatePR(el){
   setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
 
-  el.innerHTML = `
-    <div class="grid cols-2">
+  el.innerHTML = `    <div class="grid cols-2 pr-cols">
+      <!-- LEFT: PR Header / Meta -->
       <div class="card">
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
         <div class="subtext">* โปรโตไทป์นี้บันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตา/โฟลว์</div>
@@ -1437,15 +1437,6 @@ function renderCreatePR(el){
           </div>
 
           <div class="hr"></div>
-          <div class="section-title">
-            <h2 style="margin:0; font-size: 14px">PR Items</h2>
-            <div class="row tight">
-              <button class="btn btn-ghost" type="button" id="btnAddPRItem">+ เพิ่มรายการ</button>
-            </div>
-          </div>
-          <div id="prItems"></div>
-
-          <div class="hr"></div>
           <div class="grid cols-3" style="gap:10px">
             <div class="field">
               <label>${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
@@ -1470,24 +1461,27 @@ function renderCreatePR(el){
         </form>
       </div>
 
+      <!-- RIGHT: PR Items -->
       <div class="card">
         <div class="section-title">
-          <h2 style="margin:0; font-size: 16px">Live Total (เดโม)</h2>
-          <div class="subtext">รวมเงินจะคำนวณจาก QTY × Price/Unit</div>
+          <h2 style="margin:0; font-size: 14px">PR Items</h2>
+          <div class="row tight">
+            <button class="btn btn-ghost" type="button" id="btnAddPRItem">+ เพิ่มรายการ</button>
+          </div>
         </div>
+        <div id="prItems"></div>
+
         <div class="hr"></div>
-        <div class="kpi">
+        <div class="kpi" style="margin-top:0">
           <div>
             <div class="num" id="prGrandTotal">0.00</div>
             <div class="label">Grand Total (THB)</div>
           </div>
           <div class="chip">Auto</div>
         </div>
-        <div class="hr"></div>
-        <div id="prPreview" class="subtext">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส PR</div>
+        <div id="prPreview" class="subtext" style="margin-top:10px">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส PR</div>
       </div>
-    </div>
-  `;
+    </div>`;
 
   const itemsEl = $("#prItems");
   const fmt = (n)=> (Number(n||0)).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
