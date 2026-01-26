@@ -1407,7 +1407,17 @@ function renderCreatePR(el){
                 <option value="Work order">Work order</option>
               </select>
             </div>
+                        <div class="field">
+              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+              <select class="input" name="urgency">
+                <option>Normal</option>
+                <option>Urgent</option>
+                <option>Very Urgent</option>
+              </select>
+            </div>
+          </div>
 
+          <div class="row">
             <div class="field">
               <label>${biLabel("For job", "ใช้กับงาน")}</label>
               <select class="input" name="forJob" required>
