@@ -660,24 +660,7 @@ function renderCreateQR(el){
             </div>
             </div>
 
-          
           <div class="row">
-            <div class="field">
-              <label>${biLabel("Model", "รุ่น")}</label>
-              <input class="input" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" />
-              <datalist id="prModelList">
-                <option value="XR280E"></option>
-                <option value="XR320E"></option>
-                <option value="XR360E"></option>
-              </datalist>
-            </div>
-            <div class="field">
-              <label>${biLabel("S/N", "S/N")}</label>
-              <input class="input" name="prSN" placeholder="Serial Number" />
-            </div>
-          </div>
-
-<div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
@@ -1447,7 +1430,24 @@ function renderCreatePR(el){
             </div>
           </div>
 
+          
           <div class="row">
+            <div class="field">
+              <label>${biLabel("Model", "รุ่น")}</label>
+              <input class="input" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" />
+              <datalist id="prModelList">
+                <option value="XR280E"></option>
+                <option value="XR320E"></option>
+                <option value="XR360E"></option>
+              </datalist>
+            </div>
+            <div class="field">
+              <label>${biLabel("S/N", "S/N")}</label>
+              <input class="input" name="prSN" placeholder="Serial Number" />
+            </div>
+          </div>
+
+<div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
