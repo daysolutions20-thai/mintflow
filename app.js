@@ -11,80 +11,6 @@ const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
 const LS_KEY = "qr_proto_db_v1";
 const LS_ADMIN = "qr_proto_admin";
-// PR: Model list (editable)
-const LS_PR_MODEL_LIST = "pr_model_list_v1";
-function loadPrModelList(){
-  try{
-    const raw = localStorage.getItem(LS_PR_MODEL_LIST);
-    const arr = raw ? JSON.parse(raw) : null;
-    if(Array.isArray(arr) && arr.length) return arr.map(s=>String(s).trim()).filter(Boolean);
-  }catch(e){}
-  return ["XR280E","XR320E","XR360E"];
-}
-function savePrModelList(list){
-  try{ localStorage.setItem(LS_PR_MODEL_LIST, JSON.stringify(list)); }catch(e){}
-}
-function renderPrModelUI(frm){
-  const dl = frm.querySelector("#prModelList");
-  const tags = frm.querySelector('[data-role="prModelTags"]');
-  if(!dl || !tags) return;
-
-  const list = loadPrModelList();
-  dl.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
-
-  // tags (click to remove)
-  tags.innerHTML = list.map(v => (
-    `<span class="chip" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; border:1px solid #f0c7a6; background:#fff; font-size:12px">
-      <span>${escapeHtml(v)}</span>
-      <button type="button" data-remove-model="${escapeHtml(v)}"
-        style="border:0; background:transparent; cursor:pointer; padding:0 2px; line-height:1; font-size:14px">×</button>
-    </span>`
-  )).join("");
-}
-function initPrModelManager(frm){
-  if(!frm) return;
-  renderPrModelUI(frm);
-
-  frm.addEventListener("click", (e) => {
-    const btnAdd = e.target.closest('[data-action="addPrModel"]');
-    if(btnAdd){
-      const inp = frm.querySelector('input[name="prModel"]');
-      const val = (inp?.value || "").trim();
-      if(!val) return;
-      const list = loadPrModelList();
-      const exists = list.some(x => x.toLowerCase() === val.toLowerCase());
-      if(!exists){
-        list.push(val);
-        savePrModelList(list);
-        renderPrModelUI(frm);
-      }
-      // keep value as-is
-      return;
-    }
-    const rm = e.target.closest("[data-remove-model]");
-    if(rm){
-      const v = rm.getAttribute("data-remove-model");
-      const list = loadPrModelList().filter(x => x !== v);
-      savePrModelList(list.length ? list : ["XR280E","XR320E","XR360E"]);
-      renderPrModelUI(frm);
-      const inp = frm.querySelector('input[name="prModel"]');
-      if(inp && inp.value.trim() === v) inp.value = "";
-    }
-  });
-
-  // Enter to add
-  const inp = frm.querySelector('input[name="prModel"]');
-  if(inp){
-    inp.addEventListener("keydown", (e) => {
-      if(e.key === "Enter"){
-        e.preventDefault();
-        const btn = frm.querySelector('[data-action="addPrModel"]');
-        btn?.click();
-      }
-    });
-  }
-}
-
 
 function nowISO(){ return new Date().toISOString(); }
 
@@ -992,8 +918,7 @@ const itemsEl = $("#items");
 
     const action = btn.getAttribute("data-action");
     if(action === "addItem"){
-  addItem();
-  initPrModelManager($("#frmCreatePR"));
+      addItem();
       renumberItems();
       syncItemControls();
       return;
@@ -1508,13 +1433,19 @@ function renderCreatePR(el){
           
           <div class="row">
             <div class="field">
-              <label>${biLabel("Model", "รุ่น")}</label>
-              <div style="display:flex; gap:8px; align-items:center">
-                <input class="input" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" style="flex:1; min-width:0" />
-                <button type="button" class="btn" data-action="addPrModel" style="padding:10px 14px; line-height:1">+</button>
-              </div>
-              <div data-role="prModelTags" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px"></div>
-              <datalist id="prModelList"></datalist>
+              
+<label>${biLabel("Model", "รุ่น")}</label>
+<div class="inputPlus">
+  <input class="input" id="prModelInput" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" autocomplete="off" />
+  <button type="button" class="miniBtn" data-add-prmodel title="Add model" aria-label="Add model">+</button>
+</div>
+<datalist id="prModelList">
+  <option value="XR280E"></option>
+  <option value="XR320E"></option>
+  <option value="XR360E"></option>
+</datalist>
+<div class="chipRow" id="prModelChips" aria-label="Model list"></div>
+
             </div>
             <div class="field">
               <label>${biLabel("S/N", "S/N")}</label>
@@ -1599,7 +1530,94 @@ function renderCreatePR(el){
     $("#prGrandTotal").textContent = fmt(sum);
   };
 
-  const addItem = ()=>{
+  
+  // ===== PR Model: add/remove list (same idea as "Unit +" UI) =====
+  const PR_MODEL_KEY = "mf_pr_models_v1";
+  const PR_MODEL_DEFAULT = ["XR280E","XR320E","XR360E"];
+
+  const prModelNorm = (s)=> (s||"").trim().replace(/\s+/g," ");
+  const prModelUniq = (arr)=> Array.from(new Set((arr||[]).map(prModelNorm).filter(Boolean)));
+
+  const loadPrModels = ()=>{
+    try{
+      const raw = localStorage.getItem(PR_MODEL_KEY);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? prModelUniq(arr) : [];
+    }catch(e){ return []; }
+  };
+  const savePrModels = (arr)=>{
+    try{ localStorage.setItem(PR_MODEL_KEY, JSON.stringify(prModelUniq(arr))); }catch(e){}
+  };
+
+  const prModelsInit = prModelUniq([...PR_MODEL_DEFAULT, ...loadPrModels()]);
+  savePrModels(prModelsInit);
+
+  const prModelInput = $("#prModelInput");
+  const prModelList = $("#prModelList");
+  const prModelChips = $("#prModelChips");
+  const prModelAddBtn = $('[data-add-prmodel]');
+
+  const renderPrModelUI = (models)=>{
+    if(prModelList){
+      prModelList.innerHTML = models.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
+    }
+    if(prModelChips){
+      prModelChips.innerHTML = models.map(v=>`
+        <span class="chip" data-chip="${escapeHtml(v)}">
+          <span class="chipText">${escapeHtml(v)}</span>
+          <button type="button" class="chipX" data-del="${escapeHtml(v)}" aria-label="Remove ${escapeHtml(v)}">×</button>
+        </span>
+      `).join("");
+    }
+  };
+
+  let prModels = prModelsInit.slice();
+  renderPrModelUI(prModels);
+
+  const addPrModel = ()=>{
+    const v = prModelNorm(prModelInput ? prModelInput.value : "");
+    if(!v) return;
+    if(!prModels.includes(v)){
+      prModels.push(v);
+      prModels = prModelUniq(prModels);
+      savePrModels(prModels);
+      renderPrModelUI(prModels);
+    }
+    if(prModelInput) prModelInput.value = "";
+  };
+
+  const delPrModel = (v)=>{
+    const nv = prModelNorm(v);
+    if(!nv) return;
+    prModels = prModels.filter(x=>x!==nv);
+    // keep at least defaults
+    PR_MODEL_DEFAULT.forEach(d=>{ if(!prModels.includes(d)) prModels.unshift(d); });
+    prModels = prModelUniq(prModels);
+    savePrModels(prModels);
+    renderPrModelUI(prModels);
+  };
+
+  if(prModelAddBtn){
+    prModelAddBtn.addEventListener("click", addPrModel);
+  }
+  if(prModelInput){
+    prModelInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addPrModel();
+      }
+    });
+  }
+  if(prModelChips){
+    prModelChips.addEventListener("click", (e)=>{
+      const btn = e.target.closest("[data-del]");
+      if(!btn) return;
+      delPrModel(btn.getAttribute("data-del"));
+    });
+  }
+  // ================================================================
+const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
@@ -1748,10 +1766,6 @@ function renderCreatePR(el){
       docDate,
       subject: form.subject.value.trim(),
       forJob: form.forJob.value.trim(),
-      forCustomer: (form.forCustomer?.value || "").trim(),
-      urgency: (form.urgency?.value || "").trim(),
-      prModel: (form.prModel?.value || "").trim(),
-      prSN: (form.prSN?.value || "").trim(),
       requester,
       phone,
       remark: form.remark.value.trim(),
