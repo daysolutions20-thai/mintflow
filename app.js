@@ -658,7 +658,11 @@ function renderCreateQR(el){
               <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
               <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
             </div>
+            <div class="field">
+              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
+              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
             </div>
+          </div>
 
           <div class="row">
             <div class="field">
@@ -1379,267 +1383,295 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
-  const today = new Date().toISOString().slice(0,10);
+  el.innerHTML = `
+  <style>
+    /* PR use same theme/layout as QR (2 columns) */
+    #mfPR .mfLayoutA{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 980px){
+      #mfPR .mfLayoutA{ grid-template-columns: 1fr; }
+    }
+    #mfPR .col{ min-width: 0; }
+    #mfPR .box{
+      background: #fff7ed80;
+      border: 1px solid #fed7aa;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    #mfPR .row{ display:flex; gap: 12px; align-items:flex-start; }
+    #mfPR .row .field{ flex:1; min-width: 0; }
+    #mfPR .field label{ display:block; font-weight:700; font-size:13px; color:#374151; margin-bottom:6px; }
+    #mfPR .sub{ display:block; font-weight:500; font-size:12px; color:#6b7280; margin-top:-4px; }
+    #mfPR .input, #mfPR select, #mfPR textarea{
+      width: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      outline: none;
+    }
+    #mfPR textarea{ min-height: 86px; resize: vertical; }
+    #mfPR .hTitle{
+      margin: 0 0 10px 0;
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+    }
+    #mfPR .hint{ color:#6b7280; font-size:12px; margin-top:4px; }
+    #mfPR .chipRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    #mfPR .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+    }
+    #mfPR .chip button{
+      border:0; background:transparent; cursor:pointer;
+      width: 18px; height: 18px; line-height: 18px;
+      border-radius: 6px;
+      color:#111827;
+    }
+    #mfPR .chip button:hover{ background:#f3f4f6; }
+    #mfPR .btnIcon{
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 900;
+    }
+    #mfPR .btnIcon:hover{ background:#f9fafb; }
+    #mfPR .actions{ display:flex; gap:12px; margin-top: 12px; }
+    #mfPR .actions .btn{ flex:1; }
+  </style>
 
-  el.innerHTML = `    <div class="grid cols-2 pr-cols">
-      <!-- LEFT: PR Header / Meta -->
-      <div class="card">
-        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
-        <div class="subtext">* โปรโตไทป์นี้บันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตา/โฟลว์</div>
-        <div class="hr"></div>
+  <div id="mfPR">
+    <div class="hTitle">Create Purchase Requisition (PR)</div>
+    <div class="hint">* โปรโตไทป์เก็บในกล่องเครื่อง (localStorage) เพื่อดูหน้าตา/โฟลว์</div>
 
-        <form class="form" id="frmCreatePR">
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" value="${today}" />
+    <div class="mfLayoutA">
+      <!-- LEFT -->
+      <div class="col left">
+        <form id="frmCreatePR" autocomplete="off">
+          <div class="box">
+            <div class="row">
+              <div class="field">
+                <label>${biLabel("Doc Date", "วันที่")}</label>
+                <input class="input" name="docDate" type="date" value="${todayISO()}" required />
+              </div>
+              <div class="field">
+                <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
+                <select name="subject" required>
+                  <option value="">-- Select --</option>
+                  <option value="Petty cash">Petty cash</option>
+                  <option value="Work order">Work order</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+                <select name="urgency" required>
+                  <option value="Normal">Normal</option>
+                  <option value="Urgent">Urgent</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
             </div>
-            <div class="field">
-              <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
-              <select class="input" name="subject" required>
-                <option value="">-- Select --</option>
-                <option value="Petty cash">Petty cash</option>
-                <option value="Work order">Work order</option>
-              </select>
+
+            <div class="row" style="margin-top:12px">
+              <div class="field">
+                <label>${biLabel("For job", "ใช้งานงาน")}</label>
+                <select name="forJob" required>
+                  <option value="">-- Select --</option>
+                  <option>Petty cash</option>
+                  <option>Work order</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
+                <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+              </div>
             </div>
-                        <div class="field">
-              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select class="input" name="urgency">
-                <option>Normal</option>
-                <option>Urgent</option>
-                <option>Very Urgent</option>
-              </select>
+
+            <div class="row" style="margin-top:12px">
+              <div class="field">
+                <label>${biLabel("Model", "รุ่น")}</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <input class="input" id="prModelInput" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" />
+                  <button type="button" class="btnIcon" id="btnAddPRModel">+</button>
+                </div>
+                <datalist id="prModelList">
+                  <option value="XR280E"></option>
+                  <option value="XR320E"></option>
+                  <option value="XR360E"></option>
+                </datalist>
+                <input type="hidden" name="prModels" id="prModelsHidden" value="" />
+                <div class="chipRow" id="prModelChips"></div>
+              </div>
+              <div class="field">
+                <label>${biLabel("S/N", "S/N")}</label>
+                <input class="input" name="prSN" placeholder="Serial Number" />
+              </div>
             </div>
           </div>
 
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("For job", "ใช้กับงาน")}</label>
-              <select class="input" name="forJob" required>
-                <option value="">-- Select --</option>
-                <option value="HDD">HDD</option>
-                <option value="Rental">Rental</option>
-                <option value="EXT-RP (งานนอก)">EXT-RP (งานนอก)</option>
-                <option value="Other">Other</option>
-              </select>
+          <div class="box">
+            <div class="row">
+              <div class="field">
+                <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
+                <input class="input" name="requester" required />
+              </div>
+              <div class="field">
+                <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
+                <input class="input" name="phone" required />
+              </div>
             </div>
-          <div class="field">
-              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+
+            <div class="field" style="margin-top:12px">
+              <label>${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
+              <textarea class="input" name="remark" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
             </div>
           </div>
 
-          
-          <div class="row">
-            <div class="field">
-              
-<label>${biLabel("Model", "รุ่น")}</label>
-<div class="inputPlus">
-  <input class="input" id="prModelInput" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" autocomplete="off" />
-  <button type="button" class="miniBtn" data-add-prmodel title="Add model" aria-label="Add model">+</button>
-</div>
-<datalist id="prModelList">
-  <option value="XR280E"></option>
-  <option value="XR320E"></option>
-  <option value="XR360E"></option>
-</datalist>
-<div class="chipRow" id="prModelChips" aria-label="Model list"></div>
+          <div class="box">
+            <div class="row">
+              <div class="field">
+                <label>${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
+                <input class="input" name="preparedBy" placeholder="ชื่อผู้เตรียมเอกสาร" />
+              </div>
+              <div class="field">
+                <label>${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
+                <input class="input" name="orderedBy" placeholder="ชื่อผู้สั่งซื้อ" />
+              </div>
+              <div class="field">
+                <label>${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
+                <input class="input" name="approvedBy" placeholder="ชื่อผู้อนุมัติ" />
+              </div>
+            </div>
 
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Submit &amp; Generate PR</button>
+              <button class="btn" type="button" id="btnCancelPR">Cancel</button>
             </div>
-            <div class="field">
-              <label>${biLabel("S/N", "S/N")}</label>
-              <input class="input" name="prSN" placeholder="Serial Number" />
+
+            <div class="pill" style="margin-top:10px;border:1px dashed #fdba74;background:#fff7ed">
+              เลขเอกสาร: <b class="mono">PRYY-MM.NNN</b> (ตัวอย่าง: PR แค่ Prefix)
             </div>
+            <div id="prPreview" style="margin-top:10px"></div>
           </div>
-
-<div class="row">
-            <div class="field">
-              <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
-              <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
-            </div>
-            <div class="field">
-              <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" placeholder="0812345678" required />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>${biLabel("Remark", "หมายเหตุเพิ่มเติม")}</label>
-            <textarea name="remark" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
-          </div>
-
-          <div class="hr"></div>
-          <div class="grid cols-3" style="gap:10px">
-            <div class="field">
-              <label>${biLabel("Prepared by (optional)", "ผู้จัดทำ (ไม่บังคับ)")}</label>
-              <input class="input" name="preparedBy" placeholder="ชื่อผู้เตรียมเอกสาร" />
-            </div>
-            <div class="field">
-              <label>${biLabel("Order by (optional)", "ผู้สั่งซื้อ (ไม่บังคับ)")}</label>
-              <input class="input" name="orderedBy" placeholder="ชื่อผู้สั่งซื้อ" />
-            </div>
-            <div class="field">
-              <label>${biLabel("Approve by (optional)", "ผู้อนุมัติ (ไม่บังคับ)")}</label>
-              <input class="input" name="approvedBy" placeholder="ชื่อผู้อนุมัติ" />
-            </div>
-          </div>
-
-          <div class="row">
-            <button class="btn btn-primary" type="submit">Submit & Generate PR</button>
-            <button class="btn btn-ghost" type="button" id="btnCancelPR">Cancel</button>
-          </div>
-
-          <div class="pill">เลขเอกสารจะรันเป็น <span class="mono">PRYY-MM.NNN</span> (ต่างจาก QR แค่ Prefix)</div>
         </form>
       </div>
 
-      <!-- RIGHT: PR Items -->
-      <div class="card">
-        <div class="section-title">
-          <h2 style="margin:0; font-size: 14px">PR Items</h2>
-          <div class="row tight">
-            <button class="btn btn-ghost" type="button" id="btnAddPRItem">+ เพิ่มรายการ</button>
+      <!-- RIGHT -->
+      <div class="col right">
+        <div class="box">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div style="font-weight:800">${biLabel("PR Items", "รายการ PR")}</div>
+            <button class="btn" type="button" id="btnAddPRItem">+ เพิ่มรายการ</button>
           </div>
+          <div id="prItems" style="margin-top:12px"></div>
         </div>
-        <div id="prItems"></div>
-
-        <div class="hr"></div>
-        <div class="kpi" style="margin-top:0">
-          <div>
-            <div class="num" id="prGrandTotal">0.00</div>
-            <div class="label">Grand Total (THB)</div>
-          </div>
-          <div class="chip">Auto</div>
-        </div>
-        <div id="prPreview" class="subtext" style="margin-top:10px">กรอกข้อมูลแล้วกด Submit เพื่อสร้างเคส PR</div>
       </div>
-    </div>`;
+    </div>
+  </div>
+  `;
 
-  const itemsEl = $("#prItems");
-  const fmt = (n)=> (Number(n||0)).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
-  const calcTotal = ()=>{
-    let sum = 0;
-    Array.from(itemsEl.children).forEach(blk=>{
-      const qty = Number(blk.querySelector('input[name="qty"]').value||0);
-      const price = Number(blk.querySelector('input[name="price"]').value||0);
-      sum += qty * price;
-      const line = blk.querySelector("[data-line-total]");
-      if(line) line.textContent = fmt(qty*price);
+  // -------- Model add/remove (chips) --------
+  const modelInput = document.getElementById("prModelInput");
+  const chipsEl = document.getElementById("prModelChips");
+  const hidden = document.getElementById("prModelsHidden");
+  const btnAddModel = document.getElementById("btnAddPRModel");
+
+  const getModels = ()=> (hidden.value ? hidden.value.split("|").filter(Boolean) : []);
+  const setModels = (arr)=>{ hidden.value = arr.join("|"); };
+
+  const renderChips = ()=>{
+    const models = getModels();
+    chipsEl.innerHTML = models.map((m, idx)=>`
+      <span class="chip">
+        <span>${escapeHtml(m)}</span>
+        <button type="button" aria-label="remove" data-rm="${idx}">×</button>
+      </span>
+    `).join("");
+    chipsEl.querySelectorAll("[data-rm]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.getAttribute("data-rm"));
+        const arr = getModels();
+        arr.splice(i,1);
+        setModels(arr);
+        renderChips();
+      });
     });
-    $("#prGrandTotal").textContent = fmt(sum);
   };
 
-  
-  // ===== PR Model: add/remove list (same idea as "Unit +" UI) =====
-  const PR_MODEL_KEY = "mf_pr_models_v1";
-  const PR_MODEL_DEFAULT = ["XR280E","XR320E","XR360E"];
-
-  const prModelNorm = (s)=> (s||"").trim().replace(/\s+/g," ");
-  const prModelUniq = (arr)=> Array.from(new Set((arr||[]).map(prModelNorm).filter(Boolean)));
-
-  const loadPrModels = ()=>{
-    try{
-      const raw = localStorage.getItem(PR_MODEL_KEY);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? prModelUniq(arr) : [];
-    }catch(e){ return []; }
-  };
-  const savePrModels = (arr)=>{
-    try{ localStorage.setItem(PR_MODEL_KEY, JSON.stringify(prModelUniq(arr))); }catch(e){}
-  };
-
-  const prModelsInit = prModelUniq([...PR_MODEL_DEFAULT, ...loadPrModels()]);
-  savePrModels(prModelsInit);
-
-  const prModelInput = $("#prModelInput");
-  const prModelList = $("#prModelList");
-  const prModelChips = $("#prModelChips");
-  const prModelAddBtn = $('[data-add-prmodel]');
-
-  const renderPrModelUI = (models)=>{
-    if(prModelList){
-      prModelList.innerHTML = models.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
-    }
-    if(prModelChips){
-      prModelChips.innerHTML = models.map(v=>`
-        <span class="chip" data-chip="${escapeHtml(v)}">
-          <span class="chipText">${escapeHtml(v)}</span>
-          <button type="button" class="chipX" data-del="${escapeHtml(v)}" aria-label="Remove ${escapeHtml(v)}">×</button>
-        </span>
-      `).join("");
-    }
-  };
-
-  let prModels = prModelsInit.slice();
-  renderPrModelUI(prModels);
-
-  const addPrModel = ()=>{
-    const v = prModelNorm(prModelInput ? prModelInput.value : "");
+  const addOneModel = ()=>{
+    const v = (modelInput.value || "").trim();
     if(!v) return;
-    if(!prModels.includes(v)){
-      prModels.push(v);
-      prModels = prModelUniq(prModels);
-      savePrModels(prModels);
-      renderPrModelUI(prModels);
-    }
-    if(prModelInput) prModelInput.value = "";
+    const arr = getModels();
+    if(!arr.includes(v)) arr.push(v);
+    setModels(arr);
+    modelInput.value = "";
+    renderChips();
   };
 
-  const delPrModel = (v)=>{
-    const nv = prModelNorm(v);
-    if(!nv) return;
-    prModels = prModels.filter(x=>x!==nv);
-    // keep at least defaults
-    PR_MODEL_DEFAULT.forEach(d=>{ if(!prModels.includes(d)) prModels.unshift(d); });
-    prModels = prModelUniq(prModels);
-    savePrModels(prModels);
-    renderPrModelUI(prModels);
+  btnAddModel.addEventListener("click", addOneModel);
+  modelInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){ e.preventDefault(); addOneModel(); }
+  });
+
+  renderChips();
+
+  // -------- PR Items (keep original logic) --------
+  const itemsEl = $("#prItems");
+  const fmt = (n)=> (Number(n||0)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const getCustomUnits = ()=> {
+    try{ return JSON.parse(localStorage.getItem("mf_pr_custom_units")||"[]"); }catch(e){ return []; }
+  };
+  const saveCustomUnits = (arr)=> localStorage.setItem("mf_pr_custom_units", JSON.stringify(arr||[]));
+
+  const ensureUnitList = ()=>{
+    // no-op (kept for compatibility; units are in <select>)
   };
 
-  if(prModelAddBtn){
-    prModelAddBtn.addEventListener("click", addPrModel);
-  }
-  if(prModelInput){
-    prModelInput.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){
-        e.preventDefault();
-        addPrModel();
-      }
+  const calcTotal = ()=>{
+    Array.from(itemsEl.children).forEach(block=>{
+      const qty = Number(block.querySelector('input[name="qty"]').value||0);
+      const price = Number(block.querySelector('input[name="price"]').value||0);
+      const t = qty * price;
+      const elT = block.querySelector("[data-line-total]");
+      if(elT) elT.textContent = fmt(t);
     });
-  }
-  if(prModelChips){
-    prModelChips.addEventListener("click", (e)=>{
-      const btn = e.target.closest("[data-del]");
-      if(!btn) return;
-      delPrModel(btn.getAttribute("data-del"));
-    });
-  }
-  // ================================================================
-const addItem = ()=>{
-    const idx = itemsEl.children.length + 1;
+  };
+
+  const addItem = ()=>{
     const block = document.createElement("div");
     block.className = "card";
-    block.style.boxShadow = "none";
-    block.style.marginBottom = "10px";
+    block.style.marginBottom = "12px";
     block.innerHTML = `
-      <div class="section-title">
-        <h3 style="margin:0">Item #${idx}</h3>
-</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h3 style="margin:0;font-weight:800;">Item #${itemsEl.children.length+1}</h3>
+        <button type="button" class="btn" data-remove>ลบ</button>
+      </div>
 
-      <div class="row">
+      <div class="row" style="margin-top:10px">
         <div class="field">
           <label>${biLabel("Code", "รหัส")}</label>
           <input class="input" name="code" placeholder="ถ้ามี" />
         </div>
-        <div class="field" style="flex:2">
+        <div class="field">
           <label>${biLabel("Detail", "รายละเอียด (จำเป็น)")}</label>
           <input class="input" name="detail" placeholder="เช่น DIESEL FOR TEST MACHINE" required />
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" style="margin-top:10px">
         <div class="field">
           <label>${biLabel("QTY", "จำนวน (จำเป็น)")}</label>
           <input class="input" name="qty" type="number" min="0" step="0.01" value="1" required />
@@ -1665,40 +1697,27 @@ const addItem = ()=>{
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-top:10px">
         <label>${biLabel("Attach photos per item", "แนบรูปต่อรายการ")}</label>
         <input class="input" name="photos" type="file" accept="image/*" multiple />
         <div class="subtext">โปรโตไทป์: ยังไม่อัปโหลดจริง แค่โชว์ชื่อไฟล์</div>
         <div class="subtext" data-ph-list></div>
       </div>
     `;
+
     const _rm = block.querySelector("[data-remove]");
     if(_rm) _rm.onclick = ()=>{
       block.remove();
       renumber();
       calcTotal();
     };
+
     const fileInput = block.querySelector('input[name="photos"]');
     const phList = block.querySelector("[data-ph-list]");
     fileInput.onchange = ()=>{
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
-    // "+" add unit (append to datalist + persist in localStorage)
-    const addUnitBtn = block.querySelector('[data-add-unit]');
-    if(addUnitBtn){
-      addUnitBtn.addEventListener("click", () => {
-        const v = prompt("Add new unit", "");
-        const unit = (v || "").trim();
-        if(!unit) return;
-        const custom = getCustomUnits();
-        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
-        ensureUnitList();
-        const unitInput = block.querySelector('[name="unit"]');
-        if(unitInput) unitInput.value = unit;
-      });
-    }
-
 
     ["qty","price"].forEach(k=>{
       block.querySelector(`input[name="${k}"]`).addEventListener("input", calcTotal);
@@ -1718,6 +1737,7 @@ const addItem = ()=>{
   $("#btnAddPRItem").onclick = addItem;
   $("#btnCancelPR").onclick = ()=> location.hash = "#/home";
 
+  // start with 1 item
   addItem();
 
   $("#frmCreatePR").onsubmit = (e)=>{
@@ -1764,8 +1784,12 @@ const addItem = ()=>{
       id: nanoid(12),
       docNo,
       docDate,
-      subject: form.subject.value.trim(),
+      requestType: form.subject.value.trim(),
+      urgency: form.urgency.value.trim(),
       forJob: form.forJob.value.trim(),
+      forCustomer: form.forCustomer.value.trim(),
+      models: (form.prModels ? form.prModels.value : "") ? form.prModels.value.split("|").filter(Boolean) : [],
+      sn: form.prSN.value.trim(),
       requester,
       phone,
       remark: form.remark.value.trim(),
@@ -1790,7 +1814,8 @@ const addItem = ()=>{
     $("#prPreview").innerHTML = `
       <div class="pill">สร้าง PR สำเร็จ: <b class="mono">${docNo}</b></div>
       <div class="hr"></div>
-      <div><b>Subject:</b> ${escapeHtml(prObj.subject||"-")}</div>
+      <div><b>Request Type:</b> ${escapeHtml(prObj.requestType||"-")}</div>
+      <div><b>Urgency:</b> ${escapeHtml(prObj.urgency||"-")}</div>
       <div><b>Requester:</b> ${escapeHtml(prObj.requester)} (${escapeHtml(prObj.phone)})</div>
       <div><b>Items:</b> ${prObj.items.length}</div>
       <div><b>Total:</b> ${fmt(prObj.items.reduce((s,it)=>s+it.total,0))}</div>
