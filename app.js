@@ -658,11 +658,7 @@ function renderCreateQR(el){
               <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
               <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
             </div>
-            <div class="field">
-              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
             </div>
-          </div>
 
           <div class="row">
             <div class="field">
@@ -1386,26 +1382,33 @@ function renderCreatePR(el){
   setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
 
-  el.innerHTML = `          <div class="row">
+  el.innerHTML = `    <div class="grid cols-2 pr-cols">
+      <!-- LEFT: PR Header / Meta -->
+      <div class="card">
+        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
+        <div class="subtext">* โปรโตไทป์นี้บันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตา/โฟลว์</div>
+        <div class="hr"></div>
+
+        <form class="form" id="frmCreatePR">
+          <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" required />
+              <input class="input" name="docDate" type="date" value="${today}" />
             </div>
-
             <div class="field">
               <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
-              <select class="input" name="requestType" required>
+              <select class="input" name="subject" required>
                 <option value="">-- Select --</option>
                 <option value="Petty cash">Petty cash</option>
                 <option value="Work order">Work order</option>
               </select>
             </div>
-
-            <div class="field">
+                        <div class="field">
               <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select class="input" name="urgency" required>
-                <option value="Normal">Normal</option>
-                <option value="Urgent">Urgent</option>
+              <select class="input" name="urgency">
+                <option>Normal</option>
+                <option>Urgent</option>
+                <option>Very Urgent</option>
               </select>
             </div>
           </div>
@@ -1421,32 +1424,36 @@ function renderCreatePR(el){
                 <option value="Other">Other</option>
               </select>
             </div>
-
-            <div class="field">
+          <div class="field">
               <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
               <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
             </div>
           </div>
 
+          
           <div class="row">
             <div class="field">
-              <label>${biLabel("Model", "รุ่น")}</label>
-              <div class="inlinePlus">
-                <input class="input" name="prModelInput" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" autocomplete="off" />
-                <button class="btn btnIcon" type="button" id="prModelAddBtn" aria-label="Add model">+</button>
-              </div>
-              <datalist id="prModelList"></datalist>
-              <div class="chips" id="prModelChips"></div>
-              <input type="hidden" name="prModel" id="prModelHidden" />
-            </div>
+              
+<label>${biLabel("Model", "รุ่น")}</label>
+<div class="inputPlus">
+  <input class="input" id="prModelInput" name="prModel" list="prModelList" placeholder="เลือกหรือพิมพ์เพิ่มเอง" autocomplete="off" />
+  <button type="button" class="miniBtn" data-add-prmodel title="Add model" aria-label="Add model">+</button>
+</div>
+<datalist id="prModelList">
+  <option value="XR280E"></option>
+  <option value="XR320E"></option>
+  <option value="XR360E"></option>
+</datalist>
+<div class="chipRow" id="prModelChips" aria-label="Model list"></div>
 
+            </div>
             <div class="field">
               <label>${biLabel("S/N", "S/N")}</label>
               <input class="input" name="prSN" placeholder="Serial Number" />
             </div>
           </div>
 
-          <div class="row">
+<div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" placeholder="ชื่อ-นามสกุล" required />
@@ -1510,78 +1517,6 @@ function renderCreatePR(el){
     </div>`;
 
   const itemsEl = $("#prItems");
-
-  // --- PR Model (add/remove) ---
-  (function initPRModel(){
-    const input = el.querySelector('input[name="prModelInput"]');
-    const btn = el.querySelector('#prModelAddBtn');
-    const dl = el.querySelector('#prModelList');
-    const chips = el.querySelector('#prModelChips');
-    const hidden = el.querySelector('#prModelHidden');
-    if(!input || !btn || !dl || !chips || !hidden) return;
-
-    const LS_KEY = "pr_model_options_v1";
-    const seed = ["XR280E","XR320E","XR360E"];
-
-    function loadOptions(){
-      try{
-        const v = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
-        return Array.isArray(v) && v.length ? v : seed.slice();
-      }catch(e){ return seed.slice(); }
-    }
-    function saveOptions(arr){
-      try{ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }catch(e){}
-    }
-
-    let options = loadOptions();
-    let selected = [];
-
-    function renderDatalist(){
-      dl.innerHTML = options.map(v => `<option value="${escapeHtml(String(v))}"></option>`).join("");
-    }
-    function renderChips(){
-      chips.innerHTML = selected.map((v,i)=>(
-        `<span class="chip" data-i="${i}">
-          <span>${escapeHtml(v)}</span>
-          <button type="button" aria-label="Remove">×</button>
-        </span>`
-      )).join("");
-      hidden.value = selected.join(", ");
-    }
-
-    function addValue(val){
-      const v = (val || "").trim();
-      if(!v) return;
-      if(!selected.includes(v)) selected.push(v);
-      if(!options.includes(v)){
-        options.push(v);
-        saveOptions(options);
-        renderDatalist();
-      }
-      input.value = "";
-      renderChips();
-    }
-
-    btn.addEventListener("click", ()=> addValue(input.value));
-    input.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){ e.preventDefault(); addValue(input.value); }
-    });
-    chips.addEventListener("click", (e)=>{
-      const btnEl = e.target.closest("button");
-      if(!btnEl) return;
-      const chip = e.target.closest(".chip");
-      if(!chip) return;
-      const i = Number(chip.getAttribute("data-i"));
-      if(Number.isFinite(i)){
-        selected.splice(i,1);
-        renderChips();
-      }
-    });
-
-    renderDatalist();
-    renderChips();
-  })();
-
   const fmt = (n)=> (Number(n||0)).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
   const calcTotal = ()=>{
     let sum = 0;
@@ -1595,7 +1530,94 @@ function renderCreatePR(el){
     $("#prGrandTotal").textContent = fmt(sum);
   };
 
-  const addItem = ()=>{
+  
+  // ===== PR Model: add/remove list (same idea as "Unit +" UI) =====
+  const PR_MODEL_KEY = "mf_pr_models_v1";
+  const PR_MODEL_DEFAULT = ["XR280E","XR320E","XR360E"];
+
+  const prModelNorm = (s)=> (s||"").trim().replace(/\s+/g," ");
+  const prModelUniq = (arr)=> Array.from(new Set((arr||[]).map(prModelNorm).filter(Boolean)));
+
+  const loadPrModels = ()=>{
+    try{
+      const raw = localStorage.getItem(PR_MODEL_KEY);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? prModelUniq(arr) : [];
+    }catch(e){ return []; }
+  };
+  const savePrModels = (arr)=>{
+    try{ localStorage.setItem(PR_MODEL_KEY, JSON.stringify(prModelUniq(arr))); }catch(e){}
+  };
+
+  const prModelsInit = prModelUniq([...PR_MODEL_DEFAULT, ...loadPrModels()]);
+  savePrModels(prModelsInit);
+
+  const prModelInput = $("#prModelInput");
+  const prModelList = $("#prModelList");
+  const prModelChips = $("#prModelChips");
+  const prModelAddBtn = $('[data-add-prmodel]');
+
+  const renderPrModelUI = (models)=>{
+    if(prModelList){
+      prModelList.innerHTML = models.map(v=>`<option value="${escapeHtml(v)}"></option>`).join("");
+    }
+    if(prModelChips){
+      prModelChips.innerHTML = models.map(v=>`
+        <span class="chip" data-chip="${escapeHtml(v)}">
+          <span class="chipText">${escapeHtml(v)}</span>
+          <button type="button" class="chipX" data-del="${escapeHtml(v)}" aria-label="Remove ${escapeHtml(v)}">×</button>
+        </span>
+      `).join("");
+    }
+  };
+
+  let prModels = prModelsInit.slice();
+  renderPrModelUI(prModels);
+
+  const addPrModel = ()=>{
+    const v = prModelNorm(prModelInput ? prModelInput.value : "");
+    if(!v) return;
+    if(!prModels.includes(v)){
+      prModels.push(v);
+      prModels = prModelUniq(prModels);
+      savePrModels(prModels);
+      renderPrModelUI(prModels);
+    }
+    if(prModelInput) prModelInput.value = "";
+  };
+
+  const delPrModel = (v)=>{
+    const nv = prModelNorm(v);
+    if(!nv) return;
+    prModels = prModels.filter(x=>x!==nv);
+    // keep at least defaults
+    PR_MODEL_DEFAULT.forEach(d=>{ if(!prModels.includes(d)) prModels.unshift(d); });
+    prModels = prModelUniq(prModels);
+    savePrModels(prModels);
+    renderPrModelUI(prModels);
+  };
+
+  if(prModelAddBtn){
+    prModelAddBtn.addEventListener("click", addPrModel);
+  }
+  if(prModelInput){
+    prModelInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addPrModel();
+      }
+    });
+  }
+  if(prModelChips){
+    prModelChips.addEventListener("click", (e)=>{
+      const btn = e.target.closest("[data-del]");
+      if(!btn) return;
+      delPrModel(btn.getAttribute("data-del"));
+    });
+  }
+  // ================================================================
+const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
