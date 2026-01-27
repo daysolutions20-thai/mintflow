@@ -1383,6 +1383,8 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
+  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
+
   // ใช้โครงเดียวกับ QR ทั้งก้อน (ตามที่สั่ง) แต่ "เปลี่ยนหัวบน" ให้เป็น PR
   renderCreateQR(el);
 
