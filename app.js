@@ -1385,7 +1385,9 @@ const itemsEl = $("#items");
 function renderCreatePR(el){
   // NOTE: Temporary rollback to use the exact same layout as QR (1:1).
   // We will customize PR later point-by-point.
-  return renderCreateQR(el);
+  renderCreateQR(el);
+  // Override header title/desc for PR page only (do not affect QR)
+  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
 }
 
 function renderSummaryPR(el){
