@@ -1383,15 +1383,17 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
-  // PR page = copy QR layout first (no other changes), then override titles for PR.
+  // ใช้โครงเดียวกับ QR ทั้งก้อน (ตามที่สั่ง) แต่ "เปลี่ยนหัวบน" ให้เป็น PR
   renderCreateQR(el);
 
-  // Override top orange bar title/subtitle
+  // 1) แถบบนสีส้ม (title/subtitle)
   setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
 
-  // Override main page heading
+  // 2) หัวข้อใหญ่ในหน้า (เผื่อจะได้ไม่สับสนว่าอยู่หน้าไหน)
   const h2 = el.querySelector("h2");
-  if(h2) h2.textContent = "Create Purchase Requisition (PR)";
+  if(h2 && /Quotation Request\s*\(QR\)/i.test(h2.textContent)){
+    h2.textContent = "Create Purchase Requisition (PR)";
+  }
 }
 
 function renderSummaryPR(el){
