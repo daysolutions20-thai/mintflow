@@ -1385,9 +1385,7 @@ const itemsEl = $("#items");
 function renderCreatePR(el){
   // NOTE: Temporary rollback to use the exact same layout as QR (1:1).
   // We will customize PR later point-by-point.
-  renderCreateQR(el);
-  // Override header title/desc for PR page only (do not affect QR)
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
+  return renderCreateQR(el);
 }
 
 function renderSummaryPR(el){
@@ -2077,3 +2075,16 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
+
+
+
+/* === PR TITLE OVERRIDE (NO OTHER CHANGES) === */
+(function(){
+  const hash = location.hash || '';
+  if(hash.includes('request-pr')){
+    const h = document.querySelector('.page-header h1, .page-title h1, h1');
+    if(h) h.textContent = 'Request PR';
+    const p = document.querySelector('.page-header p, .page-subtitle, h1 + p');
+    if(p) p.textContent = 'ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ';
+  }
+})();
