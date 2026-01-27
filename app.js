@@ -391,7 +391,11 @@ function renderRoute(){
   if(r === "home") renderHome(view);
   else if(r === "request-qr") renderCreateQR(view);
   else if(r === "summary-qr") renderSummaryQR(view);
-  else if(r === "request-pr") renderCreatePR(view);
+  else if(r === "request-pr") {
+    renderCreatePR(view);
+    // Force header to PR (prevents leftover QR label)
+    setPageTitle("Request PR","ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
+  }
   else if(r === "summary-pr") renderSummaryPR(view);
   else if(r === "detail") renderDetail(view, param);
   else if(r === "help") renderHelp(view);
@@ -1383,13 +1387,11 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
-
   // ใช้โครงเดียวกับ QR ทั้งก้อน (ตามที่สั่ง) แต่ "เปลี่ยนหัวบน" ให้เป็น PR
   renderCreateQR(el);
 
   // 1) แถบบนสีส้ม (title/subtitle)
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
+  setPageTitle("Request PR","ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
 
   // 2) หัวข้อใหญ่ในหน้า (เผื่อจะได้ไม่สับสนว่าอยู่หน้าไหน)
   const h2 = el.querySelector("h2");
