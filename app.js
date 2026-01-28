@@ -177,10 +177,6 @@ function setAdminMode(flag){
   $("#roleLabel").textContent = flag ? "Admin" : "Requester";
   toast(flag ? "เข้าสู่โหมดแอดมินแล้ว" : "กลับเป็นโหมดพนักงานแล้ว");
   renderRoute();
-  // Force PR header (in case a cloned screen sets QR header internally)
-  if(routeState.route === "request-pr"){
-    setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
-  }
 }
 
 /* Escape */
@@ -1387,23 +1383,30 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
-  // For now: PR page is an exact clone of QR page (same layout/fields),
-  // then we only override the visible titles/texts.
+  // PR uses the same full layout as QR (clone everything first),
+  // then override only the page titles/texts for PR.
   renderCreateQR(el);
 
-  // Top orange header
-  setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
+  // Top orange header title/subtitle
+  setPageTitle(
+    "Request PR",
+    "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ"
+  );
 
-  // In-page title (H2) + subtext
+  // Main card title (inside the page)
   const h2 = el.querySelector("h2");
   if(h2) h2.textContent = "Create Purchase Requisition (PR)";
-  const sub = el.querySelector(".subtext");
-  if(sub) sub.textContent = "* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ";
 
-  // Also change any QR-specific footer note in this screen (if exists)
-  const qrHint = el.querySelector('.qr-hint, .hint-qr, [data-hint="qr"]');
-  if(qrHint) qrHint.textContent = "เลขเอกสารจะระบุเป็น PRY-MM.NNN (ต่างจาก QR แค่ Prefix)";
+  // If there is any inline helper text mentioning QR, convert it to PR
+  el.querySelectorAll("*").forEach(node=>{
+    if(node && node.childNodes && node.childNodes.length===1 && node.childNodes[0].nodeType===Node.TEXT_NODE){
+      const t = node.textContent;
+      if(!t) return;
+      if(t.includes("QR")) node.textContent = t.replaceAll("QR","PR");
+    }
+  });
 }
+
 
 function renderSummaryPR(el){
   setPageTitle("Summary PR", "ค้นหาได้ทุกมิติ: PR / ชื่อคน / เบอร์ / รายการ / code / detail");
