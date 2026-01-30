@@ -12043,3 +12043,23 @@ END – DO NOT EDIT BELOW
 /* Force bilingual label spans to use theme colors (beats injected CSS) */
 #mfS1 label .lb-en{ color: var(--mf-band-fg) !important; font-weight: 600 !important; }
 #mfS1 label .lb-th{ color: var(--mf-band-sub) !important; font-weight: 400 !important; opacity: 1 !important; }
+/* ===============================
+   PATCH: Remove legacy FOR + NOTE row and bottom warnBox
+   Reason: replaced by For job dropdown + Item Detail on right
+   Scope: Create form only (#frmCreate)
+   =============================== */
+
+/* Hide the entire row that contains the legacy FOR list */
+#frmCreate .row:has(.for-list){
+  display: none !important;
+}
+
+/* Hide the entire row that contains the NOTE textarea (legacy) */
+#frmCreate .row:has(textarea[name="note"]){
+  display: none !important;
+}
+
+/* Hide the red dashed warn box under FOR/NOTE */
+#frmCreate .warnBox{
+  display: none !important;
+}
