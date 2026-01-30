@@ -1401,7 +1401,7 @@ function renderCreatePR(el){
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         </style>
 
-        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
+        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
