@@ -16188,3 +16188,22 @@ html body #frmCreate.isPR #mfS1 label,
 html body #frmCreate.isPR #mfS1 label *{
   text-shadow: none !important;
 }
+/* ===============================
+   STEP 2.3 PATCH (ต่อท้ายไฟล์เท่านั้น)
+   PR-only: placeholder/default select tone (example text in inputs)
+   Scope: #frmCreate.isPR
+   =============================== */
+
+/* Input / textarea placeholder (example text) */
+#frmCreate.isPR input::placeholder,
+#frmCreate.isPR textarea::placeholder{
+  color: rgba(31,41,55,.45) !important; /* softer than real value */
+}
+
+/* Select: when value is empty (placeholder option), show gray */
+#frmCreate.isPR select.is-placeholder{
+  color: rgba(31,41,55,.45) !important;
+}
+#frmCreate.isPR select:not(.is-placeholder){
+  color: rgb(31,41,55) !important;
+}
