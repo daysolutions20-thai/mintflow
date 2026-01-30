@@ -8025,3 +8025,4021 @@ END – DO NOT EDIT BELOW
 #frmCreate label{
   text-shadow: none !important;
 }
+:root{
+  --bg: #FFF7ED;            /* cream */
+  --card: #FFFFFF;          /* white */
+  --text: #1F2937;
+  --muted: #6B7280;
+  --border: #E5E7EB;
+  --orange: #F97316;
+  --orange2: #FF8A65;
+  --orangeSoft: #FDBA74;
+  --shadow: 0 10px 30px rgba(17,24,39,.08);
+  --radius: 14px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+/* PATCH v34 — Restore 1cm-ish vertical gap between rows in LEFT (Section 1) for Layout A
+   Put this at the VERY END of your CSS (or <style> after main CSS)
+*/
+
+/* Add spacing between each .row inside Section 1 (except the first row) */
+.layout-a .layout-col.left #section-header .row + .row{
+  margin-top: 10mm !important; /* ~1cm */
+}
+
+/* Also ensure labels/headings don't collapse onto previous inputs */
+.layout-a .layout-col.left #section-header .field-label,
+.layout-a .layout-col.left #section-header .label,
+.layout-a .layout-col.left #section-header label{
+  display: block;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Safety: if your project uses .group or .field wrappers */
+.layout-a .layout-col.left #section-header .field + .field,
+.layout-a .layout-col.left #section-header .group + .group{
+  margin-top: 10mm !important;
+}
+
+.app{display:flex; height:100%}
+
+/* Sidebar */
+.sidebar{
+  width: 280px;
+  background: #ffffffcc;
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+.brand{display:flex; gap:12px; align-items:center; padding: 10px 10px 14px; border-bottom:1px solid var(--border);}
+.logo{
+  width:44px;height:44px;border-radius:12px;
+  background: linear-gradient(135deg,var(--orange2),var(--orange));
+  display:grid;place-items:center;color:white;font-weight:800;
+  box-shadow: 0 10px 20px rgba(249,115,22,.25);
+}
+.brand-title{font-weight:700}
+.brand-sub{color:var(--muted); font-size:12px}
+
+.nav{display:flex; flex-direction:column; gap:6px; padding: 6px 0;}
+.nav-item{
+  display:flex; gap:10px; align-items:center;
+  padding: 10px 12px; border-radius: 12px;
+  color: var(--text); text-decoration:none;
+  border: 1px solid transparent;
+}
+.nav-item:hover{background:#fff; border-color: var(--border)}
+.nav-item.active{background: #fff; border-color: rgba(249,115,22,.25); box-shadow: 0 6px 16px rgba(249,115,22,.08)}
+.nav-ico{width:22px; text-align:center}
+.nav-divider{height:1px; background: var(--border); margin: 10px 0;}
+.nav-item.subtle{color:var(--muted)}
+.sidebar-footer{margin-top:auto; display:flex; flex-direction:column; gap:10px; padding-top: 10px; border-top:1px solid var(--border)}
+.mini{background:#fff; border:1px solid var(--border); border-radius: 12px; padding: 10px}
+.mini-label{font-size:12px;color:var(--muted); margin-bottom:6px}
+.mini-value{font-weight:700}
+.mini-row{display:flex; gap:8px; align-items:center}
+.mini-input{
+  width:100%;
+  padding:10px 10px;
+  border-radius: 10px;
+  border:1px solid var(--border);
+  outline:none;
+}
+.mini-input:focus{border-color: rgba(249,115,22,.4); box-shadow: 0 0 0 4px rgba(249,115,22,.10)}
+.mini-hint{font-size:11px;color:var(--muted); margin-top:6px}
+
+/* Main */
+.main{flex:1; display:flex; flex-direction:column; min-width:0}
+.topbar{
+  position: sticky; top:0; z-index:10;
+  background: transparent;
+  padding: 12px 16px 0;
+}
+.topbar-gradient{
+  height: 86px; border-radius: var(--radius);
+  background: linear-gradient(135deg,var(--orange2),var(--orange));
+  box-shadow: 0 20px 40px rgba(249,115,22,.22);
+}
+.topbar-inner{
+  margin-top: -70px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 16px;
+  padding: 0 10px;
+}
+.topbar-left{display:flex; gap:12px; align-items:center}
+.icon-btn{
+  border:1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.18);
+  color:white;
+  width:44px;height:44px;border-radius: 12px;
+  font-size:18px; cursor:pointer;
+}
+.icon-btn:hover{background: rgba(255,255,255,.28)}
+.topbar-title{color:white; font-size: 20px; font-weight:800; line-height:1.1}
+.topbar-sub{color: rgba(255,255,255,.9); font-size: 12px}
+
+.topbar-right{display:flex; gap:10px; align-items:center; min-width: 320px}
+.search{
+  flex:1;
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+.search input{
+  width:100%;
+  border: none; outline:none;
+  font-size: 13px;
+  background: transparent;
+}
+.search-ico{opacity:.8}
+
+.content{padding: 16px 16px 24px}
+
+/* Cards + layout */
+.grid{
+  display:grid;
+  gap: 12px;
+}
+.grid.cols-3{grid-template-columns: repeat(3, minmax(0, 1fr))}
+.grid.cols-2{grid-template-columns: repeat(2, minmax(0, 1fr))}
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.card h3{margin:0 0 8px; font-size: 14px}
+.kpi{display:flex; justify-content:space-between; align-items:flex-end}
+.kpi .num{font-size: 26px; font-weight:800}
+.kpi .label{color: var(--muted); font-size: 12px}
+.kpi .chip{
+  background: rgba(249,115,22,.10);
+  color: var(--orange);
+  border: 1px solid rgba(249,115,22,.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* Buttons */
+.btn{
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor:pointer;
+  font-weight: 700;
+}
+.btn:hover{box-shadow: 0 10px 24px rgba(17,24,39,.06)}
+.btn-primary{
+  background: var(--orange);
+  color: white;
+  border-color: rgba(0,0,0,0);
+  box-shadow: 0 10px 24px rgba(249,115,22,.24);
+}
+.btn-primary:hover{filter: brightness(.97)}
+.btn-ghost{
+  background: #fff;
+}
+.btn-danger{
+  background: #fff0f0;
+  border-color: #ffd4d4;
+  color:#b91c1c;
+}
+.btn-small{padding: 8px 10px; border-radius: 10px; font-size: 12px}
+
+/* Forms */
+.form{
+  display:grid; gap: 12px;
+}
+.field{display:flex; flex-direction:column; gap:6px}
+.field label{font-size:12px; color: var(--muted)}
+.input, select, textarea{
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline:none;
+  font-family: inherit;
+  font-size: 13px;
+  background:#fff;
+}
+textarea{min-height: 90px; resize: vertical}
+.input:focus, select:focus, textarea:focus{
+  border-color: rgba(249,115,22,.5);
+  box-shadow: 0 0 0 4px rgba(249,115,22,.10);
+}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.row > *{flex: 1}
+.row.tight > *{flex: 0 0 auto}
+.hr{height:1px; background: var(--border); margin: 10px 0}
+
+/* Table */
+.table-wrap{overflow:auto; border-radius: var(--radius); border:1px solid var(--border); background:#fff; box-shadow: var(--shadow)}
+table{width:100%; border-collapse: collapse; min-width: 920px}
+thead th{
+  text-align:left;
+  font-size: 12px;
+  color: var(--muted);
+  background: #fff7ed80;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  position: sticky; top:0;
+}
+tbody td{
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+tbody tr:hover{background: rgba(249,115,22,.06)}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px}
+.badge{
+    height: 28px;
+display:inline-flex; align-items:center; gap:6px;
+  border-radius: 10px;
+  padding: 6px 10px;
+  border:1px solid var(--border);
+  font-size:12px;
+  font-weight:700;
+}
+.badge.submitted{background: rgba(249,115,22,.10); color: var(--orange); border-color: rgba(249,115,22,.18)}
+.badge.quoted{background: rgba(249,115,22,.16); color: #c2410c; border-color: rgba(249,115,22,.24)}
+.badge.po{background: rgba(253,186,116,.20); color:#9a3412; border-color: rgba(253,186,116,.35)}
+.badge.shipping{background: rgba(255,138,101,.16); color:#9a3412; border-color: rgba(255,138,101,.28)}
+.badge.closed{background: rgba(107,114,128,.10); color:#374151; border-color: rgba(107,114,128,.18)}
+
+.actions{display:flex; gap:8px; align-items:center}
+.kebab{border:1px solid var(--border); background:#fff; border-radius: 10px; width:36px; height:36px; cursor:pointer}
+.kebab:hover{box-shadow: 0 10px 24px rgba(17,24,39,.06)}
+
+/* Detail */
+.section-title{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.section-title h2{margin:0; font-size: 16px}
+.subtext{color:var(--muted); font-size: 12px}
+.tabs{display:flex; gap:8px; flex-wrap:wrap}
+.tab{
+  padding: 8px 10px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+  font-size: 12px;
+}
+.tab.active{border-color: rgba(249,115,22,.30); background: rgba(249,115,22,.08); color: var(--orange)}
+.file{
+  display:flex; justify-content:space-between; align-items:center;
+  border:1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background:#fff;
+}
+.file .meta{display:flex; flex-direction:column; gap:2px}
+.file .name{font-weight:700}
+.file .small{font-size:12px; color:var(--muted)}
+
+.pill{
+  display:inline-flex; gap:8px; align-items:center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border:1px dashed rgba(249,115,22,.35);
+  background: rgba(255,247,237,.8);
+  color:#9a3412;
+  font-size:12px;
+}
+
+/* Toast */
+.toast{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background: #111827;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events:none;
+  transition: all .18s ease;
+  max-width: 360px;
+  font-size: 13px;
+}
+.toast.show{opacity:1; transform: translateY(0)}
+
+/* Responsive */
+@media (max-width: 980px){
+  .sidebar{position: fixed; left:0; top:0; bottom:0; transform: translateX(0); z-index:20}
+  .sidebar.hidden{transform: translateX(-110%); transition: transform .18s ease}
+  .topbar-right{min-width: 0; width: 100%}
+  .topbar-inner{flex-direction: column; align-items: stretch; gap: 12px}
+  .grid.cols-3{grid-template-columns: 1fr}
+  .grid.cols-2{grid-template-columns: 1fr}
+}
+
+/* Tiles (Home) */
+.tiles{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.tile{
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  background:#fff;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  display:flex;
+  justify-content:space-between;
+  gap: 12px;
+  align-items:center;
+}
+.tile .ico{
+  width:44px;height:44px;border-radius:14px;
+  background: rgba(249,115,22,.10);
+  border:1px solid rgba(249,115,22,.18);
+  display:grid; place-items:center;
+  font-size: 22px;
+}
+.tile .t-title{font-weight:800}
+.tile .t-sub{font-size:12px;color:var(--muted); margin-top:2px}
+@media (max-width: 980px){
+  .tiles{grid-template-columns: 1fr}
+}
+
+/* ===== UI Refresh v3 (closer to approved mock) ===== */
+:root{
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 10px;
+}
+
+/* Background like mock */
+body{
+  background:
+    radial-gradient(1200px 600px at 30% 10%, rgba(249,115,22,.28), transparent 60%),
+    radial-gradient(900px 500px at 80% 30%, rgba(251,191,36,.20), transparent 55%),
+    linear-gradient(180deg, #fff7ed 0%, #fff 55%, #fff7ed 100%);
+}
+
+.app{
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.70);
+  backdrop-filter: blur(10px);
+}
+
+.sidebar{
+  background: rgba(255,255,255,.70);
+  border-right: 1px solid rgba(15,23,42,.06);
+}
+
+.brand .logo{
+  width: 34px; height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(249,115,22,.95), rgba(251,191,36,.85));
+  box-shadow: 0 10px 22px rgba(249,115,22,.20);
+}
+
+.sidecard{
+  margin: 10px 14px 14px;
+  padding: 12px 12px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(249,115,22,.12), rgba(249,115,22,.06));
+  border: 1px solid rgba(249,115,22,.18);
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.sidebadge{
+  width: 42px; height: 42px;
+  border-radius: 14px;
+  display:grid; place-items:center;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(249,115,22,.95), rgba(251,191,36,.92));
+}
+.sidetitle{ font-weight: 900; }
+.sidesub{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.nav-item{
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.nav-ico{
+  width: 22px; height: 22px;
+  display:grid; place-items:center;
+  color: rgba(249,115,22,.95);
+}
+.nav-ico .ico{ width: 20px; height: 20px; }
+
+.nav-item.active{
+  background: rgba(249,115,22,.12);
+  border: 1px solid rgba(249,115,22,.18);
+}
+.nav-item:hover{
+  background: rgba(15,23,42,.04);
+}
+
+.btn{
+  border-radius: 14px; /* less egg */
+  padding: 10px 14px;
+}
+.btn-small{ border-radius: 12px; padding: 7px 10px; }
+
+.tabs{
+  background: rgba(15,23,42,.03);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(15,23,42,.06);
+  gap: 6px;
+}
+
+.tab{
+  border-radius: 12px; /* rectangle-ish */
+  padding: 10px 14px;
+  font-weight: 800;
+  background: transparent;
+}
+.tab.active{
+  background: #fff;
+  border: 1px solid rgba(15,23,42,.08);
+  box-shadow: 0 10px 18px rgba(15,23,42,.06);
+  color: rgba(249,115,22,.95);
+}
+
+/* Keep tiles consistent with mock (less playful emoji feel) */
+.tile .ico{
+  background: rgba(249,115,22,.10);
+  border: 1px solid rgba(249,115,22,.16);
+  border-radius: 14px;
+}
+.tile .ico .ico{ width: 22px; height: 22px; }
+
+/* Make cards a bit softer like sample */
+.card{
+  border: 1px solid rgba(15,23,42,.06);
+  box-shadow: 0 20px 50px rgba(15,23,42,.06);
+}
+
+/* ===== v4 Radius fixes ===== */
+.searchbar,
+.searchbar input,
+.search-pill{
+  border-radius: 14px !important;
+}
+
+input, textarea, select{
+  border-radius: 12px !important;
+}
+
+.sidecard.logo-only{
+  justify-content: center;
+  padding: 14px;
+}
+.sidecard.logo-only img{
+  max-width: 120px;
+  height: auto;
+}
+
+/* ===== v5: searchbar less 'egg' ===== */
+.searchbar,
+.searchbar input{
+  border-radius: 12px !important;
+}
+
+/* ===== v8: Sidebar top-left = logo only ===== */
+.brand.brand-clean{
+  padding: 14px 14px 6px;
+  display:flex;
+  justify-content:flex-start;
+}
+.sidecard.logo-only{
+  margin: 0;
+  padding: 12px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(15,23,42,.06);
+  box-shadow: 0 18px 40px rgba(15,23,42,.06);
+}
+.sidecard.logo-only img{
+  display:block;
+  max-width: 170px;
+  height: auto;
+}
+
+/* ===== v8: Search bar less rounded (not egg) ===== */
+.header .search, .header .search input, .header input[type="search"], .searchbar, .searchbar input{
+  border-radius: 12px !important;
+}
+.header .search button, .header .create-btn, .btn, .btn-small{
+  border-radius: 12px !important;
+}
+
+/* ===== v9: Fix search bar pill (topbar) ===== */
+.topbar .search{
+  border-radius: 14px !important;
+}
+.topbar .search input{
+  border-radius: 12px !important;
+}
+.topbar .btn, .topbar .btn-small, .topbar .create-btn{
+  border-radius: 12px !important;
+}
+/* FIX: allow main content to scroll (Request QR/PR long form) /
+html, body { height: 100%; }
+body { overflow: hidden; } / ให้สกอลล์อยู่ใน .content แทน */
+
+.app { height: 100vh; overflow: hidden; } /* กัน body สกอลล์ซ้อน */
+
+.main {
+height: 100%;
+min-height: 0; /* สำคัญมากสำหรับ flex */
+overflow: hidden;
+}
+
+.content {
+height: calc(100vh - 88px); /* 88px = topbar โดยประมาณ */
+overflow: auto;
+-webkit-overflow-scrolling: touch;
+}
+/* ===== MintFlow FIX: prevent topbar overlap + allow long-form scroll (no magic px) ===== */
+
+/* Ensure full-height layout */
+html, body { height: 100%; }
+
+/* Keep page from double-scrolling; scroll happens in .content */
+body { overflow: hidden !important; }
+
+/* App shell */
+.app {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+/* Main area becomes a flex column so content naturally sits under topbar */
+.main {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Topbar stays on top without covering content */
+.topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Content takes remaining height and scrolls (overrides any calc(100vh - xx)) */
+.content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+/* ===== MintFlow FINAL: top spacing same as Filters (mock) ===== */
+
+/* Layout base */
+html, body { height: 100%; }
+body { overflow: hidden; }
+
+.app{
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  gap: 16px;          /* <<< ช่องไฟแบบเดียวกับ Filters (mock) */
+}
+
+/* Topbar */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Content scroll */
+.content{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* ===== MintFlow QR: align FOR + Note headers and match box heights ===== */
+
+/* Make two-column rows align to the top (no vertical drift) */
+.grid.grid-2{
+  align-items: start !important;
+}
+
+/* Ensure fields in grid behave consistently */
+.grid.grid-2 > .field{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Normalize label spacing so FOR and Note start at the same baseline */
+.field > label{
+  margin: 0 0 6px 0 !important;
+  line-height: 1.15 !important;
+}
+
+/* Match the Note box height to the FOR block height */
+.field.note-field{
+  height: 100% !important;
+}
+
+.field.note-field textarea{
+  flex: 1 1 auto !important;
+  min-height: 136px !important; /* fallback if left side gets shorter */
+  height: 100% !important;
+  resize: vertical;
+}
+
+/* If your Note field does NOT already have .note-field class,
+   add this small selector to catch the QR Note block by label text structure */
+.field:has(> label + .sub) textarea{
+  flex: 1 1 auto !important;
+}
+/* ===== FIX: align section headers + make Note box match FOR block height ===== */
+
+/* Make all 2-col grids align and stretch equally */
+.grid.grid-2{
+  align-items: stretch !important;
+}
+
+/* Ensure each field is a vertical flex stack (label -> control) */
+.grid.grid-2 > .field{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Normalize label height/spacing so headers line up */
+.field > label{
+  display: block !important;
+  margin: 0 0 6px 0 !important;
+  line-height: 1.15 !important;
+  min-height: 34px !important; /* 2-line label (EN+TH) baseline */
+}
+/* PATCH: Fix left/right alignment (remove extra top divider on Items column)
+   Apply AFTER existing CSS
+*/
+
+/* Items section header has extra border/margin */
+#section-items,
+.items-wrapper,
+.items-panel {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure both columns align from same baseline */
+.layout-a {
+  align-items: flex-start;
+}
+
+.layout-a .layout-col {
+  padding-top: 0;
+}
+
+/* If Items has internal title bar */
+#section-items > h3,
+#section-items > .section-title {
+  margin-top: 0 !important;
+}
+
+/* Make textarea fill the stretched column height */
+.field textarea{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+/* =========================================================
+   MintFlow — Layout A FIX v8
+   - เอาเส้นบน "งอก" ฝั่ง Items ออก (กันเส้นซ้อน)
+   - ดัน baseline ให้ Doc Date ตรงกับ Items
+   - แก้ปุ่ม "+ เพิ่มรายการ" ให้ไม่เบียดเส้น/สัดส่วนไม่เพี้ยน
+   Scope: เฉพาะหน้า Layout A (#mfS1/#mfS2 + .layout-a)
+   ========================================================= */
+
+.layout-a{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:16px;
+  align-items:start;
+}
+@media (max-width:980px){
+  .layout-a{ grid-template-columns:1fr; }
+}
+.layout-a .layout-col{ min-width:0; }
+
+/* ===== BASELINE (ทำให้ซ้ายเริ่มระดับเดียวกับขวา โดยไม่เพิ่มเส้นซ้อนขวา) ===== */
+/* ขวามี .hr ของเดิมอยู่แล้ว → เพิ่มเส้นให้ "ซ้าย" อย่างเดียว */
+#mfS1::before{
+  content:"";
+  display:block;
+  height:1px;
+  background: var(--border, #e5e7eb);
+  margin: 10px 0; /* match .hr */
+}
+
+/* ห้ามมีเส้น pseudo เพิ่มที่ขวา */
+#mfS2::before{ content:none !important; display:none !important; }
+
+/* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
+#mfS2,
+#mfS2 .panel,
+#mfS2 .card,
+#mfS2 .section,
+#mfS2 .items{
+  border-top:none !important;
+}
+
+/* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
+#mfS1 .row{ align-items:flex-start !important; }
+#mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
+
+/* ===== ช่องไฟฝั่งซ้าย 1cm จริง ===== */
+/* ใช้ margin-bottom ของ direct children กัน selector ไม่โดน */
+#mfS1 > .row,
+#mfS1 > .field,
+#mfS1 > .grid{ margin-bottom:10mm !important; }
+#mfS1 > .row:last-child,
+#mfS1 > .field:last-child,
+#mfS1 > .grid:last-child{ margin-bottom:0 !important; }
+
+/* label baseline */
+#mfS1 label, #mfS2 label{
+  display:block;
+  margin:0 0 6px 0 !important;
+  line-height:1.15 !important;
+}
+
+/* ===== ปุ่ม "+ เพิ่มรายการ" ไม่ให้เบียดเส้น/สัดส่วนเพี้ยน ===== */
+/* ยิงเฉพาะปุ่มที่อยู่บนหัว Items (แถวเดียวกับคำว่า Items) */
+#mfS2 .section-title + button,
+#mfS2 .section-title ~ button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
+  align-self:flex-start !important;
+}
+
+/* เผื่อโครงเป็น toolbar */
+#mfS2 .items-toolbar button,
+#mfS2 .items-head button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
+}
+
+/* =========================================================
+   Layout A — Headline Align (v12)
+   ดันหัวข้อฝั่งซ้ายแถวแรก (Doc Date / Urgency) ลงให้ตรงกับ Items
+   ========================================================= */
+#mfS1 .row:first-child label{
+  display:block;
+  position:relative;
+  top: 10px !important;
+}
+
+/* v13: Ensure RIGHT headline has no extra top offset */
+#mfS2 .section-title,
+#mfS2 h3,
+#mfS2 .items-title{
+  position: relative;
+  top: 0 !important;
+}
+
+/* v14: First row (Doc Date / Urgency) — add a bit more space between label and input */
+#mfS1 .row:first-child label{
+  margin-bottom: 10px !important;
+}
+
+/* =========================================================
+   Layout A — FOR inputs narrower so NOTE column can sit left (v15a)
+   เป้า: ลด "ความยาว" กล่องข้อความใน FOR (forRepairTxt/forSaleTxt)
+         และกันไม่ให้ FOR (content-min-width) ดัน NOTE ไปทางขวา
+   ไม่แตะ NOTE position/top, ไม่แตะ spacing 1cm แถวอื่น
+   ========================================================= */
+
+/* ให้ flex items หดได้ (กัน content ดันคอลัมน์) */
+#mfS1 .row > *,
+#mfS1 .field{
+  min-width: 0 !important;
+}
+
+/* บีบ input ใน FOR ให้สั้นลง */
+#mfS1 #forRepairTxt,
+#mfS1 #forSaleTxt{
+  max-width: 220px !important;   /* ปรับได้: 200-260 */
+  width: 100% !important;
+}
+
+/* ให้บรรทัด Repair/Sale จัด layout สวยและหดได้ */
+#mfS1 .for-line{
+  display:flex !important;
+  gap:8px !important;
+  align-items:center !important;
+}
+
+/* label checkbox ไม่ให้กว้างเกิน */
+#mfS1 .for-line .chk{
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+}
+
+/* input หดได้จริงใน flex */
+#mfS1 .for-line input.input{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* =========================================================
+   MintFlow — Orange Section Bands (v23)
+   เป้า:
+   - ทำ "แถบหัวข้อ" สีเดียวกับปุ่ม Go (ส้ม) คาดยาวเต็มคอลัมน์
+   - แยกซ้าย/ขวาคนละแถบ (ไม่คาดทั้งหน้า)
+   - หัวข้อเป็นสีขาว
+   - ลบ (Required) ด้วยการซ่อน span/class ที่พบบ่อย (ถ้ามี)
+   ========================================================= */
+
+:root{
+  --mf-band-bg: #ff7a1a;
+  --mf-band-fg: #ffffff;
+  --mf-band-radius: 12px;
+}
+
+/* ---------- ซ่อน (Required) (ถ้ามาเป็น span/class) ---------- */
+.required, .req, .is-required, .req-text,
+small.required, span.required, em.required,
+small.req, span.req, em.req{
+  display:none !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งซ้าย: ใช้แถวแรก (Doc Date / Urgency) เป็น band ---------- */
+#mfS1 .row:first-child{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  margin-bottom: 10mm; /* คง 1cm หลังแถบ */
+}
+
+/* ตัวหนังสือหัวข้อบนแถบ */
+#mfS1 .row:first-child label,
+#mfS1 .row:first-child .lbl,
+#mfS1 .row:first-child .label{
+  color: var(--mf-band-fg) !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+/* คำแปลไทยใต้หัวข้อบนแถบ (ถ้ามี) ให้เป็นขาวแบบซอฟต์ */
+#mfS1 .row:first-child .sub,
+#mfS1 .row:first-child small,
+#mfS1 .row:first-child .muted{
+  color: rgba(255,255,255,.85) !important;
+}
+
+/* กัน input ชนแถบ */
+#mfS1 .row:first-child input,
+#mfS1 .row:first-child select{
+  background: #fff !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งขวา: band ที่หัว Items (คำว่า Items + ปุ่มเพิ่มรายการ) ---------- */
+/* ยิงหลายชื่อ เผื่อโครงต่างกัน */
+#mfS2 .items-head,
+#mfS2 .items-toolbar,
+#mfS2 .items-header,
+#mfS2 .items-top{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom: 12px;
+}
+
+/* หัวคำว่า Items ให้เป็นขาว */
+#mfS2 .items-head .section-title,
+#mfS2 .items-head h2,
+#mfS2 .items-head h3,
+#mfS2 .items-toolbar .section-title,
+#mfS2 .items-toolbar h2,
+#mfS2 .items-toolbar h3,
+#mfS2 .items-header .section-title,
+#mfS2 .items-header h2,
+#mfS2 .items-header h3{
+  color: var(--mf-band-fg) !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+/* ปุ่ม +เพิ่มรายการบนแถบ: ให้คุมสีให้เข้ากัน */
+#mfS2 .items-head button,
+#mfS2 .items-toolbar button,
+#mfS2 .items-header button,
+#mfS2 .items-top button{
+  background: rgba(255,255,255,.16) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+}
+#mfS2 .items-head button:hover,
+#mfS2 .items-toolbar button:hover,
+#mfS2 .items-header button:hover,
+#mfS2 .items-top button:hover{
+  background: rgba(255,255,255,.22) !important;
+}
+
+/* Responsive */
+@media (max-width:520px){
+  #mfS2 .items-head,
+  #mfS2 .items-toolbar,
+  #mfS2 .items-header,
+  #mfS2 .items-top{
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================================
+   PATCH v24 SAFE — Soften section bands + Heading accent bar
+   - ใช้โทนส้มอ่อนแบบเมนูซ้าย (active) ไม่แป๋นแล๋น
+   - เส้นหน้าหัวข้อเข้มกว่า 1–2 เฉด (เตะตานิด ๆ)
+   - Scope เฉพาะ #mfS1 แถวแรก + #mfS2 หัว Items (ไม่ลามทั้งเว็บ)
+   ========================================================= */
+
+:root{
+  --mf-band-bg: rgba(249,115,22,.10) !important;   /* ส้มอ่อน */
+  --mf-band-fg: #1F2937 !important;               /* ตัวหนังสือหัวข้อ */
+  --mf-band-accent: #F97316 !important;           /* เส้นหัวข้อ */
+  --mf-band-border: rgba(249,115,22,.22) !important;
+}
+
+/* ----- LEFT: Doc Date / Urgency band ----- */
+#mfS1 .row:first-child{
+  background: var(--mf-band-bg) !important;
+  border: 1px solid var(--mf-band-border) !important;
+}
+
+#mfS1 .row:first-child label,
+#mfS1 .row:first-child .lbl,
+#mfS1 .row:first-child .label{
+  color: var(--mf-band-fg) !important;
+  position: relative !important;
+  padding-left: 14px !important; /* เว้นที่ให้เส้น */
+}
+
+/* เส้นหน้าหัวข้อ (ซ้าย) */
+#mfS1 .row:first-child label::before,
+#mfS1 .row:first-child .lbl::before,
+#mfS1 .row:first-child .label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.12em;
+  width:4px;
+  height:1.15em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* ซับใต้หัวข้อใน band ให้เป็นเทาซอฟต์ */
+#mfS1 .row:first-child .sub,
+#mfS1 .row:first-child small,
+#mfS1 .row:first-child .muted{
+  color: var(--muted) !important;
+}
+
+/* ----- RIGHT: Items band ----- */
+#mfS2 .items-head,
+#mfS2 .items-toolbar,
+#mfS2 .items-header,
+#mfS2 .items-top{
+  background: var(--mf-band-bg) !important;
+  border: 1px solid var(--mf-band-border) !important;
+}
+
+/* หัวคำว่า Items ให้เป็นเข้ม + มีเส้นหน้า */
+#mfS2 .items-head .section-title,
+#mfS2 .items-toolbar .section-title,
+#mfS2 .items-header .section-title,
+#mfS2 .items-top .section-title,
+#mfS2 .items-head h2,
+#mfS2 .items-head h3,
+#mfS2 .items-toolbar h2,
+#mfS2 .items-toolbar h3,
+#mfS2 .items-header h2,
+#mfS2 .items-header h3,
+#mfS2 .items-top h2,
+#mfS2 .items-top h3{
+  color: var(--mf-band-fg) !important;
+  position: relative !important;
+  padding-left: 14px !important;
+  font-weight: 800 !important;
+}
+
+/* เส้นหน้าหัวข้อ (ขวา) */
+#mfS2 .items-head .section-title::before,
+#mfS2 .items-toolbar .section-title::before,
+#mfS2 .items-header .section-title::before,
+#mfS2 .items-top .section-title::before,
+#mfS2 .items-head h2::before,
+#mfS2 .items-head h3::before,
+#mfS2 .items-toolbar h2::before,
+#mfS2 .items-toolbar h3::before,
+#mfS2 .items-header h2::before,
+#mfS2 .items-header h3::before,
+#mfS2 .items-top h2::before,
+#mfS2 .items-top h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.12em;
+  width:4px;
+  height:1.15em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* ปุ่ม +เพิ่มรายการ: ให้เด่นแต่ไม่แสบตา */
+#mfS2 .items-head button,
+#mfS2 .items-toolbar button,
+#mfS2 .items-header button,
+#mfS2 .items-top button{
+  background: var(--mf-band-accent) !important;
+  color: #fff !important;
+  border: 1px solid rgba(249,115,22,.35) !important;
+}
+#mfS2 .items-head button:hover,
+#mfS2 .items-toolbar button:hover,
+#mfS2 .items-header button:hover,
+#mfS2 .items-top button:hover{
+  filter: brightness(.95);
+}
+
+/* =========================================================
+   PATCH v25 — Apply soft band + heading accent to other headings
+   - ทำหัวข้อฝั่งซ้ายทุกแถว (Project/Requester/FOR/Note ฯลฯ) ให้เป็นธีมเดียวกับแถวแรก
+   - กันไม่ให้ไปโดน label ของ checkbox ใน FOR list
+   - ฝั่งขวา: เพิ่ม accent ให้หัวข้อ Item # (ถ้ามี)
+   ========================================================= */
+
+/* -------- LEFT: all form rows in Section 1 -------- */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Headline labels in left section (field labels) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar before label text */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* Sub label text (ไทยใต้หัวข้อ) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .sub,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) small,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .muted{
+  color: var(--mf-band-sub) !important;
+}
+
+/* -------- SAFETY: don't style checkbox labels inside FOR list -------- */
+#mfS1 .for-list label{
+  padding-left: 0 !important;
+  font-weight: 400 !important;
+}
+#mfS1 .for-list label::before{
+  content: none !important;
+}
+
+/* -------- RIGHT: item card headings (optional) -------- */
+/* If your item card has a title like "Item #1" in h4/.item-title */
+#mfS2 .item-title,
+#mfS2 .item-headline,
+#mfS2 h4{
+  position: relative;
+  padding-left: 14px;
+}
+#mfS2 .item-title::before,
+#mfS2 .item-headline::before,
+#mfS2 h4::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v26 — Ensure Project/Subject row is themed
+   (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
+   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
+   ========================================================= */
+
+#mfS1 .row:has(#project),
+#mfS1 .row:has([name="project"]),
+#mfS1 .row:has(#subject),
+#mfS1 .row:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+#mfS1 .row:has(#project) label,
+#mfS1 .row:has([name="project"]) label,
+#mfS1 .row:has(#subject) label,
+#mfS1 .row:has([name="subject"]) label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+#mfS1 .row:has(#project) label::before,
+#mfS1 .row:has([name="project"]) label::before,
+#mfS1 .row:has(#subject) label::before,
+#mfS1 .row:has([name="subject"]) label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v27 — Project/Subject block (NOT inside .row) theme
+   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
+   ========================================================= */
+
+/* Card wrapper for Project/Subject regardless of structure */
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]),
+#mfS1 .col:has(#project),
+#mfS1 .col:has([name="project"]),
+#mfS1 .col:has(#subject),
+#mfS1 .col:has([name="subject"]),
+#mfS1 .field:has(#project),
+#mfS1 .field:has([name="project"]),
+#mfS1 .field:has(#subject),
+#mfS1 .field:has([name="subject"]),
+#mfS1 .form-group:has(#project),
+#mfS1 .form-group:has([name="project"]),
+#mfS1 .form-group:has(#subject),
+#mfS1 .form-group:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Heading/label inside the Project/Subject card */
+#mfS1 > *:has(#project) > label:first-of-type,
+#mfS1 > *:has([name="project"]) > label:first-of-type,
+#mfS1 > *:has(#subject) > label:first-of-type,
+#mfS1 > *:has([name="subject"]) > label:first-of-type,
+#mfS1 .col:has(#project) label:first-of-type,
+#mfS1 .col:has([name="project"]) label:first-of-type,
+#mfS1 .col:has(#subject) label:first-of-type,
+#mfS1 .col:has([name="subject"]) label:first-of-type,
+#mfS1 .field:has(#project) label:first-of-type,
+#mfS1 .field:has([name="project"]) label:first-of-type,
+#mfS1 .field:has(#subject) label:first-of-type,
+#mfS1 .field:has([name="subject"]) label:first-of-type,
+#mfS1 .form-group:has(#project) label:first-of-type,
+#mfS1 .form-group:has([name="project"]) label:first-of-type,
+#mfS1 .form-group:has(#subject) label:first-of-type,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar */
+#mfS1 > *:has(#project) > label:first-of-type::before,
+#mfS1 > *:has([name="project"]) > label:first-of-type::before,
+#mfS1 > *:has(#subject) > label:first-of-type::before,
+#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
+#mfS1 .col:has(#project) label:first-of-type::before,
+#mfS1 .col:has([name="project"]) label:first-of-type::before,
+#mfS1 .col:has(#subject) label:first-of-type::before,
+#mfS1 .col:has([name="subject"]) label:first-of-type::before,
+#mfS1 .field:has(#project) label:first-of-type::before,
+#mfS1 .field:has([name="project"]) label:first-of-type::before,
+#mfS1 .field:has(#subject) label:first-of-type::before,
+#mfS1 .field:has([name="subject"]) label:first-of-type::before,
+#mfS1 .form-group:has(#project) label:first-of-type::before,
+#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
+#mfS1 .form-group:has(#subject) label:first-of-type::before,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v28 — Reduce spacing BETWEEN section cards only
+   From ~1cm to ~0.5cm
+   (Do NOT touch inner padding or field spacing)
+   ========================================================= */
+
+/* Control vertical gap between section cards */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]){
+  margin-bottom: 8px !important; /* ~0.5cm visual gap */
+}
+
+/* Safety: do not affect items section internal spacing */
+#mfS2 .item,
+#mfS2 .item-row{
+  margin-bottom: inherit;
+}
+
+
+/* ============================================================
+   PATCH v42 (CLEAN) - Right side: Export/Attach in ONE ROW 50/50
+   - Keep Preview/Submit/Cancel + submit-note untouched (only spacing safety)
+   - Buttons (Delete/Add) are rendered INSIDE Attach field (app.js v48)
+   ============================================================ */
+
+/* Export + Attach: same row, 50/50 like FOR/Note */
+#mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
+  gap: 20px !important;
+  align-items: start !important;
+  margin-top: 16px !important; /* give space after Detail */
+}
+
+/* Make sure each field behaves like a column */
+#mfS2 .row.row-export-attach > .field{
+  min-width: 0;
+}
+
+/* Export checkboxes: left aligned (no center drifting) */
+#mfS2 .row.row-export-attach .exportByRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+#mfS2 .row.row-export-attach .chkLine{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+/* Buttons under Attach: keep under file input, left aligned inside right column */
+#mfS2 .row.row-export-attach .itemControls{
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-top: 12px !important;   /* space from file input */
+}
+
+/* Safety spacing between controls area and bottom buttons row */
+#mfS2 .row.row-export-attach{
+  margin-bottom: 12px !important; /* creates breathing room before btnRow3 */
+}
+
+/* Submit note: make sure it doesn't stick to btnRow3 */
+#mfS2 .btnRow3{ margin-bottom: 10px !important; }
+#mfS2 .pill.submit-note{ margin-top: 10px !important; width:100% !important; }
+
+
+/* PATCH v43: spacing before Export/Attach row (avoid sticking to Detail box) */
+#frmCreate .row.row-export-attach{
+  margin-top: 8px !important; /* match 0.5 gap vibe */
+}
+
+/* ===== PATCH v44: Right controls row polish (Export/Attach + itemControls) ===== */
+#mfS2 .row-export-attach{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row-export-attach .field{ margin: 0; }
+
+#mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+#mfS2 .exportByRow .chkLine{
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+#mfS2 .itemControls{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+#mfS2 .btnRow3{ margin-top: 12px; }
+#mfS2 .pill.submit-note, #mfS2 .pill{ margin-top: 8px; }
+
+
+/* ============================================================
+   PATCH v47 - warnBox placement (outside FOR/Note card)
+   - keep the warnBox looking like the original: full width,
+     nice spacing from cards above/below.
+   ============================================================ */
+#mfS1 .warnBox{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+
+/* ============================================================
+   PATCH v48 - Add top spacing before Export/Attach row (Right)
+   - Move the "Export By / Attach photos" headings down ~1cm
+   ============================================================ */
+#frmCreate .row.row-export-attach{
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
+}
+
+
+/* ============================================================
+   PATCH v49 - Right column alignment cleanup
+   - Keep item input boxes aligned in the same vertical grid
+   ============================================================ */
+#mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field{
+  margin: 0 !important;
+  min-width: 0;
+}
+#mfS2 .field .input{
+  width: 100%;
+}
+/* ===== FIX: Submit note full width & center ===== */
+#frmCreate .pill.submit-note{
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
+/* ===== FIX: Submit note full width & center (RIGHT column only) ===== */
+#mfS2 .pill.submit-note{
+  display: flex !important;          /* ฆ่า inline-flex */
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
+/* ===== FINAL FIX : Submit note full width & center (RIGHT COLUMN ONLY) ===== */
+
+#frmCreate #mfs2 .pill.submit-note {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* ===== FORCE: Submit note full width + center (RIGHT COLUMN) ===== */
+#frmCreate #mfs2 .pill.submit-note{
+  display: flex !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* ถ้ามันอยู่ในแถว grid ให้กินเต็มแถว */
+#frmCreate #mfs2 .btnRow3 .pill.submit-note,
+#frmCreate #mfs2 .row .pill.submit-note{
+  grid-column: 1 / -1 !important;
+}
+/* ===== FORCE: Submit note full width & center (FINAL) ===== */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+}
+
+/* ให้มันอิงความกว้างคอลัมน์ขวาเสมอ */
+#mfS2 #submitNote,
+#frmCreate #submitNote{
+  grid-column: 1 / -1 !important;
+}
+/* =========================================================
+   MINTFLOW – HARD OVERRIDE (FINAL)
+   Purpose:
+   1. Submit note (หลัง Submit...) ยืดเต็มคอลัมน์
+   2. ข้อความอยู่กึ่งกลางเสมอ
+   3. ไม่โดน grid / flex อื่นดึงกลับ
+   ========================================================= */
+
+/* ---------- Submit note base ---------- */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+  padding: 8px 12px !important;
+}
+
+/* ---------- Force full row in RIGHT column grid ---------- */
+#mfS2 #submitNote{
+  grid-column: 1 / -1 !important;
+}
+
+/* ---------- In case parent is flex / weird row ---------- */
+#mfS2 .row,
+#mfS2 .btnRow3{
+  width: 100% !important;
+}
+
+/* ---------- Prevent any inline / legacy override ---------- */
+#mfS2 .pill.submit-note{
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* ---------- Safety: block float / inline ---------- */
+#submitNote,
+#submitNote *{
+  float: none !important;
+}
+/* ===== FIX: QTY / Unit column protruding (horizontal misalignment) ===== */
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.4fr 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+#mfS2 .row.row-codeqty .field{ min-width: 0 !important; }
+#mfS2 .row.row-codeqty .field .input,
+#mfS2 .row.row-codeqty .field input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+/* ===== FIX: align QTY/Unit headers with Model/Attach photos ===== */
+:root{
+  --bg: #FFF7ED;            /* cream */
+  --card: #FFFFFF;          /* white */
+  --text: #1F2937;
+  --muted: #6B7280;
+  --border: #E5E7EB;
+  --orange: #F97316;
+  --orange2: #FF8A65;
+  --orangeSoft: #FDBA74;
+  --shadow: 0 10px 30px rgba(17,24,39,.08);
+  --radius: 14px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+/* PATCH v34 — Restore 1cm-ish vertical gap between rows in LEFT (Section 1) for Layout A
+   Put this at the VERY END of your CSS (or <style> after main CSS)
+*/
+
+/* Add spacing between each .row inside Section 1 (except the first row) */
+.layout-a .layout-col.left #section-header .row + .row{
+  margin-top: 10mm !important; /* ~1cm */
+}
+
+/* Also ensure labels/headings don't collapse onto previous inputs */
+.layout-a .layout-col.left #section-header .field-label,
+.layout-a .layout-col.left #section-header .label,
+.layout-a .layout-col.left #section-header label{
+  display: block;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Safety: if your project uses .group or .field wrappers */
+.layout-a .layout-col.left #section-header .field + .field,
+.layout-a .layout-col.left #section-header .group + .group{
+  margin-top: 10mm !important;
+}
+
+.app{display:flex; height:100%}
+
+/* Sidebar */
+.sidebar{
+  width: 280px;
+  background: #ffffffcc;
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+}
+.brand{display:flex; gap:12px; align-items:center; padding: 10px 10px 14px; border-bottom:1px solid var(--border);}
+.logo{
+  width:44px;height:44px;border-radius:12px;
+  background: linear-gradient(135deg,var(--orange2),var(--orange));
+  display:grid;place-items:center;color:white;font-weight:800;
+  box-shadow: 0 10px 20px rgba(249,115,22,.25);
+}
+.brand-title{font-weight:700}
+.brand-sub{color:var(--muted); font-size:12px}
+
+.nav{display:flex; flex-direction:column; gap:6px; padding: 6px 0;}
+.nav-item{
+  display:flex; gap:10px; align-items:center;
+  padding: 10px 12px; border-radius: 12px;
+  color: var(--text); text-decoration:none;
+  border: 1px solid transparent;
+}
+.nav-item:hover{background:#fff; border-color: var(--border)}
+.nav-item.active{background: #fff; border-color: rgba(249,115,22,.25); box-shadow: 0 6px 16px rgba(249,115,22,.08)}
+.nav-ico{width:22px; text-align:center}
+.nav-divider{height:1px; background: var(--border); margin: 10px 0;}
+.nav-item.subtle{color:var(--muted)}
+.sidebar-footer{margin-top:auto; display:flex; flex-direction:column; gap:10px; padding-top: 10px; border-top:1px solid var(--border)}
+.mini{background:#fff; border:1px solid var(--border); border-radius: 12px; padding: 10px}
+.mini-label{font-size:12px;color:var(--muted); margin-bottom:6px}
+.mini-value{font-weight:700}
+.mini-row{display:flex; gap:8px; align-items:center}
+.mini-input{
+  width:100%;
+  padding:10px 10px;
+  border-radius: 10px;
+  border:1px solid var(--border);
+  outline:none;
+}
+.mini-input:focus{border-color: rgba(249,115,22,.4); box-shadow: 0 0 0 4px rgba(249,115,22,.10)}
+.mini-hint{font-size:11px;color:var(--muted); margin-top:6px}
+
+/* Main */
+.main{flex:1; display:flex; flex-direction:column; min-width:0}
+.topbar{
+  position: sticky; top:0; z-index:10;
+  background: transparent;
+  padding: 12px 16px 0;
+}
+.topbar-gradient{
+  height: 86px; border-radius: var(--radius);
+  background: linear-gradient(135deg,var(--orange2),var(--orange));
+  box-shadow: 0 20px 40px rgba(249,115,22,.22);
+}
+.topbar-inner{
+  margin-top: -70px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 16px;
+  padding: 0 10px;
+}
+.topbar-left{display:flex; gap:12px; align-items:center}
+.icon-btn{
+  border:1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.18);
+  color:white;
+  width:44px;height:44px;border-radius: 12px;
+  font-size:18px; cursor:pointer;
+}
+.icon-btn:hover{background: rgba(255,255,255,.28)}
+.topbar-title{color:white; font-size: 20px; font-weight:800; line-height:1.1}
+.topbar-sub{color: rgba(255,255,255,.9); font-size: 12px}
+
+.topbar-right{display:flex; gap:10px; align-items:center; min-width: 320px}
+.search{
+  flex:1;
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+.search input{
+  width:100%;
+  border: none; outline:none;
+  font-size: 13px;
+  background: transparent;
+}
+.search-ico{opacity:.8}
+
+.content{padding: 16px 16px 24px}
+
+/* Cards + layout */
+.grid{
+  display:grid;
+  gap: 12px;
+}
+.grid.cols-3{grid-template-columns: repeat(3, minmax(0, 1fr))}
+.grid.cols-2{grid-template-columns: repeat(2, minmax(0, 1fr))}
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+.card h3{margin:0 0 8px; font-size: 14px}
+.kpi{display:flex; justify-content:space-between; align-items:flex-end}
+.kpi .num{font-size: 26px; font-weight:800}
+.kpi .label{color: var(--muted); font-size: 12px}
+.kpi .chip{
+  background: rgba(249,115,22,.10);
+  color: var(--orange);
+  border: 1px solid rgba(249,115,22,.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* Buttons */
+.btn{
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor:pointer;
+  font-weight: 700;
+}
+.btn:hover{box-shadow: 0 10px 24px rgba(17,24,39,.06)}
+.btn-primary{
+  background: var(--orange);
+  color: white;
+  border-color: rgba(0,0,0,0);
+  box-shadow: 0 10px 24px rgba(249,115,22,.24);
+}
+.btn-primary:hover{filter: brightness(.97)}
+.btn-ghost{
+  background: #fff;
+}
+.btn-danger{
+  background: #fff0f0;
+  border-color: #ffd4d4;
+  color:#b91c1c;
+}
+.btn-small{padding: 8px 10px; border-radius: 10px; font-size: 12px}
+
+/* Forms */
+.form{
+  display:grid; gap: 12px;
+}
+.field{display:flex; flex-direction:column; gap:6px}
+.field label{font-size:12px; color: var(--muted)}
+.input, select, textarea{
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline:none;
+  font-family: inherit;
+  font-size: 13px;
+  background:#fff;
+}
+textarea{min-height: 90px; resize: vertical}
+.input:focus, select:focus, textarea:focus{
+  border-color: rgba(249,115,22,.5);
+  box-shadow: 0 0 0 4px rgba(249,115,22,.10);
+}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.row > *{flex: 1}
+.row.tight > *{flex: 0 0 auto}
+.hr{height:1px; background: var(--border); margin: 10px 0}
+
+/* Table */
+.table-wrap{overflow:auto; border-radius: var(--radius); border:1px solid var(--border); background:#fff; box-shadow: var(--shadow)}
+table{width:100%; border-collapse: collapse; min-width: 920px}
+thead th{
+  text-align:left;
+  font-size: 12px;
+  color: var(--muted);
+  background: #fff7ed80;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+  position: sticky; top:0;
+}
+tbody td{
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+tbody tr:hover{background: rgba(249,115,22,.06)}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px}
+.badge{
+    height: 28px;
+display:inline-flex; align-items:center; gap:6px;
+  border-radius: 10px;
+  padding: 6px 10px;
+  border:1px solid var(--border);
+  font-size:12px;
+  font-weight:700;
+}
+.badge.submitted{background: rgba(249,115,22,.10); color: var(--orange); border-color: rgba(249,115,22,.18)}
+.badge.quoted{background: rgba(249,115,22,.16); color: #c2410c; border-color: rgba(249,115,22,.24)}
+.badge.po{background: rgba(253,186,116,.20); color:#9a3412; border-color: rgba(253,186,116,.35)}
+.badge.shipping{background: rgba(255,138,101,.16); color:#9a3412; border-color: rgba(255,138,101,.28)}
+.badge.closed{background: rgba(107,114,128,.10); color:#374151; border-color: rgba(107,114,128,.18)}
+
+.actions{display:flex; gap:8px; align-items:center}
+.kebab{border:1px solid var(--border); background:#fff; border-radius: 10px; width:36px; height:36px; cursor:pointer}
+.kebab:hover{box-shadow: 0 10px 24px rgba(17,24,39,.06)}
+
+/* Detail */
+.section-title{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.section-title h2{margin:0; font-size: 16px}
+.subtext{color:var(--muted); font-size: 12px}
+.tabs{display:flex; gap:8px; flex-wrap:wrap}
+.tab{
+  padding: 8px 10px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+  font-size: 12px;
+}
+.tab.active{border-color: rgba(249,115,22,.30); background: rgba(249,115,22,.08); color: var(--orange)}
+.file{
+  display:flex; justify-content:space-between; align-items:center;
+  border:1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background:#fff;
+}
+.file .meta{display:flex; flex-direction:column; gap:2px}
+.file .name{font-weight:700}
+.file .small{font-size:12px; color:var(--muted)}
+
+.pill{
+  display:inline-flex; gap:8px; align-items:center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border:1px dashed rgba(249,115,22,.35);
+  background: rgba(255,247,237,.8);
+  color:#9a3412;
+  font-size:12px;
+}
+
+/* Toast */
+.toast{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background: #111827;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events:none;
+  transition: all .18s ease;
+  max-width: 360px;
+  font-size: 13px;
+}
+.toast.show{opacity:1; transform: translateY(0)}
+
+/* Responsive */
+@media (max-width: 980px){
+  .sidebar{position: fixed; left:0; top:0; bottom:0; transform: translateX(0); z-index:20}
+  .sidebar.hidden{transform: translateX(-110%); transition: transform .18s ease}
+  .topbar-right{min-width: 0; width: 100%}
+  .topbar-inner{flex-direction: column; align-items: stretch; gap: 12px}
+  .grid.cols-3{grid-template-columns: 1fr}
+  .grid.cols-2{grid-template-columns: 1fr}
+}
+
+/* Tiles (Home) */
+.tiles{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.tile{
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  background:#fff;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  display:flex;
+  justify-content:space-between;
+  gap: 12px;
+  align-items:center;
+}
+.tile .ico{
+  width:44px;height:44px;border-radius:14px;
+  background: rgba(249,115,22,.10);
+  border:1px solid rgba(249,115,22,.18);
+  display:grid; place-items:center;
+  font-size: 22px;
+}
+.tile .t-title{font-weight:800}
+.tile .t-sub{font-size:12px;color:var(--muted); margin-top:2px}
+@media (max-width: 980px){
+  .tiles{grid-template-columns: 1fr}
+}
+
+/* ===== UI Refresh v3 (closer to approved mock) ===== */
+:root{
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 10px;
+}
+
+/* Background like mock */
+body{
+  background:
+    radial-gradient(1200px 600px at 30% 10%, rgba(249,115,22,.28), transparent 60%),
+    radial-gradient(900px 500px at 80% 30%, rgba(251,191,36,.20), transparent 55%),
+    linear-gradient(180deg, #fff7ed 0%, #fff 55%, #fff7ed 100%);
+}
+
+.app{
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.70);
+  backdrop-filter: blur(10px);
+}
+
+.sidebar{
+  background: rgba(255,255,255,.70);
+  border-right: 1px solid rgba(15,23,42,.06);
+}
+
+.brand .logo{
+  width: 34px; height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(249,115,22,.95), rgba(251,191,36,.85));
+  box-shadow: 0 10px 22px rgba(249,115,22,.20);
+}
+
+.sidecard{
+  margin: 10px 14px 14px;
+  padding: 12px 12px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(249,115,22,.12), rgba(249,115,22,.06));
+  border: 1px solid rgba(249,115,22,.18);
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.sidebadge{
+  width: 42px; height: 42px;
+  border-radius: 14px;
+  display:grid; place-items:center;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(249,115,22,.95), rgba(251,191,36,.92));
+}
+.sidetitle{ font-weight: 900; }
+.sidesub{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.nav-item{
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.nav-ico{
+  width: 22px; height: 22px;
+  display:grid; place-items:center;
+  color: rgba(249,115,22,.95);
+}
+.nav-ico .ico{ width: 20px; height: 20px; }
+
+.nav-item.active{
+  background: rgba(249,115,22,.12);
+  border: 1px solid rgba(249,115,22,.18);
+}
+.nav-item:hover{
+  background: rgba(15,23,42,.04);
+}
+
+.btn{
+  border-radius: 14px; /* less egg */
+  padding: 10px 14px;
+}
+.btn-small{ border-radius: 12px; padding: 7px 10px; }
+
+.tabs{
+  background: rgba(15,23,42,.03);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(15,23,42,.06);
+  gap: 6px;
+}
+
+.tab{
+  border-radius: 12px; /* rectangle-ish */
+  padding: 10px 14px;
+  font-weight: 800;
+  background: transparent;
+}
+.tab.active{
+  background: #fff;
+  border: 1px solid rgba(15,23,42,.08);
+  box-shadow: 0 10px 18px rgba(15,23,42,.06);
+  color: rgba(249,115,22,.95);
+}
+
+/* Keep tiles consistent with mock (less playful emoji feel) */
+.tile .ico{
+  background: rgba(249,115,22,.10);
+  border: 1px solid rgba(249,115,22,.16);
+  border-radius: 14px;
+}
+.tile .ico .ico{ width: 22px; height: 22px; }
+
+/* Make cards a bit softer like sample */
+.card{
+  border: 1px solid rgba(15,23,42,.06);
+  box-shadow: 0 20px 50px rgba(15,23,42,.06);
+}
+
+/* ===== v4 Radius fixes ===== */
+.searchbar,
+.searchbar input,
+.search-pill{
+  border-radius: 14px !important;
+}
+
+input, textarea, select{
+  border-radius: 12px !important;
+}
+
+.sidecard.logo-only{
+  justify-content: center;
+  padding: 14px;
+}
+.sidecard.logo-only img{
+  max-width: 120px;
+  height: auto;
+}
+
+/* ===== v5: searchbar less 'egg' ===== */
+.searchbar,
+.searchbar input{
+  border-radius: 12px !important;
+}
+
+/* ===== v8: Sidebar top-left = logo only ===== */
+.brand.brand-clean{
+  padding: 14px 14px 6px;
+  display:flex;
+  justify-content:flex-start;
+}
+.sidecard.logo-only{
+  margin: 0;
+  padding: 12px 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(15,23,42,.06);
+  box-shadow: 0 18px 40px rgba(15,23,42,.06);
+}
+.sidecard.logo-only img{
+  display:block;
+  max-width: 170px;
+  height: auto;
+}
+
+/* ===== v8: Search bar less rounded (not egg) ===== */
+.header .search, .header .search input, .header input[type="search"], .searchbar, .searchbar input{
+  border-radius: 12px !important;
+}
+.header .search button, .header .create-btn, .btn, .btn-small{
+  border-radius: 12px !important;
+}
+
+/* ===== v9: Fix search bar pill (topbar) ===== */
+.topbar .search{
+  border-radius: 14px !important;
+}
+.topbar .search input{
+  border-radius: 12px !important;
+}
+.topbar .btn, .topbar .btn-small, .topbar .create-btn{
+  border-radius: 12px !important;
+}
+/* FIX: allow main content to scroll (Request QR/PR long form) /
+html, body { height: 100%; }
+body { overflow: hidden; } / ให้สกอลล์อยู่ใน .content แทน */
+
+.app { height: 100vh; overflow: hidden; } /* กัน body สกอลล์ซ้อน */
+
+.main {
+height: 100%;
+min-height: 0; /* สำคัญมากสำหรับ flex */
+overflow: hidden;
+}
+
+.content {
+height: calc(100vh - 88px); /* 88px = topbar โดยประมาณ */
+overflow: auto;
+-webkit-overflow-scrolling: touch;
+}
+/* ===== MintFlow FIX: prevent topbar overlap + allow long-form scroll (no magic px) ===== */
+
+/* Ensure full-height layout */
+html, body { height: 100%; }
+
+/* Keep page from double-scrolling; scroll happens in .content */
+body { overflow: hidden !important; }
+
+/* App shell */
+.app {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+/* Main area becomes a flex column so content naturally sits under topbar */
+.main {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Topbar stays on top without covering content */
+.topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Content takes remaining height and scrolls (overrides any calc(100vh - xx)) */
+.content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+/* ===== MintFlow FINAL: top spacing same as Filters (mock) ===== */
+
+/* Layout base */
+html, body { height: 100%; }
+body { overflow: hidden; }
+
+.app{
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  gap: 16px;          /* <<< ช่องไฟแบบเดียวกับ Filters (mock) */
+}
+
+/* Topbar */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Content scroll */
+.content{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* ===== MintFlow QR: align FOR + Note headers and match box heights ===== */
+
+/* Make two-column rows align to the top (no vertical drift) */
+.grid.grid-2{
+  align-items: start !important;
+}
+
+/* Ensure fields in grid behave consistently */
+.grid.grid-2 > .field{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Normalize label spacing so FOR and Note start at the same baseline */
+.field > label{
+  margin: 0 0 6px 0 !important;
+  line-height: 1.15 !important;
+}
+
+/* Match the Note box height to the FOR block height */
+.field.note-field{
+  height: 100% !important;
+}
+
+.field.note-field textarea{
+  flex: 1 1 auto !important;
+  min-height: 136px !important; /* fallback if left side gets shorter */
+  height: 100% !important;
+  resize: vertical;
+}
+
+/* If your Note field does NOT already have .note-field class,
+   add this small selector to catch the QR Note block by label text structure */
+.field:has(> label + .sub) textarea{
+  flex: 1 1 auto !important;
+}
+/* ===== FIX: align section headers + make Note box match FOR block height ===== */
+
+/* Make all 2-col grids align and stretch equally */
+.grid.grid-2{
+  align-items: stretch !important;
+}
+
+/* Ensure each field is a vertical flex stack (label -> control) */
+.grid.grid-2 > .field{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Normalize label height/spacing so headers line up */
+.field > label{
+  display: block !important;
+  margin: 0 0 6px 0 !important;
+  line-height: 1.15 !important;
+  min-height: 34px !important; /* 2-line label (EN+TH) baseline */
+}
+/* PATCH: Fix left/right alignment (remove extra top divider on Items column)
+   Apply AFTER existing CSS
+*/
+
+/* Items section header has extra border/margin */
+#section-items,
+.items-wrapper,
+.items-panel {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Ensure both columns align from same baseline */
+.layout-a {
+  align-items: flex-start;
+}
+
+.layout-a .layout-col {
+  padding-top: 0;
+}
+
+/* If Items has internal title bar */
+#section-items > h3,
+#section-items > .section-title {
+  margin-top: 0 !important;
+}
+
+/* Make textarea fill the stretched column height */
+.field textarea{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+/* =========================================================
+   MintFlow — Layout A FIX v8
+   - เอาเส้นบน "งอก" ฝั่ง Items ออก (กันเส้นซ้อน)
+   - ดัน baseline ให้ Doc Date ตรงกับ Items
+   - แก้ปุ่ม "+ เพิ่มรายการ" ให้ไม่เบียดเส้น/สัดส่วนไม่เพี้ยน
+   Scope: เฉพาะหน้า Layout A (#mfS1/#mfS2 + .layout-a)
+   ========================================================= */
+
+.layout-a{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:16px;
+  align-items:start;
+}
+@media (max-width:980px){
+  .layout-a{ grid-template-columns:1fr; }
+}
+.layout-a .layout-col{ min-width:0; }
+
+/* ===== BASELINE (ทำให้ซ้ายเริ่มระดับเดียวกับขวา โดยไม่เพิ่มเส้นซ้อนขวา) ===== */
+/* ขวามี .hr ของเดิมอยู่แล้ว → เพิ่มเส้นให้ "ซ้าย" อย่างเดียว */
+#mfS1::before{
+  content:"";
+  display:block;
+  height:1px;
+  background: var(--border, #e5e7eb);
+  margin: 10px 0; /* match .hr */
+}
+
+/* ห้ามมีเส้น pseudo เพิ่มที่ขวา */
+#mfS2::before{ content:none !important; display:none !important; }
+
+/* กัน border-top แปลก ๆ ในฝั่ง Items ที่อาจทำให้เกิดเส้นซ้อน */
+#mfS2,
+#mfS2 .panel,
+#mfS2 .card,
+#mfS2 .section,
+#mfS2 .items{
+  border-top:none !important;
+}
+
+/* ===== แถวแรก (Doc Date / Urgency) ให้ไม่หลุดโลก ===== */
+#mfS1 .row{ align-items:flex-start !important; }
+#mfS1 .row > *{ margin-top:0 !important; padding-top:0 !important; }
+
+/* ===== ช่องไฟฝั่งซ้าย 1cm จริง ===== */
+/* ใช้ margin-bottom ของ direct children กัน selector ไม่โดน */
+#mfS1 > .row,
+#mfS1 > .field,
+#mfS1 > .grid{ margin-bottom:10mm !important; }
+#mfS1 > .row:last-child,
+#mfS1 > .field:last-child,
+#mfS1 > .grid:last-child{ margin-bottom:0 !important; }
+
+/* label baseline */
+#mfS1 label, #mfS2 label{
+  display:block;
+  margin:0 0 6px 0 !important;
+  line-height:1.15 !important;
+}
+
+/* ===== ปุ่ม "+ เพิ่มรายการ" ไม่ให้เบียดเส้น/สัดส่วนเพี้ยน ===== */
+/* ยิงเฉพาะปุ่มที่อยู่บนหัว Items (แถวเดียวกับคำว่า Items) */
+#mfS2 .section-title + button,
+#mfS2 .section-title ~ button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
+  align-self:flex-start !important;
+}
+
+/* เผื่อโครงเป็น toolbar */
+#mfS2 .items-toolbar button,
+#mfS2 .items-head button{
+  line-height:1.2 !important;
+  padding:8px 12px !important;
+  height:auto !important;
+}
+
+/* =========================================================
+   Layout A — Headline Align (v12)
+   ดันหัวข้อฝั่งซ้ายแถวแรก (Doc Date / Urgency) ลงให้ตรงกับ Items
+   ========================================================= */
+#mfS1 .row:first-child label{
+  display:block;
+  position:relative;
+  top: 10px !important;
+}
+
+/* v13: Ensure RIGHT headline has no extra top offset */
+#mfS2 .section-title,
+#mfS2 h3,
+#mfS2 .items-title{
+  position: relative;
+  top: 0 !important;
+}
+
+/* v14: First row (Doc Date / Urgency) — add a bit more space between label and input */
+#mfS1 .row:first-child label{
+  margin-bottom: 10px !important;
+}
+
+/* =========================================================
+   Layout A — FOR inputs narrower so NOTE column can sit left (v15a)
+   เป้า: ลด "ความยาว" กล่องข้อความใน FOR (forRepairTxt/forSaleTxt)
+         และกันไม่ให้ FOR (content-min-width) ดัน NOTE ไปทางขวา
+   ไม่แตะ NOTE position/top, ไม่แตะ spacing 1cm แถวอื่น
+   ========================================================= */
+
+/* ให้ flex items หดได้ (กัน content ดันคอลัมน์) */
+#mfS1 .row > *,
+#mfS1 .field{
+  min-width: 0 !important;
+}
+
+/* บีบ input ใน FOR ให้สั้นลง */
+#mfS1 #forRepairTxt,
+#mfS1 #forSaleTxt{
+  max-width: 220px !important;   /* ปรับได้: 200-260 */
+  width: 100% !important;
+}
+
+/* ให้บรรทัด Repair/Sale จัด layout สวยและหดได้ */
+#mfS1 .for-line{
+  display:flex !important;
+  gap:8px !important;
+  align-items:center !important;
+}
+
+/* label checkbox ไม่ให้กว้างเกิน */
+#mfS1 .for-line .chk{
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+}
+
+/* input หดได้จริงใน flex */
+#mfS1 .for-line input.input{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* =========================================================
+   MintFlow — Orange Section Bands (v23)
+   เป้า:
+   - ทำ "แถบหัวข้อ" สีเดียวกับปุ่ม Go (ส้ม) คาดยาวเต็มคอลัมน์
+   - แยกซ้าย/ขวาคนละแถบ (ไม่คาดทั้งหน้า)
+   - หัวข้อเป็นสีขาว
+   - ลบ (Required) ด้วยการซ่อน span/class ที่พบบ่อย (ถ้ามี)
+   ========================================================= */
+
+:root{
+  --mf-band-bg: #ff7a1a;
+  --mf-band-fg: #ffffff;
+  --mf-band-radius: 12px;
+}
+
+/* ---------- ซ่อน (Required) (ถ้ามาเป็น span/class) ---------- */
+.required, .req, .is-required, .req-text,
+small.required, span.required, em.required,
+small.req, span.req, em.req{
+  display:none !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งซ้าย: ใช้แถวแรก (Doc Date / Urgency) เป็น band ---------- */
+#mfS1 .row:first-child{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  margin-bottom: 10mm; /* คง 1cm หลังแถบ */
+}
+
+/* ตัวหนังสือหัวข้อบนแถบ */
+#mfS1 .row:first-child label,
+#mfS1 .row:first-child .lbl,
+#mfS1 .row:first-child .label{
+  color: var(--mf-band-fg) !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+/* คำแปลไทยใต้หัวข้อบนแถบ (ถ้ามี) ให้เป็นขาวแบบซอฟต์ */
+#mfS1 .row:first-child .sub,
+#mfS1 .row:first-child small,
+#mfS1 .row:first-child .muted{
+  color: rgba(255,255,255,.85) !important;
+}
+
+/* กัน input ชนแถบ */
+#mfS1 .row:first-child input,
+#mfS1 .row:first-child select{
+  background: #fff !important;
+}
+
+/* ---------- แถบหัวข้อฝั่งขวา: band ที่หัว Items (คำว่า Items + ปุ่มเพิ่มรายการ) ---------- */
+/* ยิงหลายชื่อ เผื่อโครงต่างกัน */
+#mfS2 .items-head,
+#mfS2 .items-toolbar,
+#mfS2 .items-header,
+#mfS2 .items-top{
+  background: var(--mf-band-bg);
+  border-radius: var(--mf-band-radius);
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom: 12px;
+}
+
+/* หัวคำว่า Items ให้เป็นขาว */
+#mfS2 .items-head .section-title,
+#mfS2 .items-head h2,
+#mfS2 .items-head h3,
+#mfS2 .items-toolbar .section-title,
+#mfS2 .items-toolbar h2,
+#mfS2 .items-toolbar h3,
+#mfS2 .items-header .section-title,
+#mfS2 .items-header h2,
+#mfS2 .items-header h3{
+  color: var(--mf-band-fg) !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+/* ปุ่ม +เพิ่มรายการบนแถบ: ให้คุมสีให้เข้ากัน */
+#mfS2 .items-head button,
+#mfS2 .items-toolbar button,
+#mfS2 .items-header button,
+#mfS2 .items-top button{
+  background: rgba(255,255,255,.16) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+}
+#mfS2 .items-head button:hover,
+#mfS2 .items-toolbar button:hover,
+#mfS2 .items-header button:hover,
+#mfS2 .items-top button:hover{
+  background: rgba(255,255,255,.22) !important;
+}
+
+/* Responsive */
+@media (max-width:520px){
+  #mfS2 .items-head,
+  #mfS2 .items-toolbar,
+  #mfS2 .items-header,
+  #mfS2 .items-top{
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================================
+   PATCH v24 SAFE — Soften section bands + Heading accent bar
+   - ใช้โทนส้มอ่อนแบบเมนูซ้าย (active) ไม่แป๋นแล๋น
+   - เส้นหน้าหัวข้อเข้มกว่า 1–2 เฉด (เตะตานิด ๆ)
+   - Scope เฉพาะ #mfS1 แถวแรก + #mfS2 หัว Items (ไม่ลามทั้งเว็บ)
+   ========================================================= */
+
+:root{
+  --mf-band-bg: rgba(249,115,22,.10) !important;   /* ส้มอ่อน */
+  --mf-band-fg: #1F2937 !important;               /* ตัวหนังสือหัวข้อ */
+  --mf-band-accent: #F97316 !important;           /* เส้นหัวข้อ */
+  --mf-band-border: rgba(249,115,22,.22) !important;
+}
+
+/* ----- LEFT: Doc Date / Urgency band ----- */
+#mfS1 .row:first-child{
+  background: var(--mf-band-bg) !important;
+  border: 1px solid var(--mf-band-border) !important;
+}
+
+#mfS1 .row:first-child label,
+#mfS1 .row:first-child .lbl,
+#mfS1 .row:first-child .label{
+  color: var(--mf-band-fg) !important;
+  position: relative !important;
+  padding-left: 14px !important; /* เว้นที่ให้เส้น */
+}
+
+/* เส้นหน้าหัวข้อ (ซ้าย) */
+#mfS1 .row:first-child label::before,
+#mfS1 .row:first-child .lbl::before,
+#mfS1 .row:first-child .label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.12em;
+  width:4px;
+  height:1.15em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* ซับใต้หัวข้อใน band ให้เป็นเทาซอฟต์ */
+#mfS1 .row:first-child .sub,
+#mfS1 .row:first-child small,
+#mfS1 .row:first-child .muted{
+  color: var(--muted) !important;
+}
+
+/* ----- RIGHT: Items band ----- */
+#mfS2 .items-head,
+#mfS2 .items-toolbar,
+#mfS2 .items-header,
+#mfS2 .items-top{
+  background: var(--mf-band-bg) !important;
+  border: 1px solid var(--mf-band-border) !important;
+}
+
+/* หัวคำว่า Items ให้เป็นเข้ม + มีเส้นหน้า */
+#mfS2 .items-head .section-title,
+#mfS2 .items-toolbar .section-title,
+#mfS2 .items-header .section-title,
+#mfS2 .items-top .section-title,
+#mfS2 .items-head h2,
+#mfS2 .items-head h3,
+#mfS2 .items-toolbar h2,
+#mfS2 .items-toolbar h3,
+#mfS2 .items-header h2,
+#mfS2 .items-header h3,
+#mfS2 .items-top h2,
+#mfS2 .items-top h3{
+  color: var(--mf-band-fg) !important;
+  position: relative !important;
+  padding-left: 14px !important;
+  font-weight: 800 !important;
+}
+
+/* เส้นหน้าหัวข้อ (ขวา) */
+#mfS2 .items-head .section-title::before,
+#mfS2 .items-toolbar .section-title::before,
+#mfS2 .items-header .section-title::before,
+#mfS2 .items-top .section-title::before,
+#mfS2 .items-head h2::before,
+#mfS2 .items-head h3::before,
+#mfS2 .items-toolbar h2::before,
+#mfS2 .items-toolbar h3::before,
+#mfS2 .items-header h2::before,
+#mfS2 .items-header h3::before,
+#mfS2 .items-top h2::before,
+#mfS2 .items-top h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.12em;
+  width:4px;
+  height:1.15em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* ปุ่ม +เพิ่มรายการ: ให้เด่นแต่ไม่แสบตา */
+#mfS2 .items-head button,
+#mfS2 .items-toolbar button,
+#mfS2 .items-header button,
+#mfS2 .items-top button{
+  background: var(--mf-band-accent) !important;
+  color: #fff !important;
+  border: 1px solid rgba(249,115,22,.35) !important;
+}
+#mfS2 .items-head button:hover,
+#mfS2 .items-toolbar button:hover,
+#mfS2 .items-header button:hover,
+#mfS2 .items-top button:hover{
+  filter: brightness(.95);
+}
+
+/* =========================================================
+   PATCH v25 — Apply soft band + heading accent to other headings
+   - ทำหัวข้อฝั่งซ้ายทุกแถว (Project/Requester/FOR/Note ฯลฯ) ให้เป็นธีมเดียวกับแถวแรก
+   - กันไม่ให้ไปโดน label ของ checkbox ใน FOR list
+   - ฝั่งขวา: เพิ่ม accent ให้หัวข้อ Item # (ถ้ามี)
+   ========================================================= */
+
+/* -------- LEFT: all form rows in Section 1 -------- */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Headline labels in left section (field labels) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar before label text */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) label::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .lbl::before,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* Sub label text (ไทยใต้หัวข้อ) */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .sub,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) small,
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row) .muted{
+  color: var(--mf-band-sub) !important;
+}
+
+/* -------- SAFETY: don't style checkbox labels inside FOR list -------- */
+#mfS1 .for-list label{
+  padding-left: 0 !important;
+  font-weight: 400 !important;
+}
+#mfS1 .for-list label::before{
+  content: none !important;
+}
+
+/* -------- RIGHT: item card headings (optional) -------- */
+/* If your item card has a title like "Item #1" in h4/.item-title */
+#mfS2 .item-title,
+#mfS2 .item-headline,
+#mfS2 h4{
+  position: relative;
+  padding-left: 14px;
+}
+#mfS2 .item-title::before,
+#mfS2 .item-headline::before,
+#mfS2 h4::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v26 — Ensure Project/Subject row is themed
+   (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
+   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
+   ========================================================= */
+
+#mfS1 .row:has(#project),
+#mfS1 .row:has([name="project"]),
+#mfS1 .row:has(#subject),
+#mfS1 .row:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+#mfS1 .row:has(#project) label,
+#mfS1 .row:has([name="project"]) label,
+#mfS1 .row:has(#subject) label,
+#mfS1 .row:has([name="subject"]) label{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+#mfS1 .row:has(#project) label::before,
+#mfS1 .row:has([name="project"]) label::before,
+#mfS1 .row:has(#subject) label::before,
+#mfS1 .row:has([name="subject"]) label::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v27 — Project/Subject block (NOT inside .row) theme
+   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
+   ========================================================= */
+
+/* Card wrapper for Project/Subject regardless of structure */
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]),
+#mfS1 .col:has(#project),
+#mfS1 .col:has([name="project"]),
+#mfS1 .col:has(#subject),
+#mfS1 .col:has([name="subject"]),
+#mfS1 .field:has(#project),
+#mfS1 .field:has([name="project"]),
+#mfS1 .field:has(#subject),
+#mfS1 .field:has([name="subject"]),
+#mfS1 .form-group:has(#project),
+#mfS1 .form-group:has([name="project"]),
+#mfS1 .form-group:has(#subject),
+#mfS1 .form-group:has([name="subject"]){
+  background: var(--mf-band-bg);
+  border: 1px solid var(--mf-band-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+/* Heading/label inside the Project/Subject card */
+#mfS1 > *:has(#project) > label:first-of-type,
+#mfS1 > *:has([name="project"]) > label:first-of-type,
+#mfS1 > *:has(#subject) > label:first-of-type,
+#mfS1 > *:has([name="subject"]) > label:first-of-type,
+#mfS1 .col:has(#project) label:first-of-type,
+#mfS1 .col:has([name="project"]) label:first-of-type,
+#mfS1 .col:has(#subject) label:first-of-type,
+#mfS1 .col:has([name="subject"]) label:first-of-type,
+#mfS1 .field:has(#project) label:first-of-type,
+#mfS1 .field:has([name="project"]) label:first-of-type,
+#mfS1 .field:has(#subject) label:first-of-type,
+#mfS1 .field:has([name="subject"]) label:first-of-type,
+#mfS1 .form-group:has(#project) label:first-of-type,
+#mfS1 .form-group:has([name="project"]) label:first-of-type,
+#mfS1 .form-group:has(#subject) label:first-of-type,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type{
+  position: relative;
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--mf-band-fg);
+}
+
+/* Accent bar */
+#mfS1 > *:has(#project) > label:first-of-type::before,
+#mfS1 > *:has([name="project"]) > label:first-of-type::before,
+#mfS1 > *:has(#subject) > label:first-of-type::before,
+#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
+#mfS1 .col:has(#project) label:first-of-type::before,
+#mfS1 .col:has([name="project"]) label:first-of-type::before,
+#mfS1 .col:has(#subject) label:first-of-type::before,
+#mfS1 .col:has([name="subject"]) label:first-of-type::before,
+#mfS1 .field:has(#project) label:first-of-type::before,
+#mfS1 .field:has([name="project"]) label:first-of-type::before,
+#mfS1 .field:has(#subject) label:first-of-type::before,
+#mfS1 .field:has([name="subject"]) label:first-of-type::before,
+#mfS1 .form-group:has(#project) label:first-of-type::before,
+#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
+#mfS1 .form-group:has(#subject) label:first-of-type::before,
+#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.15em;
+  width:4px;
+  height:1.1em;
+  border-radius:2px;
+  background: var(--mf-band-accent);
+}
+
+/* =========================================================
+   PATCH v28 — Reduce spacing BETWEEN section cards only
+   From ~1cm to ~0.5cm
+   (Do NOT touch inner padding or field spacing)
+   ========================================================= */
+
+/* Control vertical gap between section cards */
+#mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
+#mfS1 > *:has(#project),
+#mfS1 > *:has([name="project"]),
+#mfS1 > *:has(#subject),
+#mfS1 > *:has([name="subject"]){
+  margin-bottom: 8px !important; /* ~0.5cm visual gap */
+}
+
+/* Safety: do not affect items section internal spacing */
+#mfS2 .item,
+#mfS2 .item-row{
+  margin-bottom: inherit;
+}
+
+
+/* ============================================================
+   PATCH v42 (CLEAN) - Right side: Export/Attach in ONE ROW 50/50
+   - Keep Preview/Submit/Cancel + submit-note untouched (only spacing safety)
+   - Buttons (Delete/Add) are rendered INSIDE Attach field (app.js v48)
+   ============================================================ */
+
+/* Export + Attach: same row, 50/50 like FOR/Note */
+#mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;  /* 50/50 */
+  gap: 20px !important;
+  align-items: start !important;
+  margin-top: 16px !important; /* give space after Detail */
+}
+
+/* Make sure each field behaves like a column */
+#mfS2 .row.row-export-attach > .field{
+  min-width: 0;
+}
+
+/* Export checkboxes: left aligned (no center drifting) */
+#mfS2 .row.row-export-attach .exportByRow{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+#mfS2 .row.row-export-attach .chkLine{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+/* Buttons under Attach: keep under file input, left aligned inside right column */
+#mfS2 .row.row-export-attach .itemControls{
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-top: 12px !important;   /* space from file input */
+}
+
+/* Safety spacing between controls area and bottom buttons row */
+#mfS2 .row.row-export-attach{
+  margin-bottom: 12px !important; /* creates breathing room before btnRow3 */
+}
+
+/* Submit note: make sure it doesn't stick to btnRow3 */
+#mfS2 .btnRow3{ margin-bottom: 10px !important; }
+#mfS2 .pill.submit-note{ margin-top: 10px !important; width:100% !important; }
+
+
+/* PATCH v43: spacing before Export/Attach row (avoid sticking to Detail box) */
+#frmCreate .row.row-export-attach{
+  margin-top: 8px !important; /* match 0.5 gap vibe */
+}
+
+/* ===== PATCH v44: Right controls row polish (Export/Attach + itemControls) ===== */
+#mfS2 .row-export-attach{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row-export-attach .field{ margin: 0; }
+
+#mfS2 .exportByRow{ display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+#mfS2 .exportByRow .chkLine{
+  display: flex;
+  justify-content: flex-start !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+#mfS2 .itemControls{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+#mfS2 .btnRow3{ margin-top: 12px; }
+#mfS2 .pill.submit-note, #mfS2 .pill{ margin-top: 8px; }
+
+
+/* ============================================================
+   PATCH v47 - warnBox placement (outside FOR/Note card)
+   - keep the warnBox looking like the original: full width,
+     nice spacing from cards above/below.
+   ============================================================ */
+#mfS1 .warnBox{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+
+/* ============================================================
+   PATCH v48 - Add top spacing before Export/Attach row (Right)
+   - Move the "Export By / Attach photos" headings down ~1cm
+   ============================================================ */
+#frmCreate .row.row-export-attach{
+  margin-top: 16px !important; /* ~1cm visual, consistent with other headings */
+}
+
+
+/* ============================================================
+   PATCH v49 - Right column alignment cleanup
+   - Keep item input boxes aligned in the same vertical grid
+   ============================================================ */
+#mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 12px;
+  align-items: start;
+}
+#mfS2 .row.row-name-model > .field,
+#mfS2 .row.row-codeqty > .field{
+  margin: 0 !important;
+  min-width: 0;
+}
+#mfS2 .field .input{
+  width: 100%;
+}
+/* ===== FIX: Submit note full width & center ===== */
+#frmCreate .pill.submit-note{
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
+/* ===== FIX: Submit note full width & center (RIGHT column only) ===== */
+#mfS2 .pill.submit-note{
+  display: flex !important;          /* ฆ่า inline-flex */
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+
+  justify-content: center !important;
+  align-items: center;
+  text-align: center !important;
+  box-sizing: border-box;
+}
+/* ===== FINAL FIX : Submit note full width & center (RIGHT COLUMN ONLY) ===== */
+
+#frmCreate #mfs2 .pill.submit-note {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* ===== FORCE: Submit note full width + center (RIGHT COLUMN) ===== */
+#frmCreate #mfs2 .pill.submit-note{
+  display: flex !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* ถ้ามันอยู่ในแถว grid ให้กินเต็มแถว */
+#frmCreate #mfs2 .btnRow3 .pill.submit-note,
+#frmCreate #mfs2 .row .pill.submit-note{
+  grid-column: 1 / -1 !important;
+}
+/* ===== FORCE: Submit note full width & center (FINAL) ===== */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+}
+
+/* ให้มันอิงความกว้างคอลัมน์ขวาเสมอ */
+#mfS2 #submitNote,
+#frmCreate #submitNote{
+  grid-column: 1 / -1 !important;
+}
+/* =========================================================
+   MINTFLOW – HARD OVERRIDE (FINAL)
+   Purpose:
+   1. Submit note (หลัง Submit...) ยืดเต็มคอลัมน์
+   2. ข้อความอยู่กึ่งกลางเสมอ
+   3. ไม่โดน grid / flex อื่นดึงกลับ
+   ========================================================= */
+
+/* ---------- Submit note base ---------- */
+#submitNote{
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  margin-top: 12px !important;
+  padding: 8px 12px !important;
+}
+
+/* ---------- Force full row in RIGHT column grid ---------- */
+#mfS2 #submitNote{
+  grid-column: 1 / -1 !important;
+}
+
+/* ---------- In case parent is flex / weird row ---------- */
+#mfS2 .row,
+#mfS2 .btnRow3{
+  width: 100% !important;
+}
+
+/* ---------- Prevent any inline / legacy override ---------- */
+#mfS2 .pill.submit-note{
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* ---------- Safety: block float / inline ---------- */
+#submitNote,
+#submitNote *{
+  float: none !important;
+}
+/* =========================================================
+   v606 RIGHT COLUMN ALIGN (only 3 rows)
+   - Row 1: Name / Model
+   - Row 2: Code / QTY / Unit
+   - Row 3: Export By / Attach photos
+   Goal: Model, QTY, Attach photos start on the same vertical line.
+   NOTE: Do NOT touch other layout parts.
+========================================================= */
+
+/* Base: Code/QTY/Unit = 3 columns. Tune ONLY col1 width here. */
+#mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: 1.55fr 1fr 1fr !important; /* col1=Code, col2=QTY, col3=Unit */
+  gap: 12px !important;
+  align-items: start !important;
+}
+#mfS2 .row.row-codeqty > .field{
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+
+/* Row 1: Name/Model -> make Model start at same x as QTY (col2 start). */
+#mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: 1.55fr 2fr !important; /* 2fr = (1fr+1fr) */
+  gap: 12px !important;
+  align-items: start !important;
+}
+#mfS2 .row.row-name-model > .field{
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+
+/* Row 3: Export/Attach -> make Attach start at same x as QTY (col2 start). */
+#mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: 1.55fr 2fr !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+#mfS2 .row.row-export-attach > .field{
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+
+/* Prevent Export labels from breaking into 2 lines (By / Sea). */
+#mfS2 .row.row-export-attach .chkLine{
+  white-space: nowrap !important;
+}
+
+/* ========================================================= */
+END – DO NOT EDIT BELOW
+   ========================================================= */
+
+
+/* ============================================================
+   v605 FINAL: Right column alignment (ONLY mfS2)
+   - Align Model start with QTY/Attach
+   - Fix Export By options wrapping (keep enough column width)
+   ============================================================ */
+
+#frmCreate #mfS2 .row.row-name-model{
+  display: grid !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(320px, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+#frmCreate #mfS2 .row.row-codeqty{
+  display: grid !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(180px, 1fr) minmax(220px, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+#frmCreate #mfS2 .row.row-export-attach{
+  display: grid !important;
+  grid-template-columns: minmax(320px, 1.55fr) minmax(320px, 1fr) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+/* Safety: stop the Export checkbox text from breaking into one-word-per-line */
+#frmCreate #mfS2 .row.row-export-attach .field:first-child{
+  min-width: 320px !important;
+}
+
+#frmCreate #mfS2 .row.row-export-attach .field:first-child *{
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* ============================================================
+   MINTFLOW — ALIGN FIX HARD (2026-01-14)
+   - Remove ANY debug outline that may exist from previous tests
+   - Force Code/QTY/Unit grid to 50% | 25% | 25%
+   - Force Export/Attach to 50/50
+   (High specificity + !important)
+   ============================================================ */
+
+/* kill debug border if any */
+#frmCreate #mfS2 .row.row-codeqty{
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
+/* 50% split reference */
+#frmCreate #mfS2 .row.row-name-model{
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* FORCE QTY start = 50% line */
+#frmCreate #mfS2 #items .card .row.row-codeqty{
+  grid-template-columns: 1fr .5fr .5fr !important; /* 50% | 25% | 25% */
+}
+
+/* FORCE Export/Attach = 50/50 (no other styling) */
+#frmCreate #mfS2 #items .card .row.row-export-attach{
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* Inputs: only text-like to avoid export checkbox issues */
+#frmCreate #mfS2 input:not([type="checkbox"]):not([type="radio"]),
+#frmCreate #mfS2 select,
+#frmCreate #mfS2 textarea{
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX (QTY NUDGE RIGHT 1 TAP)
+   Scope: ONLY move QTY column slightly to the right
+   Method: margin-left (true position move, no padding)
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(2){
+  margin-left: 4px !important; /* 1 เคาะ ตามสายตา */
+}
+
+/* ============================================================
+   MINTFLOW — MICRO FIX #2 (CODE WIDTH MATCH NAME)
+   Requirement:
+   - Make Code input width visually match Name input (same right edge)
+   - Do NOT touch QTY (already correct)
+   Cause:
+   - QTY column was nudged right by 4px, leaving a 4px visual gap.
+   Fix:
+   - Extend Code field by that gap using negative right margin (visual only).
+   ============================================================ */
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1){
+  margin-right: -4px !important; /* เติมช่องว่าง 1 เคาะ */
+}
+
+#frmCreate #mfS2 #items .card .row.row-codeqty > .field:nth-child(1) input{
+  width: 100% !important;
+}
+
+/* ==== HOTFIX: Export/Attach mobile containment (does NOT touch QTY/Unit rows) ==== */
+#mfS2 .row.row-export-attach .field{ min-width: 0 !important; }
+#mfS2 .row.row-export-attach input[type="file"]{ max-width: 100% !important; }
+
+/* Keep buttons inside the Attach column */
+#mfS2 .row.row-export-attach .itemControls{
+  max-width: 100% !important;
+  flex-wrap: wrap !important;
+}
+
+/* When screen is narrow, stack Export + Attach to avoid overflow */
+@media (max-width: 820px){
+  #mfS2 .row.row-export-attach{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extra small: let buttons fill the row instead of pushing outside */
+@media (max-width: 480px){
+  #mfS2 .row.row-export-attach .itemControls button{
+    flex: 1 1 auto !important;
+  }
+}
+/* ===== Item card highlight (orange) ===== */
+/* ครอบทั้ง Item # ให้เป็นก้อนเดียว */
+#mfS2 #items .card{
+  border: 1.5px solid #ff8a00;          /* เส้นส้ม */
+  background: #fff7ee;                  /* ส้มอ่อน */
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(255,138,0,.12);
+}
+
+/* เว้นระยะในก้อนให้ดูเป็นหัวเรื่องเดียว */
+#mfS2 #items .card{
+  padding: 14px 16px;
+}
+
+/* หัว Item # ให้เด่นขึ้นนิดเดียว (ไม่บังคับ) */
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: #ff8a00;
+}
+/* ===== Item card highlight (match right-side orange) ===== */
+#mfS2 #items .card{
+  border: 1px solid rgba(255, 122, 69, .55);
+  background: rgba(255, 122, 69, .06);
+  border-radius: 14px;
+  box-shadow: none;
+  padding: 14px 16px;
+}
+
+#mfS2 #items .card .section-title,
+#mfS2 #items .card h3{
+  color: rgba(255, 122, 69, .9);
+}
+
+
+/* =========================================================
+   FINAL HOTFIX (do not edit above)
+   - Reset base .card (some previous patches accidentally tinted all cards)
+   - Apply orange "big item frame" ONLY to the Item card in Request QR
+   - Add orange divider bar to the Item title (like left-side cards)
+   ========================================================= */
+
+/* 1) Base card reset (prevents random orange/bg overrides) */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+/* 2) Item big frame (ONLY right-side item card) */
+#mfS2 #items > .card{
+  background: rgba(249,115,22,.08);
+  border: 1px solid rgba(249,115,22,.25);
+  box-shadow: none;
+}
+
+/* 3) Remove any accidental underline/divider coming from generic title styles */
+#mfS2 #items .section-title{
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 12px;
+}
+
+/* 4) Orange divider bar before "Item #..." title (match left card vibe) */
+#mfS2 #items .section-title h3{
+  position: relative;
+  padding-left: 12px;
+}
+#mfS2 #items .section-title h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:3px;
+  width:4px;
+  height:18px;
+  border-radius: 4px;
+  background: var(--orange); /* uses existing variable */
+}
+
+/* 5) Safety: keep item grids intact (do NOT touch QTY widths / align) */
+#mfS2 #items .row.row2,
+#mfS2 #items .row.row-product{
+  align-items: start;
+}
+
+/* =========================================================
+   FINAL LOCK — Export / Attach alignment (SAFE)
+   Scope: ONLY .row.row-export-attach
+   Rule:
+   - Desktop: unchanged
+   - <=900px: force 2-column grid like Name/Model
+   ========================================================= */
+
+@media (max-width: 900px){
+  #mfS2 .row.row-export-attach{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  #mfS2 .row.row-export-attach > .field{
+    min-width: 0;
+  }
+}
+
+
+/* =========================================================
+   PATCH v57 — FIX VERSION DRIFT
+   1) Remove extra inner box on Project/Subject (and For Customer) fields
+   2) Align FOR Repair/Sale input start + placeholder alignment
+   Scope: ONLY #mfS1 (left form panel)
+   ========================================================= */
+
+/* ---------- 1) Kill double-box on Project/Subject row ---------- */
+#mfS1 .field:has(input[name="project"]),
+#mfS1 .field:has(input#project),
+#mfS1 .field:has(input[name="forCustomer"]),
+#mfS1 .field:has(input#forCustomer){
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure inputs still look correct inside the row container */
+#mfS1 .field:has(input[name="project"]) input.input,
+#mfS1 .field:has(input#project) input.input,
+#mfS1 .field:has(input[name="forCustomer"]) input.input,
+#mfS1 .field:has(input#forCustomer) input.input{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ---------- 2) FOR: Make Repair/Sale lines perfectly aligned ---------- */
+#mfS1 .for-list .for-line{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Fix label width so both Repair/Sale inputs start at same x */
+#mfS1 .for-list .for-line > label.chk{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 92px !important; /* locks input start */
+  margin: 0 !important;
+}
+
+/* Input takes the remaining space */
+#mfS1 .for-list .for-line > input.input{
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: normal !important;
+}
+
+
+
+/* =====================================================================
+   FINAL FIX — Export By ONLY (NO Attach photos changes)
+   Requirements:
+   ✅ PC: 1 horizontal row
+   ✅ Mobile/Tablet (<=820px): vertical stack (no overflow)
+   ✅ Gap Detail -> Export By block: 1 cm
+   ✅ Gap Export By heading -> first checkbox row: 0.5 cm
+   ✅ Icon AFTER checkbox BEFORE text (single icon), readable text (no shrink)
+   Scope: ONLY #mfS2 .row.row-export-attach (right section)
+   ===================================================================== */
+
+:root{ --mfExportIco: rgba(249,115,22,.95); }
+
+/* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
+#mfS2 .row.row-export-attach .field:has(.exportByRow){
+  margin-top: 10mm !important;   /* 1 cm */
+}
+
+/* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 5mm !important; /* 0.5 cm */
+}
+
+/* 3) Desktop: force one horizontal row */
+#mfS2 .row.row-export-attach .exportByRow{
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 18px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 4) Each option line: checkbox -> icon -> text */
+#mfS2 .row.row-export-attach .exportByRow .chkLine{
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  position: relative !important;
+}
+
+/* Remove any previous icon attempts to prevent duplicates */
+#mfS2 .row.row-export-attach .exportByRow .chkLine::after{ content: none !important; display:none !important; }
+#mfS2 .row.row-export-attach .exportByRow .chkLine span::before{ content: none !important; display:none !important; }
+#mfS2 .row.row-export-attach .exportByRow .chkLine input[type="checkbox"]::after{ content: none !important; display:none !important; }
+
+/* Checkbox first */
+#mfS2 .row.row-export-attach .exportByRow .chkLine input[type="checkbox"]{
+  order: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+/* Text last (label/span/anything after checkbox) */
+#mfS2 .row.row-export-attach .exportByRow .chkLine > *:not(input[type="checkbox"]){
+  order: 2 !important;
+}
+
+/* Icon slot: after checkbox, before text */
+#mfS2 .row.row-export-attach .exportByRow .chkLine::before{
+  content: "" !important;
+  order: 1 !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-block !important;
+  margin: 0 2px !important;
+  background-color: var(--mfExportIco) !important;
+  -webkit-mask-repeat: no-repeat !important;
+  -webkit-mask-position: center !important;
+  -webkit-mask-size: contain !important;
+  mask-repeat: no-repeat !important;
+  mask-position: center !important;
+  mask-size: contain !important;
+}
+
+/* SEA — clearer side-view ship */
+#mfS2 .row.row-export-attach .exportByRow .chkLine.by-sea::before,
+#mfS2 .row.row-export-attach .exportByRow .chkLine:nth-child(1)::before{
+  -webkit-mask-image: url("data:image/png;base64,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");
+  mask-image: url("data:image/png;base64,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");
+
+}
+
+/* LAND — truck */
+#mfS2 .row.row-export-attach .exportByRow .chkLine.by-land::before,
+#mfS2 .row.row-export-attach .exportByRow .chkLine:nth-child(2)::before{
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7h11v9H3V7Zm13 3h3l2 3v3h-5v-6ZM6.5 18.5A1.5 1.5 0 1 0 6.5 21a1.5 1.5 0 0 0 0-2.5Zm11 0A1.5 1.5 0 1 0 17.5 21a1.5 1.5 0 0 0 0-2.5Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7h11v9H3V7Zm13 3h3l2 3v3h-5v-6ZM6.5 18.5A1.5 1.5 0 1 0 6.5 21a1.5 1.5 0 0 0 0-2.5Zm11 0A1.5 1.5 0 1 0 17.5 21a1.5 1.5 0 0 0 0-2.5Z'/%3E%3C/svg%3E");
+}
+
+/* AIR — plane */
+#mfS2 .row.row-export-attach .exportByRow .chkLine.by-air::before,
+#mfS2 .row.row-export-attach .exportByRow .chkLine:nth-child(3)::before{
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L2 14v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5l8 2.5Z'/%3E%3C/svg%3E");
+}
+
+/* 5) Mobile/Tablet: stack vertically */
+@media (max-width: 820px){
+  #mfS2 .row.row-export-attach .exportByRow{
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+  #mfS2 .row.row-export-attach .exportByRow .chkLine{
+    width: 100% !important;
+    white-space: normal !important;
+  }
+}
+
+
+
+/* =====================================================================
+   MICRO FIX — Export By spacing ONLY
+   Goal:
+   - Distance between "Export By :" label and first checkbox row = 0.5 cm
+   - Match other headings (NO other changes)
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+/* Normalize gap under Export By heading */
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 5mm !important; /* 0.5 cm */
+}
+
+
+
+/* =====================================================================
+   MICRO FIX v2 — Export By spacing ONLY
+   Goal:
+   - Reduce gap under "Export By :" to ~0.25 cm (match other headings visually)
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 2.5mm !important; /* ~0.25 cm */
+}
+
+
+
+/* =====================================================================
+   MICRO FIX v3 — Export By spacing ONLY
+   Target:
+   - Current ~7mm → move up 2mm → final ~5mm
+   Scope: ONLY Export By field
+   ===================================================================== */
+
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 5mm !important; /* final target */
+}
+
+
+
+/* =====================================================================
+   MICRO FIX v4 — Export By spacing (CORRECT DIRECTION)
+   Clarification:
+   - Need to MOVE CHECKBOX ROW UP by 2mm (from ~7mm to ~5mm)
+   - Do NOT move the heading down
+   Action:
+   - Reduce TOP margin of exportByRow by 2mm
+   Scope: ONLY Export By checkbox row
+   ===================================================================== */
+
+/* Move checkbox row UP by 2mm */
+#mfS2 .row.row-export-attach .exportByRow{
+  margin-top: -2mm !important;
+}
+#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
+  margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
+}
+
+
+
+/* =========================================================
+   FIX ONLY — Detail → Export By spacing
+   Target effective gap = 10mm (1cm)
+   Adjustment: subtract extra 6mm → set margin-top to 4mm
+   ========================================================= */
+#mfS2 .row.row-export-attach .field:has(.exportByRow){
+  margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
+}
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN / FOR checkbox alignment
+   Baseline: latest approved file (keeps right column untouched)
+   Goal:
+   - Checkbox and label text vertically aligned
+   - Balanced spacing
+   Scope:
+   - LEFT column only (FOR section)
+   ========================================================= */
+
+/* FOR checkbox rows: align box + text */
+#mfS1 .for-line,
+#mfS1 .for-list label{
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  line-height: 1.2 !important;
+}
+
+/* Checkbox: remove drift */
+#mfS1 .for-line input[type="checkbox"],
+#mfS1 .for-list input[type="checkbox"]{
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* Text: keep centered with checkbox */
+#mfS1 .for-line label,
+#mfS1 .for-list label span,
+#mfS1 .for-list label{
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN / FOR order + checkbox usability + input width
+   Requirements:
+   1) Order: Sale, Repair, Stock
+   2) Checkbox must be usable (clickable) and look like real checkbox
+   3) Sale/Repair input width align with other inputs (full row)
+   Scope: LEFT column FOR block only (#mfS1)
+   ========================================================= */
+
+/* Make each FOR row a flex item so we can reorder */
+#mfS1 .for-list,
+#mfS1 .for-lines{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+/* Reorder (assumes existing order: Stock(1), Repair(2), Sale(3)) */
+#mfS1 .for-line:nth-child(1),
+#mfS1 .for-list > label:nth-child(1){ order: 3 !important; } /* Stock -> last */
+#mfS1 .for-line:nth-child(2),
+#mfS1 .for-list > label:nth-child(2){ order: 2 !important; } /* Repair -> middle */
+#mfS1 .for-line:nth-child(3),
+#mfS1 .for-list > label:nth-child(3){ order: 1 !important; } /* Sale -> first */
+
+/* Checkbox usability: restore native checkbox and ensure clickable */
+#mfS1 input[type="checkbox"]{
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  margin: 0 !important;
+}
+
+/* Make label/row clickable (helps even if checkbox small) */
+#mfS1 .for-line,
+#mfS1 .for-list > label{
+  cursor: pointer !important;
+}
+
+/* Layout of a row: left cluster (checkbox+text) and right input (if any) */
+#mfS1 .for-line,
+#mfS1 .for-list > label{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* If row contains a text input (Sale/Repair), make it stretch to align with other fields */
+#mfS1 .for-line input[type="text"],
+#mfS1 .for-line input[type="search"],
+#mfS1 .for-line input:not([type]),
+#mfS1 .for-list > label input[type="text"],
+#mfS1 .for-list > label input[type="search"]{
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Prevent inputs from looking shorter due to max-width constraints inside FOR */
+#mfS1 .field.for-field input[type="text"],
+#mfS1 .field.for-field input[type="search"],
+#mfS1 .field.for-field input:not([type]){
+  max-width: 100% !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — Left note text wrapping (Please add product spec...)
+   Symptom: message in left column doesn't wrap on narrow screens
+   Likely element uses .pill (inline-flex) -> prevents wrapping.
+   Scope: LEFT column only (#mfS1). Do NOT touch right column.
+   ========================================================= */
+
+#mfS1 .pill{
+  display: block !important;          /* allow normal wrapping */
+  width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — Left submit note wrap (Please add product spec...)
+   Why previous didn't work:
+   - .pill is inline-flex; some browsers keep flex items unwrapping unless flex-wrap enabled + max-width set.
+   Fix:
+   - Force block-level flex with wrapping and width constraints (LEFT ONLY)
+   Scope: LEFT column only (#mfS1)
+   ========================================================= */
+
+#mfS1 .pill.submit-note,
+#mfS1 .pill{
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* Allow flex text nodes to shrink/wrap */
+#mfS1 .pill.submit-note > *,
+#mfS1 .pill > *{
+  min-width: 0 !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN
+   1) "Please add product spec..." must WRAP on narrow screens
+   2) Sale/Repair inputs must be typeable + width aligned
+   Scope: LEFT column (#mfS1) only
+   ========================================================= */
+
+/* (1) Force pill to be a normal block so text can wrap (inline-flex prevents wrapping due to shrink-to-fit) */
+#mfS1 .pill{
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* If pill sits inside a flex row, allow it to shrink/wrap */
+#mfS1 .pill{
+  min-width: 0 !important;
+}
+
+/* (2) Sale/Repair inputs: remove hard max-width + make sure they sit above label hit-area */
+#mfS1 #forRepairTxt,
+#mfS1 #forSaleTxt{
+  max-width: none !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure the checkbox label doesn't cover the input */
+#mfS1 .for-line .chk{
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Keep row layout: label cluster + input */
+#mfS1 .for-line{
+  align-items: center !important;
+}
+
+
+
+/* =========================================================
+   HARD FIX (LEFT ONLY) — wrap + typeable inputs
+   Scope: ONLY #mfS1 (left column)
+   ========================================================= */
+
+/* A) Wrap: force any hint/warn/pill box in left column to wrap */
+#mfS1 .pill,
+#mfS1 .submit-note,
+#mfS1 .submitNote,
+#mfS1 .hint,
+#mfS1 .hint-box,
+#mfS1 .hintBox,
+#mfS1 .notice,
+#mfS1 .warning,
+#mfS1 .warn,
+#mfS1 .msg,
+#mfS1 .message,
+#mfS1 .dash,
+#mfS1 .dashed,
+#mfS1 [class*="note"],
+#mfS1 [class*="hint"],
+#mfS1 [class*="warn"],
+#mfS1 [class*="pill"]{
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* Ensure parents allow shrinking */
+#mfS1 .field,
+#mfS1 .row,
+#mfS1 .card,
+#mfS1 .panel{
+  min-width: 0 !important;
+}
+
+/* B) Inputs: ensure they are on top and clickable */
+#mfS1 input[type="text"],
+#mfS1 input[type="search"],
+#mfS1 input:not([type]){
+  position: relative !important;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+
+/* Put row/label behind inputs if covering */
+#mfS1 .for-line,
+#mfS1 .for-list label,
+#mfS1 .for-list > label{
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Disable any overlay hit-testing in FOR rows */
+#mfS1 .for-line .overlay,
+#mfS1 .for-line .mask,
+#mfS1 .for-line .cover,
+#mfS1 .for-line [class*="overlay"],
+#mfS1 .for-line [class*="mask"],
+#mfS1 .for-line [class*="cover"]{
+  pointer-events: none !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — LEFT COLUMN (target real containers)
+   A) Left "Please add product spec..." (dashed .pill) must WRAP
+      Root cause: .pill is inline-flex (shrink-to-fit) in base CSS.
+      Fix: override ONLY in left column container.
+   B) Sale/Repair inputs clickable/typeable (CSS-only best effort)
+   ========================================================= */
+
+/* A) Wrap ONLY in left column (Layout A) */
+.layout-a .layout-col.left .pill{
+  display: block !important;        /* stop shrink-to-fit */
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* If pill sits inside flex wrappers in left column, allow shrink */
+.layout-a .layout-col.left *{
+  min-width: 0;
+}
+
+/* B) Inputs: ensure nothing blocks interaction */
+#mfS1 #forSaleTxt,
+#mfS1 #forRepairTxt{
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Prevent checkbox label/cluster from stretching over inputs */
+#mfS1 .for-line .chk{
+  flex: 0 0 auto !important;
+}
+
+/* Ensure the input area can take remaining width */
+#mfS1 .for-line input#forSaleTxt,
+#mfS1 .for-line input#forRepairTxt{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+
+
+/* =========================================================
+   FIX ONLY — Mobile auto-collapse left sidebar
+   Requirement:
+   - On mobile/tablet, sidebar must start collapsed (not covering content)
+   - Hamburger (3 lines) can still toggle sidebar (JS toggles .hidden)
+   Scope:
+   - Sidebar only. Do NOT touch other layout parts.
+   ========================================================= */
+
+@media (max-width: 980px){
+  /* Default = collapsed */
+  .sidebar{
+    transform: translateX(-110%) !important;
+    transition: transform .18s ease !important;
+  }
+  /* When JS toggles .hidden, use it as "open" on mobile */
+  .sidebar.hidden{
+    transform: translateX(0) !important;
+    transition: transform .18s ease !important;
+  }
+}
+
+
+/* ===============================
+   PATCH vColor2 (ต่อท้ายไฟล์เท่านั้น)
+   Fix: labels too dark / no eye-break
+   Reason: --mf-band-sub was not defined; also soften --mf-band-fg
+   Scope: theme vars + bilingual label spans
+   =============================== */
+
+:root{
+  --mf-band-fg: #374151 !important;   /* soften heading (was #1F2937) */
+  --mf-band-sub: #9CA3AF !important;  /* define sub label color (missing before) */
+}
+
+/* Force bilingual label spans to use theme colors (beats injected CSS) */
+#mfS1 label .lb-en{ color: var(--mf-band-fg) !important; font-weight: 600 !important; }
+#mfS1 label .lb-th{ color: var(--mf-band-sub) !important; font-weight: 400 !important; opacity: 1 !important; }
