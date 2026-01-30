@@ -638,33 +638,7 @@ function renderCreateQR(el){
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
-          <!-- ===== ROW 1 (NEW GROUP): Doc Date + Request Type + Urgency ===== -->
           <div class="row">
-            <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" value="${today}" />
-            </div>
-            <div class="field">
-              <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
-              <select class="input" name="requestType">
-                <option value="Petty Cash">Petty Cash</option>
-                <option value="Work Order">Work Order</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select class="input" name="urgency">
-                <option value="Normal">Normal</option>
-                <option value="Urgent">Urgent</option>
-                <option value="Very Urgent">Very Urgent</option>
-              </select>
-            </div>
-          </div>
-          <!-- ===== END ROW 1 (NEW GROUP) ===== -->
-
-          <!-- ===== LEGACY ROW (HIDDEN): Doc Date + Urgency (kept for rollback) ===== -->
-
-          <div class="row" style="display:none">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
               <input class="input" name="docDate" type="date" value="${today}" />
@@ -678,8 +652,6 @@ function renderCreateQR(el){
               </select>
             </div>
           </div>
-          <!-- ===== END LEGACY ROW (HIDDEN) ===== -->
-
 
           <div class="row">
             <div class="field">
@@ -1437,6 +1409,32 @@ function renderCreatePR(el){
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
+              <!-- ===== ROW 1 (NEW GROUP): Doc Date + Request Type + Urgency ===== -->
+              <div class="row mfRow3">
+                <div class="field">
+                  <label>${biLabel("Doc Date", "วันที่")}</label>
+                  <input class="input" type="date" name="docDate" value="${today}" />
+                </div>
+
+                <div class="field">
+                  <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
+                  <select class="input" name="requestType">
+                    <option value="Petty Cash">Petty Cash</option>
+                    <option value="Work Order">Work Order</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+                  <select class="input" name="urgency">
+                    <option value="Normal">Normal</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Very Urgent">Very Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ===== END ROW 1 ===== -->
+
         <!-- ===== NEW ROW 1: Doc Date + Request Type (PATCH) ===== -->
         <div class="row" style="display:none">
           <div class="field">
@@ -1453,7 +1451,7 @@ function renderCreatePR(el){
         </div>
         <!-- ===== END NEW ROW 1 ===== -->
         <!-- ===== NEW ROW 2: Urgency + For Job (PATCH) ===== -->
-        <div class="row" style="display:none">
+        <div class="row">
           <div class="field">
             <label>Urgency<br><small>ความเร่งด่วน</small></label>
             <select class="input" name="urgency">
@@ -1474,7 +1472,7 @@ function renderCreatePR(el){
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
         <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
-        <div class="row" style="display:none">
+        <div class="row">
           <div class="field">
             <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
             <input class="input" type="text" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
