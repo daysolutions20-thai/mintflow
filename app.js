@@ -1409,7 +1409,7 @@ function renderCreatePR(el){
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
-        <!-- ===== NEW ROW 1: Doc Date + Request Type (PATCH) ===== -->
+        <!-- ===== NEW ROW 1: Doc Date + Request Type + Urgency (PATCH) ===== -->
         <div class="row">
           <div class="field">
             <label>Doc Date<br><small>วันที่</small></label>
@@ -1422,10 +1422,6 @@ function renderCreatePR(el){
               <option value="Work Order">Work Order</option>
             </select>
           </div>
-        </div>
-        <!-- ===== END NEW ROW 1 ===== -->
-        <!-- ===== NEW ROW 2: Urgency + For Job (PATCH) ===== -->
-        <div class="row">
           <div class="field">
             <label>Urgency<br><small>ความเร่งด่วน</small></label>
             <select class="input" name="urgency">
@@ -1434,6 +1430,10 @@ function renderCreatePR(el){
               <option value="Very Urgent">Very Urgent</option>
             </select>
           </div>
+        </div>
+        <!-- ===== END NEW ROW 1 ===== -->
+        <!-- ===== NEW ROW 2: For Job (PATCH) ===== -->
+        <div class="row">
           <div class="field">
             <label>For job<br><small>สำหรับงาน</small></label>
             <select class="input" name="forJob">
@@ -1443,6 +1443,7 @@ function renderCreatePR(el){
               <option value="Stock">Stock</option>
             </select>
           </div>
+          <div class="field"></div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
         <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
@@ -1558,6 +1559,16 @@ function renderCreatePR(el){
 </form>
     </div>
   `;
+
+  // PR only: make select placeholder text grey when value is empty
+  const $prForm = el.querySelector('#frmCreate.isPR');
+  if($prForm){
+    $prForm.querySelectorAll('select.input').forEach(sel=>{
+      const sync = ()=> sel.classList.toggle('isEmpty', !sel.value);
+      sync();
+      sel.addEventListener('change', sync);
+    });
+  }
 
   // Layout A: remove redundant "Items" title (if present) at top of right column
   try{
