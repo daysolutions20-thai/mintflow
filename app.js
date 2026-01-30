@@ -1431,6 +1431,7 @@ function renderCreatePR(el){
             <select class="input" name="urgency">
               <option value="Normal">Normal</option>
               <option value="Urgent">Urgent</option>
+              <option value="Very Urgent">Very Urgent</option>
             </select>
           </div>
           <div class="field">
