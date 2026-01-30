@@ -1409,6 +1409,22 @@ function renderCreatePR(el){
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
+        <!-- ===== NEW ROW 1: Doc Date + Request Type (PATCH) ===== -->
+        <div class="row">
+          <div class="field">
+            <label>Doc Date<br><small>วันที่</small></label>
+            <input class="input" type="date" name="docDate" />
+          </div>
+          <div class="field">
+            <label>Request Type<br><small>ประเภทคำขอ</small></label>
+            <select class="input" name="requestType">
+              <option value="Petty Cash">Petty Cash</option>
+              <option value="Work Order">Work Order</option>
+            </select>
+          </div>
+        </div>
+        <!-- ===== END NEW ROW 1 ===== -->
+
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
