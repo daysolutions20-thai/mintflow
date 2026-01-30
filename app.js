@@ -1459,34 +1459,7 @@ function renderCreatePR(el){
         <!-- ===== END NEW ROW 3 ===== -->
 
 
-
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" value="${today}" />
-            </div>
-            <div class="field">
-              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select name="urgency">
-                <option>Normal</option>
-                <option>Urgent</option>
-                <option>Very Urgent</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="field">
-              <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
-            </div>
-            <div class="field">
-              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
-            </div>
-          </div>
-
-          <div class="row">
+<div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
