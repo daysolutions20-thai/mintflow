@@ -12063,3 +12063,30 @@ END – DO NOT EDIT BELOW
 #frmCreate .warnBox{
   display: none !important;
 }
+/* ===============================
+   PATCH: Input & Select value tone
+   Purpose: reduce eye strain, separate placeholder vs real value
+   Scope: Create form only (#frmCreate)
+   =============================== */
+
+/* 1) Placeholder text (input / textarea) */
+#frmCreate input::placeholder,
+#frmCreate textarea::placeholder{
+  color: #9CA3AF !important;   /* gray-400 */
+  font-weight: 400 !important;
+}
+
+/* 2) Default select (ยังไม่เลือกค่า meaningful) */
+#frmCreate select{
+  color: #9CA3AF;              /* gray-400 */
+}
+
+/* 3) เมื่อ select มีค่าจริงแล้ว → ตัวหนังสือเข้มขึ้น */
+#frmCreate select:not([value=""]){
+  color: #374151;              /* gray-700 */
+}
+
+/* 4) Option ภายใน dropdown */
+#frmCreate option{
+  color: #374151;
+}
