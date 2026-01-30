@@ -1401,44 +1401,16 @@ function renderCreatePR(el){
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         </style>
 
-        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
+        <h2 style="margin:0 0 10px">Create Purchase Requisition (PR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
-        <form class="form" id="frmCreate" class="isPR">
+        <form class="form" id="frmCreate">
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
-              <!-- ===== ROW 1 (NEW GROUP): Doc Date + Request Type + Urgency ===== -->
-              <div class="row mfRow3">
-                <div class="field">
-                  <label>${biLabel("Doc Date", "วันที่")}</label>
-                  <input class="input" type="date" name="docDate" value="${today}" />
-                </div>
-
-                <div class="field">
-                  <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
-                  <select class="input" name="requestType">
-                    <option value="" selected>-- Select type --</option>
-                    <option value="Petty Cash">Petty Cash</option>
-                    <option value="Work Order">Work Order</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-                  <select class="input" name="urgency">
-                    <option value="" selected>-- Select urgency --</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Urgent">Urgent</option>
-                    <option value="Very Urgent">Very Urgent</option>
-                  </select>
-                </div>
-              </div>
-              <!-- ===== END ROW 1 ===== -->
-
         <!-- ===== NEW ROW 1: Doc Date + Request Type (PATCH) ===== -->
-        <div class="row" style="display:none">
+        <div class="row">
           <div class="field">
             <label>Doc Date<br><small>วันที่</small></label>
             <input class="input" type="date" name="docDate" />
@@ -1452,42 +1424,34 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 1 ===== -->
-        <!-- ===== NEW ROW 2: Urgency + For Job (PATCH) ===== -->
-        <div class="row">
-          <div class="field">
-            <label>Urgency<br><small>ความเร่งด่วน</small></label>
-            <select class="input" name="urgency">
-              <option value="Normal">Normal</option>
-              <option value="Urgent">Urgent</option>
-              <option value="Very Urgent">Very Urgent</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>For job<br><small>สำหรับงาน</small></label>
-            <select class="input" name="forJob">
-              <option value="">-- Select job --</option>
-              <option value="Repair">Repair</option>
-              <option value="Sale">Sale</option>
-              <option value="Stock">Stock</option>
-            </select>
-          </div>
-        </div>
-        <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
-        <div class="row">
-          <div class="field">
-            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
-            <input class="input" type="text" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
-          </div>
-          <div class="field">
-            <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <input class="input" type="text" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
-          </div>
-        </div>
-        <!-- ===== END NEW ROW 3 ===== -->
 
+          <div class="row">
+            <div class="field">
+              <label>${biLabel("Doc Date", "วันที่")}</label>
+              <input class="input" name="docDate" type="date" value="${today}" />
+            </div>
+            <div class="field">
+              <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
+              <select name="urgency">
+                <option>Normal</option>
+                <option>Urgent</option>
+                <option>Very Urgent</option>
+              </select>
+            </div>
+          </div>
 
-<div class="row">
+          <div class="row">
+            <div class="field">
+              <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
+              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+            </div>
+            <div class="field">
+              <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
+              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+            </div>
+          </div>
+
+          <div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <input class="input" name="requester" required />
