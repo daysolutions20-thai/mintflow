@@ -16126,3 +16126,23 @@ END – DO NOT EDIT BELOW
   color: #9CA3AF !important;   /* gray-400 */
   font-weight: 400 !important;
 }
+/* ===============================
+   STEP 2.2 PATCH (ต่อท้ายไฟล์เท่านั้น)
+   Match LEFT PR label color to RIGHT Items (exact color)
+   Source color: rgb(31,41,55) = #1F2937
+   Scope: PR only
+   =============================== */
+
+/* PR LEFT: main label (EN) — match Items */
+#frmCreate.isPR .layout-col.left .field > label,
+#frmCreate.isPR .layout-col.left label .lb-en{
+  color: #1F2937 !important;
+  font-weight: 600 !important;
+}
+
+/* PR LEFT: sub label (TH) */
+#frmCreate.isPR .layout-col.left label .lb-th,
+#frmCreate.isPR .layout-col.left .field > label small{
+  color: rgba(31,41,55,.45) !important;
+  font-weight: 400 !important;
+}
