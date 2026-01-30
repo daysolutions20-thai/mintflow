@@ -1424,6 +1424,27 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 1 ===== -->
+        <!-- ===== NEW ROW 2: Urgency + For Job (PATCH) ===== -->
+        <div class="row">
+          <div class="field">
+            <label>Urgency<br><small>ความเร่งด่วน</small></label>
+            <select class="input" name="urgency">
+              <option value="Normal">Normal</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>For job<br><small>สำหรับงาน</small></label>
+            <select class="input" name="forJob">
+              <option value="">-- Select job --</option>
+              <option value="Repair">Repair</option>
+              <option value="Sale">Sale</option>
+              <option value="Stock">Stock</option>
+            </select>
+          </div>
+        </div>
+        <!-- ===== END NEW ROW 2 ===== -->
+
 
           <div class="row">
             <div class="field">
