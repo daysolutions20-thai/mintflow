@@ -16165,3 +16165,26 @@ END – DO NOT EDIT BELOW
   color: rgba(31,41,55,.45) !important;
   font-weight: 400 !important;
 }
+/* ===============================
+   PR HOTFIX (ต่อท้ายไฟล์เท่านั้น)
+   Force override injected label CSS from app.js
+   Scope: PR only (#frmCreate.isPR)
+   =============================== */
+
+html body #frmCreate.isPR #mfS1 .field > label,
+html body #frmCreate.isPR #mfS1 label .lb-en{
+  color: rgb(31, 41, 55) !important; /* #1F2937 */
+  font-weight: 600 !important;
+}
+
+html body #frmCreate.isPR #mfS1 .field > label small,
+html body #frmCreate.isPR #mfS1 label .lb-th{
+  color: rgba(31, 41, 55, .45) !important;
+  font-weight: 400 !important;
+}
+
+/* กันกรณี label โดน rule อื่นลากไปดำ */
+html body #frmCreate.isPR #mfS1 label,
+html body #frmCreate.isPR #mfS1 label *{
+  text-shadow: none !important;
+}
