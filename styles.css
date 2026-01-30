@@ -16146,3 +16146,22 @@ END – DO NOT EDIT BELOW
   color: rgba(31,41,55,.45) !important;
   font-weight: 400 !important;
 }
+/* ===============================
+   PR FIX: Override injected label CSS
+   Source: injectBilingualLabelCSS() in app.js
+   Scope: PR only
+   =============================== */
+
+/* LEFT PR label = same color as RIGHT items */
+#frmCreate.isPR .mfColLeft .field > label,
+#frmCreate.isPR .mfColLeft label .lb-en{
+  color: #1F2937 !important; /* rgb(31,41,55) */
+  font-weight: 600 !important;
+}
+
+/* LEFT PR sublabel (TH) */
+#frmCreate.isPR .mfColLeft .field > label small,
+#frmCreate.isPR .mfColLeft label .lb-th{
+  color: rgba(31,41,55,.45) !important;
+  font-weight: 400 !important;
+}
