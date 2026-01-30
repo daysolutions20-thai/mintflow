@@ -660,7 +660,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -1162,33 +1161,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -1201,26 +1187,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -1228,22 +1197,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -1251,22 +1204,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -1285,10 +1222,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -2225,7 +2158,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -2727,33 +2659,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -2766,26 +2685,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -2793,22 +2695,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -2816,22 +2702,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -2850,10 +2720,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -3411,10 +3277,6 @@ END – DO NOT EDIT BELOW
    ========================================================= */
 
 /* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
@@ -3423,10 +3285,6 @@ END – DO NOT EDIT BELOW
 }
 
 /* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -3473,12 +3331,10 @@ END – DO NOT EDIT BELOW
 :root{ --mfExportIco: rgba(249,115,22,.95); }
 
 /* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 10mm !important;   /* 1 cm */
 }
 
 /* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -3585,7 +3441,6 @@ END – DO NOT EDIT BELOW
    ===================================================================== */
 
 /* Normalize gap under Export By heading */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -3598,7 +3453,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
 
@@ -3611,7 +3465,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
 
@@ -3631,7 +3484,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
 }
 
@@ -3642,7 +3494,6 @@ END – DO NOT EDIT BELOW
    Target effective gap = 10mm (1cm)
    Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
 
@@ -4661,7 +4512,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -5163,33 +5013,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -5202,26 +5039,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -5229,22 +5049,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -5252,22 +5056,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -5286,10 +5074,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -6226,7 +6010,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -6728,33 +6511,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -6767,26 +6537,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -6794,22 +6547,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -6817,22 +6554,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -6851,10 +6572,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -7412,10 +7129,6 @@ END – DO NOT EDIT BELOW
    ========================================================= */
 
 /* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
@@ -7424,10 +7137,6 @@ END – DO NOT EDIT BELOW
 }
 
 /* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -7474,12 +7183,10 @@ END – DO NOT EDIT BELOW
 :root{ --mfExportIco: rgba(249,115,22,.95); }
 
 /* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 10mm !important;   /* 1 cm */
 }
 
 /* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -7586,7 +7293,6 @@ END – DO NOT EDIT BELOW
    ===================================================================== */
 
 /* Normalize gap under Export By heading */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -7599,7 +7305,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
 
@@ -7612,7 +7317,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
 
@@ -7632,7 +7336,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
 }
 
@@ -7643,7 +7346,6 @@ END – DO NOT EDIT BELOW
    Target effective gap = 10mm (1cm)
    Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
 
@@ -8687,7 +8389,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -9189,33 +8890,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -9228,26 +8916,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -9255,22 +8926,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -9278,22 +8933,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -9312,10 +8951,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -10252,7 +9887,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -10754,33 +10388,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -10793,26 +10414,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -10820,22 +10424,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -10843,22 +10431,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -10877,10 +10449,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -11438,10 +11006,6 @@ END – DO NOT EDIT BELOW
    ========================================================= */
 
 /* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
@@ -11450,10 +11014,6 @@ END – DO NOT EDIT BELOW
 }
 
 /* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -11500,12 +11060,10 @@ END – DO NOT EDIT BELOW
 :root{ --mfExportIco: rgba(249,115,22,.95); }
 
 /* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 10mm !important;   /* 1 cm */
 }
 
 /* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -11612,7 +11170,6 @@ END – DO NOT EDIT BELOW
    ===================================================================== */
 
 /* Normalize gap under Export By heading */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -11625,7 +11182,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
 
@@ -11638,7 +11194,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
 
@@ -11658,7 +11213,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
 }
 
@@ -11669,7 +11223,6 @@ END – DO NOT EDIT BELOW
    Target effective gap = 10mm (1cm)
    Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
 
@@ -12050,12 +11603,10 @@ END – DO NOT EDIT BELOW
    =============================== */
 
 /* Hide the entire row that contains the legacy FOR list */
-#frmCreate .row:has(.for-list){
   display: none !important;
 }
 
 /* Hide the entire row that contains the NOTE textarea (legacy) */
-#frmCreate .row:has(textarea[name="note"]){
   display: none !important;
 }
 
@@ -12752,7 +12303,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -13254,33 +12804,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -13293,26 +12830,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -13320,22 +12840,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -13343,22 +12847,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -13377,10 +12865,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -14317,7 +13801,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -14819,33 +14302,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -14858,26 +14328,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -14885,22 +14338,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -14908,22 +14345,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -14942,10 +14363,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -15503,10 +14920,6 @@ END – DO NOT EDIT BELOW
    ========================================================= */
 
 /* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
@@ -15515,10 +14928,6 @@ END – DO NOT EDIT BELOW
 }
 
 /* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -15565,12 +14974,10 @@ END – DO NOT EDIT BELOW
 :root{ --mfExportIco: rgba(249,115,22,.95); }
 
 /* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 10mm !important;   /* 1 cm */
 }
 
 /* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -15677,7 +15084,6 @@ END – DO NOT EDIT BELOW
    ===================================================================== */
 
 /* Normalize gap under Export By heading */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -15690,7 +15096,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
 
@@ -15703,7 +15108,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
 
@@ -15723,7 +15127,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
 }
 
@@ -15734,7 +15137,6 @@ END – DO NOT EDIT BELOW
    Target effective gap = 10mm (1cm)
    Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
 
@@ -16100,13 +15502,11 @@ END – DO NOT EDIT BELOW
    =============================== */
 
 /* placeholder selected (option value="") -> gray */
-#frmCreate select:has(option:checked[value=""]){
   color: #9CA3AF !important;  /* gray-400 */
   font-weight: 400 !important;
 }
 
 /* real selection -> darker */
-#frmCreate select:not(:has(option:checked[value=""])) {
   color: #374151 !important;  /* gray-700 */
   font-weight: 500 !important;
 }
@@ -16777,7 +16177,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -17279,33 +16678,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -17318,26 +16704,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -17345,22 +16714,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -17368,22 +16721,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -17402,10 +16739,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -18342,7 +17675,6 @@ body { overflow: hidden; }
 
 /* If your Note field does NOT already have .note-field class,
    add this small selector to catch the QR Note block by label text structure */
-.field:has(> label + .sub) textarea{
   flex: 1 1 auto !important;
 }
 /* ===== FIX: align section headers + make Note box match FOR block height ===== */
@@ -18844,33 +18176,20 @@ small.req, span.req, em.req{
 /* =========================================================
    PATCH v26 — Ensure Project/Subject row is themed
    (บางโครงจะไม่ได้ใช้ .row แบบเดียวกับแถวอื่น เลยหลุด)
-   ใช้ :has() จับแถวที่มีช่อง #project / name="project"
    ========================================================= */
 
-#mfS1 .row:has(#project),
-#mfS1 .row:has([name="project"]),
-#mfS1 .row:has(#subject),
-#mfS1 .row:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-#mfS1 .row:has(#project) label,
-#mfS1 .row:has([name="project"]) label,
-#mfS1 .row:has(#subject) label,
-#mfS1 .row:has([name="subject"]) label{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
   color: var(--mf-band-fg);
 }
 
-#mfS1 .row:has(#project) label::before,
-#mfS1 .row:has([name="project"]) label::before,
-#mfS1 .row:has(#subject) label::before,
-#mfS1 .row:has([name="subject"]) label::before{
   content:"";
   position:absolute;
   left:0;
@@ -18883,26 +18202,9 @@ small.req, span.req, em.req{
 
 /* =========================================================
    PATCH v27 — Project/Subject block (NOT inside .row) theme
-   ใช้ :has() จับ "กล่องที่ครอบ input project/subject" ไม่อิง .row
    ========================================================= */
 
 /* Card wrapper for Project/Subject regardless of structure */
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]),
-#mfS1 .col:has(#project),
-#mfS1 .col:has([name="project"]),
-#mfS1 .col:has(#subject),
-#mfS1 .col:has([name="subject"]),
-#mfS1 .field:has(#project),
-#mfS1 .field:has([name="project"]),
-#mfS1 .field:has(#subject),
-#mfS1 .field:has([name="subject"]),
-#mfS1 .form-group:has(#project),
-#mfS1 .form-group:has([name="project"]),
-#mfS1 .form-group:has(#subject),
-#mfS1 .form-group:has([name="subject"]){
   background: var(--mf-band-bg);
   border: 1px solid var(--mf-band-border);
   border-radius: 14px;
@@ -18910,22 +18212,6 @@ small.req, span.req, em.req{
 }
 
 /* Heading/label inside the Project/Subject card */
-#mfS1 > *:has(#project) > label:first-of-type,
-#mfS1 > *:has([name="project"]) > label:first-of-type,
-#mfS1 > *:has(#subject) > label:first-of-type,
-#mfS1 > *:has([name="subject"]) > label:first-of-type,
-#mfS1 .col:has(#project) label:first-of-type,
-#mfS1 .col:has([name="project"]) label:first-of-type,
-#mfS1 .col:has(#subject) label:first-of-type,
-#mfS1 .col:has([name="subject"]) label:first-of-type,
-#mfS1 .field:has(#project) label:first-of-type,
-#mfS1 .field:has([name="project"]) label:first-of-type,
-#mfS1 .field:has(#subject) label:first-of-type,
-#mfS1 .field:has([name="subject"]) label:first-of-type,
-#mfS1 .form-group:has(#project) label:first-of-type,
-#mfS1 .form-group:has([name="project"]) label:first-of-type,
-#mfS1 .form-group:has(#subject) label:first-of-type,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type{
   position: relative;
   padding-left: 14px;
   font-weight: 600;
@@ -18933,22 +18219,6 @@ small.req, span.req, em.req{
 }
 
 /* Accent bar */
-#mfS1 > *:has(#project) > label:first-of-type::before,
-#mfS1 > *:has([name="project"]) > label:first-of-type::before,
-#mfS1 > *:has(#subject) > label:first-of-type::before,
-#mfS1 > *:has([name="subject"]) > label:first-of-type::before,
-#mfS1 .col:has(#project) label:first-of-type::before,
-#mfS1 .col:has([name="project"]) label:first-of-type::before,
-#mfS1 .col:has(#subject) label:first-of-type::before,
-#mfS1 .col:has([name="subject"]) label:first-of-type::before,
-#mfS1 .field:has(#project) label:first-of-type::before,
-#mfS1 .field:has([name="project"]) label:first-of-type::before,
-#mfS1 .field:has(#subject) label:first-of-type::before,
-#mfS1 .field:has([name="subject"]) label:first-of-type::before,
-#mfS1 .form-group:has(#project) label:first-of-type::before,
-#mfS1 .form-group:has([name="project"]) label:first-of-type::before,
-#mfS1 .form-group:has(#subject) label:first-of-type::before,
-#mfS1 .form-group:has([name="subject"]) label:first-of-type::before{
   content:"";
   position:absolute;
   left:0;
@@ -18967,10 +18237,6 @@ small.req, span.req, em.req{
 
 /* Control vertical gap between section cards */
 #mfS1 .row:not(.actions):not(.btn-row):not(.footer):not(.toolbar):not(.search-row),
-#mfS1 > *:has(#project),
-#mfS1 > *:has([name="project"]),
-#mfS1 > *:has(#subject),
-#mfS1 > *:has([name="subject"]){
   margin-bottom: 8px !important; /* ~0.5cm visual gap */
 }
 
@@ -19528,10 +18794,6 @@ END – DO NOT EDIT BELOW
    ========================================================= */
 
 /* ---------- 1) Kill double-box on Project/Subject row ---------- */
-#mfS1 .field:has(input[name="project"]),
-#mfS1 .field:has(input#project),
-#mfS1 .field:has(input[name="forCustomer"]),
-#mfS1 .field:has(input#forCustomer){
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
@@ -19540,10 +18802,6 @@ END – DO NOT EDIT BELOW
 }
 
 /* Ensure inputs still look correct inside the row container */
-#mfS1 .field:has(input[name="project"]) input.input,
-#mfS1 .field:has(input#project) input.input,
-#mfS1 .field:has(input[name="forCustomer"]) input.input,
-#mfS1 .field:has(input#forCustomer) input.input{
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -19590,12 +18848,10 @@ END – DO NOT EDIT BELOW
 :root{ --mfExportIco: rgba(249,115,22,.95); }
 
 /* 1) 1 cm gap ABOVE the whole Export By field (between Detail and Export By) */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 10mm !important;   /* 1 cm */
 }
 
 /* 2) 0.5 cm gap between "Export By :" label and the checkbox row */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -19702,7 +18958,6 @@ END – DO NOT EDIT BELOW
    ===================================================================== */
 
 /* Normalize gap under Export By heading */
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* 0.5 cm */
 }
 
@@ -19715,7 +18970,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 2.5mm !important; /* ~0.25 cm */
 }
 
@@ -19728,7 +18982,6 @@ END – DO NOT EDIT BELOW
    Scope: ONLY Export By field
    ===================================================================== */
 
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 5mm !important; /* final target */
 }
 
@@ -19748,7 +19001,6 @@ END – DO NOT EDIT BELOW
 #mfS2 .row.row-export-attach .exportByRow{
   margin-top: -2mm !important;
 }
-#mfS2 .row.row-export-attach .field:has(.exportByRow) > label{
   margin-bottom: 3mm !important; /* 7mm - 2mm = 5mm */
 }
 
@@ -19759,7 +19011,6 @@ END – DO NOT EDIT BELOW
    Target effective gap = 10mm (1cm)
    Adjustment: subtract extra 6mm → set margin-top to 4mm
    ========================================================= */
-#mfS2 .row.row-export-attach .field:has(.exportByRow){
   margin-top: 4mm !important; /* 16mm - 6mm = 10mm effective */
 }
 
@@ -20125,13 +19376,11 @@ END – DO NOT EDIT BELOW
    =============================== */
 
 /* PR: placeholder selected (option value="") -> gray */
-#frmCreate.isPR select:has(option:checked[value=""]){
   color: #9CA3AF !important;  /* gray-400 */
   font-weight: 400 !important;
 }
 
 /* PR: real selection -> darker */
-#frmCreate.isPR select:not(:has(option:checked[value=""])) {
   color: #374151 !important;  /* gray-700 */
   font-weight: 500 !important;
 }
