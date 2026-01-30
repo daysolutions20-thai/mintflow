@@ -1445,6 +1445,19 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
+        <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
+        <div class="row">
+          <div class="field">
+            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
+            <input class="input" type="text" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+          </div>
+          <div class="field">
+            <label>For Customer<br><small>สำหรับลูกค้า</small></label>
+            <input class="input" type="text" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+          </div>
+        </div>
+        <!-- ===== END NEW ROW 3 ===== -->
+
 
 
           <div class="row">
