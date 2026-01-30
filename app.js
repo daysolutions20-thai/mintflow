@@ -1419,6 +1419,7 @@ function renderCreatePR(el){
                 <div class="field">
                   <label>${biLabel("Request Type", "ประเภทคำขอ")}</label>
                   <select class="input" name="requestType">
+                    <option value="" selected>-- Select type --</option>
                     <option value="Petty Cash">Petty Cash</option>
                     <option value="Work Order">Work Order</option>
                   </select>
@@ -1427,6 +1428,7 @@ function renderCreatePR(el){
                 <div class="field">
                   <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
                   <select class="input" name="urgency">
+                    <option value="" selected>-- Select urgency --</option>
                     <option value="Normal">Normal</option>
                     <option value="Urgent">Urgent</option>
                     <option value="Very Urgent">Very Urgent</option>
