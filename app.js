@@ -1405,7 +1405,7 @@ function renderCreatePR(el){
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
-        <form class="form" id="frmCreate">
+        <form class="form" id="frmCreate" class="isPR">
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
