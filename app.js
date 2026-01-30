@@ -1432,7 +1432,7 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 1 ===== -->
-        <!-- ===== NEW ROW 2: For Job (PATCH) ===== -->
+        <!-- ===== NEW ROW 2: For Job + Project/Subject (PATCH) ===== -->
         <div class="row">
           <div class="field">
             <label>For job<br><small>สำหรับงาน</small></label>
@@ -1443,7 +1443,10 @@ function renderCreatePR(el){
               <option value="Stock">Stock</option>
             </select>
           </div>
-          <div class="field"></div>
+          <div class="field">
+            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
+            <input class="input" name="projectSubjectNew" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+          </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
         <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
@@ -1564,7 +1567,7 @@ function renderCreatePR(el){
   const $prForm = el.querySelector('#frmCreate.isPR');
   if($prForm){
     $prForm.querySelectorAll('select.input').forEach(sel=>{
-      const sync = ()=> sel.classList.toggle('isEmpty', !sel.value);
+      const sync = ()=> sel.classList.toggle('is-placeholder', !sel.value);
       sync();
       sel.addEventListener('change', sync);
     });
