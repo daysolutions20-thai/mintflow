@@ -168,6 +168,26 @@ function seedDB(){
   return base;
 }
 
+
+// ===========================
+// PR MASTER LIST (EDIT HERE)
+// ===========================
+const PR_LIST = {
+  models: [
+    "HDD : XZ360E",
+    "HDD : XZ480E",
+    "Drilling RIG : XR280DII",
+    "GRAB : XG600E",
+    "GRAB : XG700E",
+  ],
+  customers: [
+    "Sinkeaw",
+    "BangMin",
+    "HDD Thailand",
+    "JP nelson",
+  ],
+};
+
 /* Role */
 function isAdmin(){
   return localStorage.getItem(LS_ADMIN) === "1";
@@ -1383,6 +1403,30 @@ const itemsEl = $("#items");
 }
 
 function renderCreatePR(el){
+  // PR: fill Model / Customer from PR_LIST
+  const $prForm = document.querySelector('#frmCreate.isPR');
+  if($prForm){
+    const modelSel = $prForm.querySelector('select[name="prModel"]');
+    const custSel  = $prForm.querySelector('select[name="prCustomer"]');
+
+    if(modelSel){
+      PR_LIST.models.forEach(v=>{
+        const o=document.createElement('option');
+        o.value=v; o.textContent=v;
+        modelSel.appendChild(o);
+      });
+      modelSel.addEventListener('change', ()=>modelSel.classList.toggle('is-placeholder', !modelSel.value));
+    }
+    if(custSel){
+      PR_LIST.customers.forEach(v=>{
+        const o=document.createElement('option');
+        o.value=v; o.textContent=v;
+        custSel.appendChild(o);
+      });
+      custSel.addEventListener('change', ()=>custSel.classList.toggle('is-placeholder', !custSel.value));
+    }
+  }
+
   setPageTitle("Request PR", "ขอเบิก/ขอซื้อ (PR) + แนบรูปต่อรายการ + ระบบออกเลข PR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
 
@@ -1454,17 +1498,13 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Model + S/N + For Customer (DROPDOWN add/remove) (PATCH) ===== -->
+        <!-- ===== NEW ROW 3: Model + S/N + For Customer (MASTER LIST) ===== -->
         <div class="row">
           <div class="field">
             <label>Model<br><small>รุ่น</small></label>
-            <div class="mfSelEdit">
-              <select class="input is-placeholder" name="prModel" data-listkey="mf_pr_models">
-                <option value="">-- Select model --</option>
-              </select>
-              <button type="button" class="mfMiniBtn" data-add="mf_pr_models" title="Add">+</button>
-              <button type="button" class="mfMiniBtn" data-del="mf_pr_models" title="Remove">−</button>
-            </div>
+            <select class="input is-placeholder" name="prModel">
+              <option value="">-- Select model --</option>
+            </select>
           </div>
 
           <div class="field">
@@ -1474,13 +1514,9 @@ function renderCreatePR(el){
 
           <div class="field">
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <div class="mfSelEdit">
-              <select class="input is-placeholder" name="prCustomer" data-listkey="mf_pr_customers">
-                <option value="">-- Select customer --</option>
-              </select>
-              <button type="button" class="mfMiniBtn" data-add="mf_pr_customers" title="Add">+</button>
-              <button type="button" class="mfMiniBtn" data-del="mf_pr_customers" title="Remove">−</button>
-            </div>
+            <select class="input is-placeholder" name="prCustomer">
+              <option value="">-- Select customer --</option>
+            </select>
           </div>
         </div>
         <!-- ===== END NEW ROW 3 ===== -->
