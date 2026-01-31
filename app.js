@@ -1399,6 +1399,11 @@ function renderCreatePR(el){
           .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
+        
+          .mfSelEdit{display:flex;align-items:center;gap:8px}
+          .mfSelEdit select{flex:1}
+          .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
+          .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
 </style>
 
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
@@ -1449,14 +1454,16 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Model + S/N + For Customer (DLT-style: + icon inside, remove via clear X) (PATCH) ===== -->
+        <!-- ===== NEW ROW 3: Model + S/N + For Customer (DROPDOWN add/remove) (PATCH) ===== -->
         <div class="row">
           <div class="field">
             <label>Model<br><small>รุ่น</small></label>
-            <div class="inputPlus">
-              <input class="input" type="search" name="prModel" list="dl_prModel" placeholder="-- Select model --" />
-              <datalist id="dl_prModel" data-listkey="mf_pr_models"></datalist>
-              <button type="button" class="miniBtn" data-add="mf_pr_models" title="Add">+</button>
+            <div class="mfSelEdit">
+              <select class="input is-placeholder" name="prModel" data-listkey="mf_pr_models">
+                <option value="">-- Select / Add model --</option>
+              </select>
+              <button type="button" class="mfMiniBtn" data-add="mf_pr_models" title="Add">+</button>
+              <button type="button" class="mfMiniBtn" data-del="mf_pr_models" title="Remove">−</button>
             </div>
           </div>
 
@@ -1467,10 +1474,12 @@ function renderCreatePR(el){
 
           <div class="field">
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <div class="inputPlus">
-              <input class="input" type="search" name="prCustomer" list="dl_prCustomer" placeholder="-- Select customer --" />
-              <datalist id="dl_prCustomer" data-listkey="mf_pr_customers"></datalist>
-              <button type="button" class="miniBtn" data-add="mf_pr_customers" title="Add">+</button>
+            <div class="mfSelEdit">
+              <select class="input is-placeholder" name="prCustomer" data-listkey="mf_pr_customers">
+                <option value="">-- Select / Add customer --</option>
+              </select>
+              <button type="button" class="mfMiniBtn" data-add="mf_pr_customers" title="Add">+</button>
+              <button type="button" class="mfMiniBtn" data-del="mf_pr_customers" title="Remove">−</button>
             </div>
           </div>
         </div>
@@ -1600,18 +1609,26 @@ function renderCreatePR(el){
   function mfListSet(key, arr){
     localStorage.setItem(key, JSON.stringify(arr || []));
   }
-  function mfFillDatalist(dl, key, defaults){
-    if(!dl) return;
+  function mfSyncSelectPlaceholder(sel){
+    if(!sel) return;
+    sel.classList.toggle('is-placeholder', !sel.value);
+  }
+  function mfFillSelect(sel, key, defaults){
+    const cur = sel.value;
     const items = mfListGet(key, defaults);
-    dl.innerHTML = "";
+    const first = sel.querySelector("option[value='']");
+    sel.innerHTML = "";
+    if(first) sel.appendChild(first);
     items.forEach(v=>{
-      const o = document.createElement("option");
-      o.value = v;
-      dl.appendChild(o);
+      const o=document.createElement("option");
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
     });
+    if(cur) sel.value = cur;
+    mfSyncSelectPlaceholder(sel);
   }
   function mfAddToList(key, defaults){
-    const v = prompt("เพิ่มรายการใหม่:");
+    const v = prompt("Add new value:");
     if(!v) return;
     const val = v.trim();
     if(!val) return;
@@ -1623,7 +1640,7 @@ function renderCreatePR(el){
   function mfRemoveFromList(key){
     const items = mfListGet(key, []);
     if(!items.length){ alert("No items to remove."); return; }
-    const v = prompt("พิมพ์ค่าที่จะลบ:\n\n" + items.join("\n"));
+    const v = prompt("Remove which value?\n\n" + items.join("\n"));
     if(!v) return;
     const val = v.trim();
     const idx = items.indexOf(val);
@@ -1638,32 +1655,32 @@ function renderCreatePR(el){
     const defaultsModels = ["XR280E","XR320E"];
     const defaultsCustomers = [];
 
-    $prForm.querySelectorAll('datalist[data-listkey]').forEach(dl=>{
-      const key = dl.getAttribute('data-listkey');
-      if(key === 'mf_pr_models') mfFillDatalist(dl, key, defaultsModels);
-      if(key === 'mf_pr_customers') mfFillDatalist(dl, key, defaultsCustomers);
+    $prForm.querySelectorAll('select[data-listkey]').forEach(sel=>{
+      const key = sel.getAttribute('data-listkey');
+      if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+      if(key === 'mf_pr_customers') mfFillSelect(sel, key, defaultsCustomers);
+      sel.addEventListener('change', ()=>mfSyncSelectPlaceholder(sel));
     });
 
-    $prForm.querySelectorAll('.miniBtn[data-add]').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
+    $prForm.querySelectorAll('.mfMiniBtn[data-add]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
         const key = btn.getAttribute('data-add');
-
-        // Same behavior as DLT vibe: main click = Add
-        // (No extra delete icon). Use Shift+Click on + to remove from the saved list.
-        if(e && e.shiftKey){
-          mfRemoveFromList(key);
-        }else{
-          if(key === 'mf_pr_models') mfAddToList(key, defaultsModels);
-          if(key === 'mf_pr_customers') mfAddToList(key, defaultsCustomers);
-        }
-
-        // refresh selects bound to this list
-        $prForm.querySelectorAll("datalist[data-listkey='"+key+"']").forEach(dl=>{
-          if(key === 'mf_pr_models') mfFillDatalist(dl, key, defaultsModels);
-          else mfFillDatalist(dl, key, defaultsCustomers);
+        if(key === 'mf_pr_models') mfAddToList(key, defaultsModels);
+        if(key === 'mf_pr_customers') mfAddToList(key, defaultsCustomers);
+        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
+          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+          else mfFillSelect(sel, key, defaultsCustomers);
         });
       });
     });
+    $prForm.querySelectorAll('.mfMiniBtn[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.getAttribute('data-del');
+        mfRemoveFromList(key);
+        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
+          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+          else mfFillSelect(sel, key, defaultsCustomers);
+        });
       });
     });
   }
