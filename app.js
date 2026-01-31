@@ -1400,8 +1400,8 @@ function renderCreatePR(el){
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
         
-          .mfSelEdit{display:flex;align-items:center;gap:8px}
-          .mfSelEdit select{flex:1}
+          .mfSelEdit{display:grid;grid-template-columns:1fr 34px 34px;gap:8px;align-items:center}
+          .mfSelEdit select{width:100%;min-width:0}
           .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
           .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
 </style>
@@ -1460,7 +1460,7 @@ function renderCreatePR(el){
             <label>Model<br><small>รุ่น</small></label>
             <div class="mfSelEdit">
               <select class="input is-placeholder" name="prModel" data-listkey="mf_pr_models">
-                <option value="">-- Select / Add model --</option>
+                <option value="">-- Select model --</option>
               </select>
               <button type="button" class="mfMiniBtn" data-add="mf_pr_models" title="Add">+</button>
               <button type="button" class="mfMiniBtn" data-del="mf_pr_models" title="Remove">−</button>
@@ -1476,7 +1476,7 @@ function renderCreatePR(el){
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
             <div class="mfSelEdit">
               <select class="input is-placeholder" name="prCustomer" data-listkey="mf_pr_customers">
-                <option value="">-- Select / Add customer --</option>
+                <option value="">-- Select customer --</option>
               </select>
               <button type="button" class="mfMiniBtn" data-add="mf_pr_customers" title="Add">+</button>
               <button type="button" class="mfMiniBtn" data-del="mf_pr_customers" title="Remove">−</button>
@@ -1628,7 +1628,7 @@ function renderCreatePR(el){
     mfSyncSelectPlaceholder(sel);
   }
   function mfAddToList(key, defaults){
-    const v = prompt("Add new value:");
+    const v = prompt("เพิ่มรายการใหม่:");
     if(!v) return;
     const val = v.trim();
     if(!val) return;
@@ -1640,7 +1640,7 @@ function renderCreatePR(el){
   function mfRemoveFromList(key){
     const items = mfListGet(key, []);
     if(!items.length){ alert("No items to remove."); return; }
-    const v = prompt("Remove which value?\n\n" + items.join("\n"));
+    const v = prompt("พิมพ์ค่าที่จะลบ:\n\n" + items.join("\n"));
     if(!v) return;
     const val = v.trim();
     const idx = items.indexOf(val);
