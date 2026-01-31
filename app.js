@@ -1399,7 +1399,12 @@ function renderCreatePR(el){
           .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
-        </style>
+        
+          .mfSelEdit{display:flex;align-items:center;gap:8px}
+          .mfSelEdit select{flex:1}
+          .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
+          .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
+</style>
 
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
@@ -1449,15 +1454,33 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
+        <!-- ===== NEW ROW 3: Model + S/N + For Customer (DROPDOWN add/remove) (PATCH) ===== -->
         <div class="row">
           <div class="field">
-            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
-            <input class="input" type="text" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+            <label>Model<br><small>รุ่น</small></label>
+            <div class="mfSelEdit">
+              <select class="input is-placeholder" name="prModel" data-listkey="mf_pr_models">
+                <option value="">-- Select / Add model --</option>
+              </select>
+              <button type="button" class="mfMiniBtn" data-add="mf_pr_models" title="Add">+</button>
+              <button type="button" class="mfMiniBtn" data-del="mf_pr_models" title="Remove">−</button>
+            </div>
           </div>
+
+          <div class="field">
+            <label>S/N<br><small>Serial Number</small></label>
+            <input class="input" type="text" name="prSerial" placeholder="Serial Number" />
+          </div>
+
           <div class="field">
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <input class="input" type="text" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
+            <div class="mfSelEdit">
+              <select class="input is-placeholder" name="prCustomer" data-listkey="mf_pr_customers">
+                <option value="">-- Select / Add customer --</option>
+              </select>
+              <button type="button" class="mfMiniBtn" data-add="mf_pr_customers" title="Add">+</button>
+              <button type="button" class="mfMiniBtn" data-del="mf_pr_customers" title="Remove">−</button>
+            </div>
           </div>
         </div>
         <!-- ===== END NEW ROW 3 ===== -->
@@ -1570,6 +1593,95 @@ function renderCreatePR(el){
       const sync = ()=> sel.classList.toggle('is-placeholder', !sel.value);
       sync();
       sel.addEventListener('change', sync);
+    });
+  }
+
+
+  // ===== PR: editable dropdown lists (Model / Customer / Supplier later) =====
+  function mfListGet(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      const arr = raw ? JSON.parse(raw) : null;
+      if(Array.isArray(arr)) return arr;
+    }catch(e){}
+    return fallback || [];
+  }
+  function mfListSet(key, arr){
+    localStorage.setItem(key, JSON.stringify(arr || []));
+  }
+  function mfSyncSelectPlaceholder(sel){
+    if(!sel) return;
+    sel.classList.toggle('is-placeholder', !sel.value);
+  }
+  function mfFillSelect(sel, key, defaults){
+    const cur = sel.value;
+    const items = mfListGet(key, defaults);
+    const first = sel.querySelector("option[value='']");
+    sel.innerHTML = "";
+    if(first) sel.appendChild(first);
+    items.forEach(v=>{
+      const o=document.createElement("option");
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+    if(cur) sel.value = cur;
+    mfSyncSelectPlaceholder(sel);
+  }
+  function mfAddToList(key, defaults){
+    const v = prompt("Add new value:");
+    if(!v) return;
+    const val = v.trim();
+    if(!val) return;
+    const items = mfListGet(key, defaults);
+    if(items.includes(val)) return;
+    items.push(val);
+    mfListSet(key, items);
+  }
+  function mfRemoveFromList(key){
+    const items = mfListGet(key, []);
+    if(!items.length){ alert("No items to remove."); return; }
+    const v = prompt("Remove which value?\n\n" + items.join("\n"));
+    if(!v) return;
+    const val = v.trim();
+    const idx = items.indexOf(val);
+    if(idx === -1){ alert("Not found: " + val); return; }
+    if(!confirm('Remove "'+val+'"?')) return;
+    items.splice(idx,1);
+    mfListSet(key, items);
+  }
+
+  // PR only: init editable select lists + +/- buttons
+  if($prForm){
+    const defaultsModels = ["XR280E","XR320E"];
+    const defaultsCustomers = [];
+
+    $prForm.querySelectorAll('select[data-listkey]').forEach(sel=>{
+      const key = sel.getAttribute('data-listkey');
+      if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+      if(key === 'mf_pr_customers') mfFillSelect(sel, key, defaultsCustomers);
+      sel.addEventListener('change', ()=>mfSyncSelectPlaceholder(sel));
+    });
+
+    $prForm.querySelectorAll('.mfMiniBtn[data-add]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.getAttribute('data-add');
+        if(key === 'mf_pr_models') mfAddToList(key, defaultsModels);
+        if(key === 'mf_pr_customers') mfAddToList(key, defaultsCustomers);
+        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
+          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+          else mfFillSelect(sel, key, defaultsCustomers);
+        });
+      });
+    });
+    $prForm.querySelectorAll('.mfMiniBtn[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.getAttribute('data-del');
+        mfRemoveFromList(key);
+        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
+          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
+          else mfFillSelect(sel, key, defaultsCustomers);
+        });
+      });
     });
   }
 
