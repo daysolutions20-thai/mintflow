@@ -16207,3 +16207,7 @@ html body #frmCreate.isPR #mfS1 label *{
 #frmCreate.isPR select:not(.is-placeholder){
   color: rgb(31,41,55) !important;
 }
+/* PR-only : hide product spec warning box */
+#frmCreate.isPR .warnBox{
+  display: none !important;
+}
