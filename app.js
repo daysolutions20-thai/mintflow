@@ -796,12 +796,34 @@ function renderCreateQR(el){
   window.addEventListener('resize', balanceForNoteRow);
   // Custom unit options (free, no backend)
   const MF_UNITS_KEY = "mf_units_custom_v1";
+const ensureUnitDatalistBase = () => {
+    // Create a single shared <datalist id="unitList"> for both QR + PR
+    // (PR route may not render the datalist in its HTML, so we guarantee it exists here)
+    let dl = document.getElementById("unitList");
+    if(dl) return dl;
+
+    dl = document.createElement("datalist");
+    dl.id = "unitList";
+    // Default units (edit here once; shared everywhere)
+    const defaults = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz.","Lot"];
+    defaults.forEach(v=>{
+      const opt = document.createElement("option");
+      opt.value = v;
+      dl.appendChild(opt);
+    });
+    dl.style.display = "none";
+    document.body.appendChild(dl);
+    return dl;
+  };
+
+  ensureUnitDatalistBase();
+
   const getCustomUnits = () => {
     try { return JSON.parse(localStorage.getItem(MF_UNITS_KEY) || "[]"); } catch(e){ return []; }
   };
   const saveCustomUnits = (arr) => localStorage.setItem(MF_UNITS_KEY, JSON.stringify(arr));
   const ensureUnitList = () => {
-    const dl = document.getElementById("unitList");
+    const dl = ensureUnitDatalistBase();
     if(!dl) return;
     const existing = new Set(Array.from(dl.querySelectorAll("option")).map(o => (o.value||"").trim()).filter(Boolean));
     const custom = getCustomUnits();
@@ -813,6 +835,8 @@ function renderCreateQR(el){
       dl.appendChild(opt);
       existing.add(v);
     });
+    // If UI uses <select name="unit">, refresh options after list changes
+    try{ if(typeof fillUnitSelectFromDatalist === 'function') fillUnitSelectFromDatalist(document); }catch(e){}
   };
   ensureUnitList();
 
