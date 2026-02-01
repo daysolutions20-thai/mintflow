@@ -816,6 +816,33 @@ function renderCreateQR(el){
   };
   ensureUnitList();
 
+  // vXX: Unit as SELECT (shared PR + QR) using existing unitList datalist (no + button)
+  const fillUnitSelectFromDatalist = (root=document) => {
+    try{
+      const dl = document.getElementById("unitList");
+      if(!dl) return;
+      const values = Array.from(dl.querySelectorAll("option"))
+        .map(o => (o.value||"").trim())
+        .filter(Boolean);
+
+      root.querySelectorAll('select[name="unit"][data-unit-select]').forEach(sel=>{
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">-- Select unit --</option>';
+        values.forEach(v=>{
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          sel.appendChild(opt);
+        });
+        if(cur) sel.value = cur;
+      });
+    }catch(e){}
+  };
+
+  // Fill any existing Unit selects at render time
+  fillUnitSelectFromDatalist(document);
+
+
 const itemsEl = $("#items");
   const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
@@ -848,10 +875,9 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus">
-            <input class="input" name="unit" list="unitList" style="flex:1" />
-            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
-          </div>
+          <select class="input" name="unit" data-unit-select>
+            <option value="">-- Select unit --</option>
+          </select>
         </div>
       </div>
 
@@ -886,6 +912,10 @@ const itemsEl = $("#items");
 </div>
       </div>
     `;
+
+    // Unit select: copy options from existing datalist (shared PR + QR)
+    fillUnitSelectFromDatalist(block);
+
     const _rm = block.querySelector("[data-remove]");
     if(_rm) _rm.onclick = ()=>{
       block.remove();
@@ -1816,10 +1846,9 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus">
-            <input class="input" name="unit" list="unitList" style="flex:1" />
-            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
-          </div>
+          <select class="input" name="unit" data-unit-select>
+            <option value="">-- Select unit --</option>
+          </select>
         </div>
       </div>
 
