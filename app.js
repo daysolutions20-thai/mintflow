@@ -269,6 +269,7 @@ function biLabel(en, th){
     .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
     .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
+    #frmCreate.isPR .warnBox{display:none !important;}
     #items .card .row.row-codeqty > .field{ min-width: 0; }
 
 
@@ -816,6 +817,38 @@ function renderCreateQR(el){
   };
   ensureUnitList();
 
+  // Unit: use the SAME unitList (datalist) but render as <select> like Model (shared QR+PR)
+  function syncUnitSelectFromDatalist(root){
+    const dl = document.getElementById("unitList");
+    if(!dl) return;
+    const vals = Array.from(dl.querySelectorAll("option"))
+      .map(o => (o.value||"").trim())
+      .filter(Boolean);
+
+    const scope = root || document;
+    scope.querySelectorAll('select[name="unit"]').forEach(sel=>{
+      const cur = sel.value;
+      sel.innerHTML = "";
+      const ph = document.createElement("option");
+      ph.value = "";
+      ph.textContent = "-- Select unit --";
+      sel.appendChild(ph);
+
+      vals.forEach(v=>{
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = v;
+        sel.appendChild(o);
+      });
+
+      if(cur) sel.value = cur;
+    });
+  }
+
+  // Fill any existing unit selects on first render
+  syncUnitSelectFromDatalist(document);
+
+
 const itemsEl = $("#items");
   const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
@@ -848,10 +881,9 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus">
-            <input class="input" name="unit" list="unitList" style="flex:1" />
-            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
-          </div>
+          <select class="input" name="unit" required>
+            <option value="">-- Select unit --</option>
+          </select>
         </div>
       </div>
 
@@ -897,20 +929,7 @@ const itemsEl = $("#items");
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
-    // "+" add unit (append to datalist + persist in localStorage)
-    const addUnitBtn = block.querySelector('[data-add-unit]');
-    if(addUnitBtn){
-      addUnitBtn.addEventListener("click", () => {
-        const v = prompt("Add new unit", "");
-        const unit = (v || "").trim();
-        if(!unit) return;
-        const custom = getCustomUnits();
-        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
-        ensureUnitList();
-        const unitInput = block.querySelector('[name="unit"]');
-        if(unitInput) unitInput.value = unit;
-      });
-    }
+    syncUnitSelectFromDatalist(block);
 
     itemsEl.appendChild(block);
   };
@@ -1816,10 +1835,9 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <div class="inputPlus">
-            <input class="input" name="unit" list="unitList" style="flex:1" />
-            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
-          </div>
+          <select class="input" name="unit" required>
+            <option value="">-- Select unit --</option>
+          </select>
         </div>
       </div>
 
@@ -1865,21 +1883,6 @@ const itemsEl = $("#items");
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
-    // "+" add unit (append to datalist + persist in localStorage)
-    const addUnitBtn = block.querySelector('[data-add-unit]');
-    if(addUnitBtn){
-      addUnitBtn.addEventListener("click", () => {
-        const v = prompt("Add new unit", "");
-        const unit = (v || "").trim();
-        if(!unit) return;
-        const custom = getCustomUnits();
-        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
-        ensureUnitList();
-        const unitInput = block.querySelector('[name="unit"]');
-        if(unitInput) unitInput.value = unit;
-      });
-    }
-
     itemsEl.appendChild(block);
   };
 
@@ -3052,64 +3055,3 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
-
-
-
-/* =========================================================
- * Unit shared list (Requester pattern) — PR + QR
- * - Single shared list via localStorage
- * - No '+' button
- * - Autofill after addItem() (works for dynamic items)
- * ========================================================= */
-(function(){
-  const MF_UNITS_KEY = "mf_units_shared_v1";
-  const DEFAULT_UNITS = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz."];
-
-  function mfUnitsGet(){
-    try{
-      const raw = localStorage.getItem(MF_UNITS_KEY);
-      const arr = raw ? JSON.parse(raw) : null;
-      if(Array.isArray(arr) && arr.length) return arr;
-    }catch(e){}
-    return DEFAULT_UNITS.slice();
-  }
-
-  function mfFillUnitSelect(sel){
-    if(!sel) return;
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">-- Select unit --</option>';
-    mfUnitsGet().forEach(v=>{
-      const o = document.createElement("option");
-      o.value = v; o.textContent = v;
-      sel.appendChild(o);
-    });
-    if(cur) sel.value = cur;
-  }
-
-  // Autofill existing unit selects (in case some already rendered)
-  function fillAllUnits(root=document){
-    root.querySelectorAll('select[name="unit"]').forEach(mfFillUnitSelect);
-  }
-
-  // Monkey-patch addItem to autofill unit for newly created items
-  try{
-    if(typeof window.addItem === "function"){
-      const _addItem = window.addItem;
-      window.addItem = function(){
-        const res = _addItem.apply(this, arguments);
-        // last item card usually appended at #items > .card:last-child
-        const items = document.querySelectorAll('#items > .card');
-        const last = items && items.length ? items[items.length-1] : null;
-        if(last){
-          const sel = last.querySelector('select[name="unit"]');
-          if(sel) mfFillUnitSelect(sel);
-        }
-        return res;
-      };
-    }
-  }catch(e){}
-
-  // Initial fill after route render / DOM ready
-  document.addEventListener('DOMContentLoaded', ()=> fillAllUnits());
-  window.addEventListener('hashchange', ()=> setTimeout(()=>fillAllUnits(), 0));
-})();
