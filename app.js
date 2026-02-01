@@ -269,7 +269,8 @@ function biLabel(en, th){
     .exportByRow{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:4px 0;}
     .exportByRow .chkLine{display:flex;align-items:center;gap:8px;margin:0;}
     .warnBox{margin-top:10px;padding:10px 12px;border:1px dashed rgb(255,153,102);background:rgba(255,153,102,0.08);border-radius:12px;color:#c23b22;font-weight:700;font-size:13px;text-align:center;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
-    #frmCreate.isPR .warnBox{display:none !important;}
+     /* PR only: hide the orange instruction box */
+     #frmCreate.isPR .warnBox{ display:none !important; }
     #items .card .row.row-codeqty > .field{ min-width: 0; }
 
 
@@ -629,10 +630,7 @@ function renderCreateQR(el){
           .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
-        
-
-
-</style>
+        </style>
 
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
@@ -817,36 +815,28 @@ function renderCreateQR(el){
   };
   ensureUnitList();
 
-  // Unit: use the SAME unitList (datalist) but render as <select> like Model (shared QR+PR)
-  function syncUnitSelectFromDatalist(root){
-    const dl = document.getElementById("unitList");
-    if(!dl) return;
-    const vals = Array.from(dl.querySelectorAll("option"))
-      .map(o => (o.value||"").trim())
-      .filter(Boolean);
-
-    const scope = root || document;
-    scope.querySelectorAll('select[name="unit"]').forEach(sel=>{
+  // vUnitSelect: convert datalist(#unitList) -> select[name="unit"] options
+  const mfFillUnitSelect = (sel) => {
+    try{
+      if(!sel) return;
+      const dl = document.getElementById("unitList");
+      if(!dl) return;
       const cur = sel.value;
+      // keep first placeholder option
+      const first = sel.querySelector("option[value='']");
       sel.innerHTML = "";
-      const ph = document.createElement("option");
-      ph.value = "";
-      ph.textContent = "-- Select unit --";
-      sel.appendChild(ph);
-
-      vals.forEach(v=>{
+      if(first) sel.appendChild(first);
+      Array.from(dl.querySelectorAll("option")).forEach(opt=>{
+        const v = (opt.value || "").trim();
+        if(!v) return;
         const o = document.createElement("option");
         o.value = v;
         o.textContent = v;
         sel.appendChild(o);
       });
-
       if(cur) sel.value = cur;
-    });
-  }
-
-  // Fill any existing unit selects on first render
-  syncUnitSelectFromDatalist(document);
+    }catch(e){}
+  };
 
 
 const itemsEl = $("#items");
@@ -881,10 +871,9 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <select class="input" name="unit" required>
-            <option value="">-- Select unit --</option>
-          </select>
-        </div>
+          <select class="input" name="unit">
+              <option value="">-- Select unit --</option>
+            </select></div>
       </div>
 
       <div class="field">
@@ -929,7 +918,22 @@ const itemsEl = $("#items");
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
-    syncUnitSelectFromDatalist(block);
+    // "+" add unit (append to datalist + persist in localStorage)
+    const addUnitBtn = block.querySelector('[data-add-unit]');
+    if(addUnitBtn){
+      addUnitBtn.addEventListener("click", () => {
+        const v = prompt("Add new unit", "");
+        const unit = (v || "").trim();
+        if(!unit) return;
+        const custom = getCustomUnits();
+        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
+        ensureUnitList();
+        const unitInput = block.querySelector('[name="unit"]');
+        if(unitInput) unitInput.value = unit;
+      });
+    }
+
+    mfFillUnitSelect(block.querySelector('select[name="unit"]'));
 
     itemsEl.appendChild(block);
   };
@@ -1438,10 +1442,6 @@ function renderCreatePR(el){
           .mfSelEdit select{width:100%;min-width:0}
           .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
           .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
-
-
-/* === PR ONLY: hide legacy FOR block (keep in DOM for JS logic) === */
-.form.isPR .mfForLegacy{display:none !important;}
 </style>
 
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
@@ -1562,33 +1562,18 @@ function renderCreatePR(el){
             </div>
           </div>
 
-          
           <div class="row">
-            <div class="field mfSupplierField">
-              <label>${biLabel("Supplier", "ซัพพลายเออร์")}</label>
-
-              <!-- PR SUPPLIER LIST (EDIT HERE): dropdown A (ฝังลิสต์ในโค้ด) -->
-              <select class="input" name="supplier" id="supplierSel">
-                <option value="">-- Select supplier --</option>
-                <option value="000">000 : ไม่ระบุ</option>
-                <option value="SUP01">SUP01 : Supplier 01</option>
-                <option value="SUP02">SUP02 : Supplier 02</option>
-                <option value="SUP03">SUP03 : Supplier 03</option>
-              </select>
-
-              <!-- KEEP FOR (DO NOT DELETE): hidden only on PR via CSS -->
-              <div class="mfForLegacy">
-                <label>${biLabel("FOR", "สำหรับ")}</label>
-                <div class="for-list">
-                  <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
-                  <div class="for-line">
-                    <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
-                    <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
-                  </div>
-                  <div class="for-line">
-                    <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
-                    <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
-                  </div>
+            <div class="field">
+              <label>${biLabel("FOR", "สำหรับ")}</label>
+              <div class="for-list">
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
+                </div>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
                 </div>
               </div>
             </div>
@@ -1597,8 +1582,7 @@ function renderCreatePR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
-          </div>
-
+</div>
             
 
           <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
@@ -1835,9 +1819,10 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <select class="input" name="unit" required>
-            <option value="">-- Select unit --</option>
-          </select>
+          <div class="inputPlus">
+            <input class="input" name="unit" list="unitList" style="flex:1" />
+            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
+          </div>
         </div>
       </div>
 
@@ -1883,6 +1868,21 @@ const itemsEl = $("#items");
       const names = Array.from(fileInput.files||[]).map(f=>f.name);
       phList.textContent = names.length ? "แนบแล้ว: " + names.join(", ") : "";
     };
+    // "+" add unit (append to datalist + persist in localStorage)
+    const addUnitBtn = block.querySelector('[data-add-unit]');
+    if(addUnitBtn){
+      addUnitBtn.addEventListener("click", () => {
+        const v = prompt("Add new unit", "");
+        const unit = (v || "").trim();
+        if(!unit) return;
+        const custom = getCustomUnits();
+        if(!custom.includes(unit)) { custom.push(unit); saveCustomUnits(custom); }
+        ensureUnitList();
+        const unitInput = block.querySelector('[name="unit"]');
+        if(unitInput) unitInput.value = unit;
+      });
+    }
+
     itemsEl.appendChild(block);
   };
 
