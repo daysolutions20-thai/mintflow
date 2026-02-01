@@ -624,15 +624,14 @@ function renderCreateQR(el){
           .for-line .input{flex:1}
           textarea[name="note"]{min-height:96px}
 
-          /* PR-only: hide legacy FOR block but keep it for JS logic */
-          #frmCreate.isPR .mfForLegacy{display:none !important;}
-
-
           /* Layout A: 2 columns inside the form (Section 1 / Items) */
           .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
-        </style>
+        
+
+
+</style>
 
         <h2 style="margin:0 0 10px">Create Quotation Request (QR)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
@@ -693,30 +692,16 @@ function renderCreateQR(el){
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Supplier", "ผู้ขาย / ซัพพลายเออร์")}</label>
-
-              <!-- PR SUPPLIER LIST (EDIT HERE): dropdown A (ฝังลิสต์ในโค้ด) -->
-              <select class="input is-placeholder" name="supplier">
-                <option value="">-- Select supplier --</option>
-                <option value="(Not sure yet)"> (Not sure yet) </option>
-                <option value="Supplier A">Supplier A</option>
-                <option value="Supplier B">Supplier B</option>
-                <option value="Supplier C">Supplier C</option>
-              </select>
-
-              <!-- Legacy FOR block: keep in DOM for JS logic, but hide on PR via CSS (PR-only) -->
-              <div class="mfForLegacy">
-                <label>${biLabel("FOR", "สำหรับ")}</label>
-                <div class="for-list">
-                  <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
-                  <div class="for-line">
-                    <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
-                    <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
-                  </div>
-                  <div class="for-line">
-                    <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
-                    <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
-                  </div>
+              <label>${biLabel("FOR", "สำหรับ")}</label>
+              <div class="for-list">
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
+                </div>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
                 </div>
               </div>
             </div>
@@ -1434,6 +1419,10 @@ function renderCreatePR(el){
           .mfSelEdit select{width:100%;min-width:0}
           .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
           .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
+
+
+/* === PR ONLY: hide legacy FOR block (keep in DOM for JS logic) === */
+.form.isPR .mfForLegacy{display:none !important;}
 </style>
 
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
@@ -1554,18 +1543,33 @@ function renderCreatePR(el){
             </div>
           </div>
 
+          
           <div class="row">
-            <div class="field">
-              <label>${biLabel("FOR", "สำหรับ")}</label>
-              <div class="for-list">
-                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
-                <div class="for-line">
-                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
-                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
-                </div>
-                <div class="for-line">
-                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
-                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
+            <div class="field mfSupplierField">
+              <label>${biLabel("Supplier", "ซัพพลายเออร์")}</label>
+
+              <!-- PR SUPPLIER LIST (EDIT HERE): dropdown A (ฝังลิสต์ในโค้ด) -->
+              <select class="input" name="supplier" id="supplierSel">
+                <option value="">-- Select supplier --</option>
+                <option value="000">000 : ไม่ระบุ</option>
+                <option value="SUP01">SUP01 : Supplier 01</option>
+                <option value="SUP02">SUP02 : Supplier 02</option>
+                <option value="SUP03">SUP03 : Supplier 03</option>
+              </select>
+
+              <!-- KEEP FOR (DO NOT DELETE): hidden only on PR via CSS -->
+              <div class="mfForLegacy">
+                <label>${biLabel("FOR", "สำหรับ")}</label>
+                <div class="for-list">
+                  <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                  <div class="for-line">
+                    <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                    <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
+                  </div>
+                  <div class="for-line">
+                    <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                    <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1574,7 +1578,8 @@ function renderCreatePR(el){
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
             </div>
-</div>
+          </div>
+
             
 
           <div class="warnBox" title="**Please add product spec detail, picture and show export rate**">**Please add product spec detail, picture and show export rate**</div>
