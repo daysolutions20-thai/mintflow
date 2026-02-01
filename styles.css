@@ -16221,3 +16221,13 @@ html body #frmCreate.isPR #mfS1 label *{
 .inputPlus{
   grid-template-columns: 1fr !important;
 }
+/* Fix Unit select arrow overlapping text */
+#frmCreate select[name="unit"]{
+  padding-right: 38px !important;   /* เผื่อพื้นที่ลูกศร */
+  background-position: right 12px center !important; /* จัดลูกศรไปขวา */
+  text-indent: 0 !important;
+}
+#frmCreate select[name="unit"]{
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+}
