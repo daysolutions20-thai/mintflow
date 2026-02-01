@@ -796,34 +796,12 @@ function renderCreateQR(el){
   window.addEventListener('resize', balanceForNoteRow);
   // Custom unit options (free, no backend)
   const MF_UNITS_KEY = "mf_units_custom_v1";
-const ensureUnitDatalistBase = () => {
-    // Create a single shared <datalist id="unitList"> for both QR + PR
-    // (PR route may not render the datalist in its HTML, so we guarantee it exists here)
-    let dl = document.getElementById("unitList");
-    if(dl) return dl;
-
-    dl = document.createElement("datalist");
-    dl.id = "unitList";
-    // Default units (edit here once; shared everywhere)
-    const defaults = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz.","Lot"];
-    defaults.forEach(v=>{
-      const opt = document.createElement("option");
-      opt.value = v;
-      dl.appendChild(opt);
-    });
-    dl.style.display = "none";
-    document.body.appendChild(dl);
-    return dl;
-  };
-
-  ensureUnitDatalistBase();
-
   const getCustomUnits = () => {
     try { return JSON.parse(localStorage.getItem(MF_UNITS_KEY) || "[]"); } catch(e){ return []; }
   };
   const saveCustomUnits = (arr) => localStorage.setItem(MF_UNITS_KEY, JSON.stringify(arr));
   const ensureUnitList = () => {
-    const dl = ensureUnitDatalistBase();
+    const dl = document.getElementById("unitList");
     if(!dl) return;
     const existing = new Set(Array.from(dl.querySelectorAll("option")).map(o => (o.value||"").trim()).filter(Boolean));
     const custom = getCustomUnits();
@@ -835,37 +813,8 @@ const ensureUnitDatalistBase = () => {
       dl.appendChild(opt);
       existing.add(v);
     });
-    // If UI uses <select name="unit">, refresh options after list changes
-    try{ if(typeof fillUnitSelectFromDatalist === 'function') fillUnitSelectFromDatalist(document); }catch(e){}
   };
   ensureUnitList();
-
-  // vXX: Unit as SELECT (shared PR + QR) using existing unitList datalist (no + button)
-  const fillUnitSelectFromDatalist = (root=document) => {
-    try{
-      const dl = document.getElementById("unitList");
-      if(!dl) return;
-      const values = Array.from(dl.querySelectorAll("option"))
-        .map(o => (o.value||"").trim())
-        .filter(Boolean);
-
-      root.querySelectorAll('select[name="unit"][data-unit-select]').forEach(sel=>{
-        const cur = sel.value;
-        sel.innerHTML = '<option value="">-- Select unit --</option>';
-        values.forEach(v=>{
-          const opt = document.createElement("option");
-          opt.value = v;
-          opt.textContent = v;
-          sel.appendChild(opt);
-        });
-        if(cur) sel.value = cur;
-      });
-    }catch(e){}
-  };
-
-  // Fill any existing Unit selects at render time
-  fillUnitSelectFromDatalist(document);
-
 
 const itemsEl = $("#items");
   const addItem = ()=>{
@@ -899,9 +848,10 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <select class="input" name="unit" data-unit-select>
-            <option value="">-- Select unit --</option>
-          </select>
+          <div class="inputPlus">
+            <input class="input" name="unit" list="unitList" style="flex:1" />
+            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
+          </div>
         </div>
       </div>
 
@@ -936,10 +886,6 @@ const itemsEl = $("#items");
 </div>
       </div>
     `;
-
-    // Unit select: copy options from existing datalist (shared PR + QR)
-    fillUnitSelectFromDatalist(block);
-
     const _rm = block.querySelector("[data-remove]");
     if(_rm) _rm.onclick = ()=>{
       block.remove();
@@ -965,8 +911,6 @@ const itemsEl = $("#items");
         if(unitInput) unitInput.value = unit;
       });
     }
-
-    try{ if(typeof fillUnitSelectFromDatalist==='function') fillUnitSelectFromDatalist(block); }catch(e){}
 
     itemsEl.appendChild(block);
   };
@@ -1033,7 +977,6 @@ const itemsEl = $("#items");
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
   addItem();
-  try{ if(typeof fillUnitSelectFromDatalist==='function') fillUnitSelectFromDatalist(document); }catch(e){}
   renumberItems();
   syncItemControls();
 
@@ -1873,9 +1816,10 @@ const itemsEl = $("#items");
         </div>
         <div class="field">
           <label>${biLabel("Unit", "หน่วย (จำเป็น)")}</label>
-          <select class="input" name="unit" data-unit-select>
-            <option value="">-- Select unit --</option>
-          </select>
+          <div class="inputPlus">
+            <input class="input" name="unit" list="unitList" style="flex:1" />
+            <button type="button" class="miniBtn" data-add-unit title="Add unit" aria-label="Add unit">+</button>
+          </div>
         </div>
       </div>
 
@@ -3108,3 +3052,64 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
+
+
+
+/* =========================================================
+ * Unit shared list (Requester pattern) — PR + QR
+ * - Single shared list via localStorage
+ * - No '+' button
+ * - Autofill after addItem() (works for dynamic items)
+ * ========================================================= */
+(function(){
+  const MF_UNITS_KEY = "mf_units_shared_v1";
+  const DEFAULT_UNITS = ["Trip","Unit","Kg.","Km.","Box","Set","Pcs.","Hr.","Mth.","Sqm.","Year","Pack","Metr","Doz."];
+
+  function mfUnitsGet(){
+    try{
+      const raw = localStorage.getItem(MF_UNITS_KEY);
+      const arr = raw ? JSON.parse(raw) : null;
+      if(Array.isArray(arr) && arr.length) return arr;
+    }catch(e){}
+    return DEFAULT_UNITS.slice();
+  }
+
+  function mfFillUnitSelect(sel){
+    if(!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- Select unit --</option>';
+    mfUnitsGet().forEach(v=>{
+      const o = document.createElement("option");
+      o.value = v; o.textContent = v;
+      sel.appendChild(o);
+    });
+    if(cur) sel.value = cur;
+  }
+
+  // Autofill existing unit selects (in case some already rendered)
+  function fillAllUnits(root=document){
+    root.querySelectorAll('select[name="unit"]').forEach(mfFillUnitSelect);
+  }
+
+  // Monkey-patch addItem to autofill unit for newly created items
+  try{
+    if(typeof window.addItem === "function"){
+      const _addItem = window.addItem;
+      window.addItem = function(){
+        const res = _addItem.apply(this, arguments);
+        // last item card usually appended at #items > .card:last-child
+        const items = document.querySelectorAll('#items > .card');
+        const last = items && items.length ? items[items.length-1] : null;
+        if(last){
+          const sel = last.querySelector('select[name="unit"]');
+          if(sel) mfFillUnitSelect(sel);
+        }
+        return res;
+      };
+    }
+  }catch(e){}
+
+  // Initial fill after route render / DOM ready
+  document.addEventListener('DOMContentLoaded', ()=> fillAllUnits());
+  window.addEventListener('hashchange', ()=> setTimeout(()=>fillAllUnits(), 0));
+})();
