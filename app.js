@@ -1538,12 +1538,20 @@ function renderCreatePR(el){
 
           <div class="row">
             <div class="field">
-              <label>${biLabel("Supplier", "ซัพพลายเออร์")}</label>
-              <select class="input is-placeholder" name="supplier">
-                <option value="">-- Select supplier --</option>
-                <!-- Add supplier options here in code (shared list) -->
-              </select>
+              <label>${biLabel("FOR", "สำหรับ")}</label>
+              <div class="for-list">
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
+                </div>
+                <div class="for-line">
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
+                </div>
+              </div>
             </div>
+
             <div class="field">
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
               <textarea name="note"></textarea>
@@ -1890,11 +1898,375 @@ const itemsEl = $("#items");
   });
 
 
+// FOR: enable detail inputs only when checked
+  const repairChk = $("#forRepairChk");
+  const saleChk = $("#forSaleChk");
+  const repairTxt = $("#forRepairTxt");
+  const saleTxt = $("#forSaleTxt");
+  const syncFor = () => {
+    if(repairChk && repairTxt){
+      repairTxt.disabled = !repairChk.checked;
+      repairTxt.required = !!repairChk.checked;
+      if(!repairChk.checked) repairTxt.value = "";
+    }
+    if(saleChk && saleTxt){
+      saleTxt.disabled = !saleChk.checked;
+      saleTxt.required = !!saleChk.checked;
+      if(!saleChk.checked) saleTxt.value = "";
+    }
+  };
+  if(repairChk) repairChk.addEventListener("change", syncFor);
+  if(saleChk) saleChk.addEventListener("change", syncFor);
+  syncFor();
+
+  $("#btnCancel").onclick = ()=> location.hash = "#/home";
+
+  addItem();
+  renumberItems();
+  syncItemControls();
 
 
-// (FOR legacy logic removed: replaced by Supplier dropdown)
+  // v24: Preview + submit confirm flow
+  const submitModal = $("#submitModal");
+  const openSubmitModal = ()=>{
+    if(!submitModal) return true;
+    submitModal.classList.add("is-open");
+    submitModal.setAttribute("aria-hidden","false");
+    return false;
+  };
+  const closeSubmitModal = ()=>{
+    if(!submitModal) return;
+    submitModal.classList.remove("is-open");
+    submitModal.setAttribute("aria-hidden","true");
+  };
 
-// Export By (checkboxes) -> store into remark (backward compatible)
+  // build preview as "real document" inside modal (FlowAccount-ish, no required enforcement)
+  const renderPreviewFromData = (data)=>{
+    const __pvTarget = $("#previewBody") || $("#preview");
+    if(!__pvTarget) return;
+
+    // Inject preview-doc CSS once (scoped to .mfPreviewDoc*)
+    (function injectPreviewDocCSS(){
+      if(document.querySelector('style[data-mintflow="preview-doc"]')) return;
+      const css = `
+        .mfPreviewDocPaper{
+          width: 794px; max-width: 100%;
+          margin: 0 auto;
+          background:#fff;
+          border: 1px solid rgba(0,0,0,.08);
+          border-radius: 14px;
+          padding: 18px 18px 16px;
+          box-shadow: 0 10px 28px rgba(0,0,0,.10);
+          color:#111;
+        }
+        .mfPreviewDocHeader{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px;}
+        .mfPreviewDocTitle{font-weight:900;letter-spacing:.3px;font-size:18px;line-height:1.1;margin:0;}
+        .mfPreviewDocMeta{font-size:12px;color:rgba(0,0,0,.62);line-height:1.3;}
+        .mfPreviewDocGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+        .mfPreviewDocBlock{padding:10px 12px;border:1px solid rgba(0,0,0,.08);border-radius:12px;}
+        .mfPreviewDocBlock h3{margin:0 0 8px;font-size:12px;letter-spacing:.2px;color:rgba(0,0,0,.55);}
+        .mfPreviewDocLine{display:flex;gap:8px;line-height:1.25;margin:6px 0;font-size:13px;}
+        .mfPreviewDocLine b{min-width:92px;display:inline-block;color:rgba(0,0,0,.72);}
+        .mfPreviewDocNote{white-space:pre-wrap;}
+        .mfPreviewDocTable{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px;}
+        .mfPreviewDocTable th,.mfPreviewDocTable td{border:1px solid rgba(0,0,0,.10);padding:6px 7px;vertical-align:top;}
+        .mfPreviewDocTable th{background:rgba(0,0,0,.035);text-align:left;font-weight:800;color:rgba(0,0,0,.72);}
+        .mfPreviewDocFooter{margin-top:10px;font-size:12px;color:rgba(0,0,0,.55);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+        .mfPreviewDocPill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px dashed rgba(255,153,102,.55);background:rgba(255,153,102,.08);border-radius:999px;font-weight:800;color:#c23b22;}
+        @media (max-width: 980px){
+          .mfPreviewDocGrid{grid-template-columns:1fr;}
+        }
+        @media print{
+          body *{visibility:hidden !important;}
+          #previewModal, #previewModal *{visibility:visible !important;}
+          #previewModal{position:static !important; inset:auto !important;}
+          #previewModal .mfModal__backdrop{display:none !important;}
+          #previewModal .mfModal__panel{position:static !important; left:auto !important; top:auto !important; transform:none !important; box-shadow:none !important; width:100% !important; padding:0 !important;}
+          #previewModal .row, #previewModal .hr{display:none !important;} /* hide modal chrome */
+          .mfPreviewDocPaper{border:none !important; box-shadow:none !important; padding:0 !important;}
+        }
+      `;
+      const style = document.createElement("style");
+      style.setAttribute("data-mintflow","preview-doc");
+      style.textContent = css;
+      document.head.appendChild(style);
+    })();
+
+    const val = (v)=> (v==null || String(v).trim()==="" ? "" : String(v));
+    const line = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div>${escapeHtml(v)}</div></div>` : "";
+    const noteLine = (k,v)=> v ? `<div class="mfPreviewDocLine"><b>${escapeHtml(k)}</b><div class="mfPreviewDocNote">${escapeHtml(v)}</div></div>` : "";
+
+    const docDate = val(data.docDate);
+    const urgency = val(data.urgency);
+    const project = val(data.project);
+    const requester = val(data.requester);
+    const phone = val(data.phone);
+    const forMode = val(data.forMode || data.for); // tolerate legacy key
+    const note = val(data.note);
+    const exportBy = Array.isArray(data.exportBy) ? data.exportBy.filter(Boolean) : (val(data.exportBy) ? [val(data.exportBy)] : []);
+    const attachCount = data.attachCount != null ? String(data.attachCount) : "";
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const itemsRows = items.map((it, i)=>{
+      const c = (x)=> escapeHtml(val(x));
+      return `
+        <tr>
+          <td style="width:34px">${i+1}</td>
+          <td>${c(it.name)}</td>
+          <td>${c(it.model)}</td>
+          <td>${c(it.code)}</td>
+          <td style="width:70px">${c(it.qty)}</td>
+          <td style="width:80px">${c(it.unit)}</td>
+          <td>${c(it.detail)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    __pvTarget.innerHTML = `
+      <div class="mfPreviewDocPaper" id="mfPreviewDocPaper">
+        <div class="mfPreviewDocHeader">
+          <div>
+            <div class="mfPreviewDocTitle">Quotation Request</div>
+            <div class="mfPreviewDocMeta">Preview only (ยังไม่ส่งจริง)</div>
+          </div>
+          <div class="mfPreviewDocMeta" style="text-align:right">
+            ${docDate ? `Doc Date: ${escapeHtml(docDate)}<br>` : ``}
+            ${urgency ? `Urgency: ${escapeHtml(urgency)}<br>` : ``}
+            ${data.docNo ? `Doc No: ${escapeHtml(data.docNo)}<br>` : ``}
+          </div>
+        </div>
+
+        <div class="mfPreviewDocGrid">
+          <div class="mfPreviewDocBlock">
+            <h3>Section 1</h3>
+            ${line("Project", project)}
+            ${line("Requester", requester)}
+            ${line("Phone", phone)}
+            ${line("FOR", forMode)}
+            ${noteLine("Note", note)}
+          </div>
+
+          <div class="mfPreviewDocBlock">
+            <h3>Section 2</h3>
+            ${exportBy.length ? `<div class="mfPreviewDocLine"><b>Export By</b><div>${escapeHtml(exportBy.join(", "))}</div></div>` : ``}
+            ${attachCount ? line("Attach", attachCount) : ``}
+            <div class="mfPreviewDocLine"><b>Items</b><div>${items.length} รายการ</div></div>
+            <div class="mfPreviewDocPill" style="margin-top:10px;">ตรวจสอบก่อน Submit</div>
+          </div>
+        </div>
+
+        ${items.length ? `
+          <table class="mfPreviewDocTable" aria-label="Items table">
+            <thead>
+              <tr>
+                <th style="width:34px">#</th>
+                <th>Name</th>
+                <th>Model</th>
+                <th>Code</th>
+                <th style="width:70px">QTY</th>
+                <th style="width:80px">Unit</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>${itemsRows}</tbody>
+          </table>
+        ` : `<div class="mfPreviewDocFooter"><div>ยังไม่มีรายการ Items</div></div>`}
+
+        <div class="mfPreviewDocFooter">
+          <div>${requester ? `Prepared by: ${escapeHtml(requester)}` : ``}</div>
+          <div>${nowISO ? `Generated: ${escapeHtml(nowISO().slice(0,19).replace("T"," "))}` : ``}</div>
+        </div>
+      </div>
+    `;
+
+    $("#previewModal")?.classList.add("is-open");
+  };
+
+  const collectQRFromForm = ({strict=true}={}) => {
+    const form = $("#frmCreate");
+    if(!form) throw new Error("Form not ready");
+
+    const getFormVal = (name)=>{
+      const el = form.elements ? form.elements[name] : null;
+      return (el && typeof el.value === "string") ? el.value : (el && el.value != null ? String(el.value) : "");
+    };
+    const getTrim = (name)=> (getFormVal(name) || "").trim();
+
+    const requester = getTrim("requester");
+    const phone = getTrim("phone");
+
+    const itemsBlocks = itemsEl ? Array.from(itemsEl.children) : [];
+    const items = itemsBlocks.map((blk, idx)=>{
+      const q = (sel)=> blk ? blk.querySelector(sel) : null;
+      const v = (sel)=> {
+        const el = q(sel);
+        return el && el.value != null ? String(el.value) : "";
+      };
+      const t = (sel)=> (v(sel) || "").trim();
+
+      const name = t('input[name="item_name"]');
+      const model = t('input[name="item_model"]');
+      const code = t('input[name="item_code"]');
+
+      const qtyRaw = v('input[name="qty"]');
+      const qty = Number(qtyRaw || 0);
+
+      // unit can be select or input; always query by [name="unit"]
+      const unit = (t('[name="unit"]') || "");
+
+      const detailEl = q('textarea[name="detail"], input[name="detail"]');
+      const detail = (detailEl && detailEl.value != null ? String(detailEl.value) : "").trim();
+
+      const sea = !!q('input[name="exportSea"]')?.checked;
+      const land = !!q('input[name="exportLand"]')?.checked;
+      const air = !!q('input[name="exportAir"]')?.checked;
+
+      const exportParts = [];
+      if(sea) exportParts.push("By Sea");
+      if(land) exportParts.push("By Land");
+      if(air) exportParts.push("By Air");
+
+      const remarkInput = q('input[name="remark"]');
+      const remark = exportParts.length ? exportParts.join(" / ") : ((remarkInput && remarkInput.value != null ? String(remarkInput.value) : "").trim());
+
+      const photosInput = q('input[name="photos"]');
+      const photos = photosInput && photosInput.files ? Array.from(photosInput.files).map(f=>f.name) : [];
+
+      return { lineNo: idx+1, code, name, model, qty, unit, detail, remark, photos, exportBy: exportParts };
+    });
+
+    const forListEl = $("#forList");
+    const forBy = forListEl ? Array.from(forListEl.querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value) : [];
+
+    return {
+      docDate: getFormVal("docDate"),
+      urgency: getFormVal("urgency"),
+      project: getTrim("project"),
+      subject: getTrim("subject"),
+      requester, phone,
+      forBy,
+      note: getTrim("note"),
+      items
+    };
+  };
+
+
+  // Helpers: treat a completely blank form as "no preview"
+  // We consider "blank" = user hasn't typed anything meaningful.
+  // Default values like docDate, urgency, qty=1, unit default don't count as meaningful.
+  const isAllEmptyQR = (d)=>{
+    if(!d) return true;
+
+    const anyTop = !!((d.project||"").trim() || (d.subject||"").trim() || (d.requester||"").trim() || (d.phone||"").trim() || (d.note||"").trim());
+    const anyFor = Array.isArray(d.forBy) && d.forBy.length>0;
+
+    const anyItems = Array.isArray(d.items) && d.items.some(it=>{
+      const hasText = !!((it.name||"").trim() || (it.model||"").trim() || (it.code||"").trim() || (it.detail||"").trim());
+      const hasRemark = !!((it.remark||"").trim());
+      const hasPhotos = Array.isArray(it.photos) && it.photos.length>0;
+      const hasExport = Array.isArray(it.exportBy) && it.exportBy.length>0;
+      // qty/unit alone doesn't count
+      return hasText || hasRemark || hasPhotos || hasExport;
+    });
+
+    return !(anyTop || anyFor || anyItems);
+  };
+
+
+
+  // Wire Preview button
+  const btnPreview = $("#btnPreview");
+  if(btnPreview){
+    btnPreview.onclick = ()=>{
+      try{
+        const data = collectQRFromForm({strict:false});
+        if(isAllEmptyQR(data)){
+          toast("กรุณากรอกข้อมูลก่อนพรีวิว");
+          // try focus requester field if exists
+          const f = $("#frmCreate");
+          if(f && f.requester) f.requester.focus();
+          return;
+        }
+        renderPreviewFromData(data);
+        toast("เปิดพรีวิวแล้ว");
+      }catch(err){
+        toast(err?.message || "Preview error");
+      }
+    };
+  }
+
+  // Modal wiring
+  if(submitModal){
+    submitModal.addEventListener("click", (ev)=>{
+      const t = ev.target;
+      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closeSubmitModal(); }
+    });
+  }
+
+  const previewModal = $("#previewModal");
+  const closePreviewModal = ()=> previewModal?.classList.remove("is-open");
+  if(previewModal){
+    previewModal.addEventListener("click",(ev)=>{
+      const t = ev.target;
+      if(t && t.getAttribute && t.getAttribute("data-close")==="1"){ closePreviewModal(); }
+    });
+  }
+  const btnClosePreview = $("#btnClosePreview");
+  if(btnClosePreview) btnClosePreview.onclick = ()=> closePreviewModal();
+
+
+  const btnPrintPreview = $("#btnPrintPreview");
+  if(btnPrintPreview){
+    btnPrintPreview.onclick = ()=>{
+      try{
+        // print the preview document only
+        $("#previewModal")?.classList.add("is-open");
+        window.print();
+      }catch(e){
+        toast("Print error");
+      }
+    };
+  }
+
+
+  const btnCancelSubmit = $("#btnCancelSubmit");
+  if(btnCancelSubmit) btnCancelSubmit.onclick = ()=> closeSubmitModal();
+
+  $("#frmCreate").onsubmit = (e)=>{
+    e.preventDefault();
+    // show Preview reminder before submit
+    openSubmitModal();
+  };
+
+  // Confirm submit -> run the original submit logic
+  const btnConfirmSubmit = $("#btnConfirmSubmit");
+  if(btnConfirmSubmit){
+    btnConfirmSubmit.onclick = ()=>{
+      closeSubmitModal();
+      const form = $("#frmCreate");
+          const requester = form.requester.value.trim();
+          const phone = form.phone.value.trim();
+          if(!requester || !phone){
+            toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
+            return;
+          }
+
+          const itemBlocks = Array.from(itemsEl.children);
+          if(!itemBlocks.length){
+            toast("ต้องมีอย่างน้อย 1 รายการ");
+            return;
+          }
+
+          const items = itemBlocks.map((blk, idx)=>{
+            const name = blk.querySelector('input[name="item_name"]').value.trim();
+            const model = blk.querySelector('input[name="item_model"]').value.trim();
+            const code = blk.querySelector('input[name="item_code"]').value.trim();
+            const qty = Number(blk.querySelector('input[name="qty"]').value || 0);
+            const unit = blk.querySelector('[name="unit"]').value.trim();
+            const detailEl = blk.querySelector('textarea[name="detail"], input[name="detail"]');
+            const detail = (detailEl ? detailEl.value : "").trim();
+
+            // Export By (checkboxes) -> store into remark (backward compatible)
             const sea = !!blk.querySelector('input[name="exportSea"]')?.checked;
             const land = !!blk.querySelector('input[name="exportLand"]')?.checked;
             const air = !!blk.querySelector('input[name="exportAir"]')?.checked;
