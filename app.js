@@ -667,7 +667,19 @@ function renderCreateQR(el){
           <div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
-              <input class="input" name="requester" required />
+              <select class="input is-placeholder" name="requester" required>
+                <option value="">-- Select requester --</option>
+                <option value="Chakrit (Heeb)">Chakrit (Heeb)</option>
+                <option value="Jirawat (Tor)">Jirawat (Tor)</option>
+                <option value="K.Lim">K.Lim</option>
+                <option value="K.Yang">K.Yang</option>
+                <option value="Kanrawee (Kling)">Kanrawee (Kling)</option>
+                <option value="Ratthaphol (Frame)">Ratthaphol (Frame)</option>
+                <option value="Rojarnon (Non)">Rojarnon (Non)</option>
+                <option value="Phantita (Ning)">Phantita (Ning)</option>
+                <option value="Saowarak (Nok)">Saowarak (Nok)</option>
+                <option value="Sudarat (Mhork)">Sudarat (Mhork)</option>
+              </select>
             </div>
             <div class="field">
               <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
