@@ -1454,17 +1454,32 @@ function renderCreatePR(el){
           </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Model + S/N + For Customer (DROPDOWN add/remove) (PATCH) ===== -->
+        <!-- ===== NEW ROW 3: Model + S/N + For Customer (MASTER LIST IN CODE) ===== -->
+        <!--
+          PR MASTER LIST (EDIT HERE):
+          Models:
+            - HDD : XZ360E
+            - HDD : XZ480E
+            - Drilling RIG : XR280DII
+            - GRAB : XG600E
+            - GRAB : XG700E
+          Customers:
+            - Sinkeaw
+            - BangMin
+            - HDD Thailand
+            - JP nelson
+        -->
         <div class="row">
           <div class="field">
             <label>Model<br><small>รุ่น</small></label>
-            <div class="mfSelEdit">
-              <select class="input is-placeholder" name="prModel" data-listkey="mf_pr_models">
-                <option value="">-- Select model --</option>
-              </select>
-              <button type="button" class="mfMiniBtn" data-add="mf_pr_models" title="Add">+</button>
-              <button type="button" class="mfMiniBtn" data-del="mf_pr_models" title="Remove">−</button>
-            </div>
+            <select class="input is-placeholder" name="prModel">
+              <option value="">-- Select model --</option>
+              <option value="HDD : XZ360E">HDD : XZ360E</option>
+              <option value="HDD : XZ480E">HDD : XZ480E</option>
+              <option value="Drilling RIG : XR280DII">Drilling RIG : XR280DII</option>
+              <option value="GRAB : XG600E">GRAB : XG600E</option>
+              <option value="GRAB : XG700E">GRAB : XG700E</option>
+            </select>
           </div>
 
           <div class="field">
@@ -1474,13 +1489,13 @@ function renderCreatePR(el){
 
           <div class="field">
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <div class="mfSelEdit">
-              <select class="input is-placeholder" name="prCustomer" data-listkey="mf_pr_customers">
-                <option value="">-- Select customer --</option>
-              </select>
-              <button type="button" class="mfMiniBtn" data-add="mf_pr_customers" title="Add">+</button>
-              <button type="button" class="mfMiniBtn" data-del="mf_pr_customers" title="Remove">−</button>
-            </div>
+            <select class="input is-placeholder" name="prCustomer">
+              <option value="">-- Select customer --</option>
+              <option value="Sinkeaw">Sinkeaw</option>
+              <option value="BangMin">BangMin</option>
+              <option value="HDD Thailand">HDD Thailand</option>
+              <option value="JP nelson">JP nelson</option>
+            </select>
           </div>
         </div>
         <!-- ===== END NEW ROW 3 ===== -->
