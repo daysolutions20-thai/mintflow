@@ -16231,3 +16231,30 @@ html body #frmCreate.isPR #mfS1 label *{
   appearance: auto !important;
   -webkit-appearance: menulist !important;
 }
+/* ===== FIX: Unit dropdown arrow overlap (kill custom arrow, use native) ===== */
+#items select[name="unit"]{
+  -webkit-appearance: menulist !important;
+  appearance: auto !important;
+
+  /* remove custom arrow image */
+  background-image: none !important;
+
+  /* keep text clear */
+  padding-right: 34px !important;
+  text-align: left !important;
+}
+
+/* in case arrow is drawn by wrapper pseudo-element */
+#items .inputPlus::after,
+#items .inputPlus::before{
+  display: none !important;
+}
+#items .card select{
+  -webkit-appearance: menulist !important;
+  appearance: auto !important;
+  background-image: none !important;
+  padding-right: 34px !important;
+  text-align: left !important;
+}
+#items .inputPlus::after,
+#items .inputPlus::before{ display:none !important; }
