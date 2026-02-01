@@ -1399,22 +1399,17 @@ function renderCreatePR(el){
           .mfLayoutA{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
           .mfLayoutA .mfCol{min-width:0;}
           @media(max-width: 920px){.mfLayoutA{grid-template-columns:1fr;}}
-        
-          .mfSelEdit{display:grid;grid-template-columns:1fr 34px 34px;gap:8px;align-items:center}
-          .mfSelEdit select{width:100%;min-width:0}
-          .mfMiniBtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)}
-          .mfMiniBtn:hover{border-color:rgba(249,115,22,.6)}
-</style>
+        </style>
 
         <h2 style="margin:0 0 10px">Create Purchase Requisition (PR & Work Order)</h2>
         <div class="subtext">* โปรโตไทป์นี้จะบันทึกลงเครื่อง (localStorage) เพื่อดูหน้าตาระบบ</div>
         <div class="hr"></div>
 
-        <form class="form isPR" id="frmCreate">
+        <form class="form" id="frmCreate">
 
           <div class="mfLayoutA">
             <div class="mfCol left" id="mfS1">
-        <!-- ===== NEW ROW 1: Doc Date + Request Type + Urgency (PATCH) ===== -->
+        <!-- ===== NEW ROW 1: Doc Date + Request Type (PATCH) ===== -->
         <div class="row">
           <div class="field">
             <label>Doc Date<br><small>วันที่</small></label>
@@ -1427,6 +1422,10 @@ function renderCreatePR(el){
               <option value="Work Order">Work Order</option>
             </select>
           </div>
+        </div>
+        <!-- ===== END NEW ROW 1 ===== -->
+        <!-- ===== NEW ROW 2: Urgency + For Job (PATCH) ===== -->
+        <div class="row">
           <div class="field">
             <label>Urgency<br><small>ความเร่งด่วน</small></label>
             <select class="input" name="urgency">
@@ -1435,10 +1434,6 @@ function renderCreatePR(el){
               <option value="Very Urgent">Very Urgent</option>
             </select>
           </div>
-        </div>
-        <!-- ===== END NEW ROW 1 ===== -->
-        <!-- ===== NEW ROW 2: For Job + Project/Subject (PATCH) ===== -->
-        <div class="row">
           <div class="field">
             <label>For job<br><small>สำหรับงาน</small></label>
             <select class="input" name="forJob">
@@ -1448,54 +1443,17 @@ function renderCreatePR(el){
               <option value="Stock">Stock</option>
             </select>
           </div>
-          <div class="field">
-            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
-            <input class="input" name="projectSubjectNew" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
-          </div>
         </div>
         <!-- ===== END NEW ROW 2 ===== -->
-        <!-- ===== NEW ROW 3: Model + S/N + For Customer (MASTER LIST IN CODE) ===== -->
-        <!--
-          PR MASTER LIST (EDIT HERE):
-          Models:
-            - HDD : XZ360E
-            - HDD : XZ480E
-            - Drilling RIG : XR280DII
-            - GRAB : XG600E
-            - GRAB : XG700E
-          Customers:
-            - Sinkeaw
-            - BangMin
-            - HDD Thailand
-            - JP nelson
-        -->
+        <!-- ===== NEW ROW 3: Project / Subject + For Customer (PATCH) ===== -->
         <div class="row">
           <div class="field">
-            <label>Model<br><small>รุ่น</small></label>
-            <select class="input is-placeholder" name="prModel">
-              <option value="">-- Select model --</option>
-              <option value="HDD : XZ360E">HDD : XZ360E</option>
-              <option value="HDD : XZ480E">HDD : XZ480E</option>
-              <option value="Drilling RIG : XR280DII">Drilling RIG : XR280DII</option>
-              <option value="GRAB : XG600E">GRAB : XG600E</option>
-              <option value="GRAB : XG700E">GRAB : XG700E</option>
-            </select>
+            <label>Project / Subject<br><small>โครงการ / หัวข้อ</small></label>
+            <input class="input" type="text" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
           </div>
-
-          <div class="field">
-            <label>S/N<br><small>Serial Number</small></label>
-            <input class="input" type="text" name="prSerial" placeholder="Serial Number" />
-          </div>
-
           <div class="field">
             <label>For Customer<br><small>สำหรับลูกค้า</small></label>
-            <select class="input is-placeholder" name="prCustomer">
-              <option value="">-- Select customer --</option>
-              <option value="Sinkeaw">Sinkeaw</option>
-              <option value="BangMin">BangMin</option>
-              <option value="HDD Thailand">HDD Thailand</option>
-              <option value="JP nelson">JP nelson</option>
-            </select>
+            <input class="input" type="text" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
           </div>
         </div>
         <!-- ===== END NEW ROW 3 ===== -->
@@ -1600,105 +1558,6 @@ function renderCreatePR(el){
 </form>
     </div>
   `;
-
-  // PR only: make select placeholder text grey when value is empty
-  const $prForm = el.querySelector('#frmCreate.isPR');
-  if($prForm){
-    $prForm.querySelectorAll('select.input').forEach(sel=>{
-      const sync = ()=> sel.classList.toggle('is-placeholder', !sel.value);
-      sync();
-      sel.addEventListener('change', sync);
-    });
-  }
-
-
-  // ===== PR: editable dropdown lists (Model / Customer / Supplier later) =====
-  function mfListGet(key, fallback){
-    try{
-      const raw = localStorage.getItem(key);
-      const arr = raw ? JSON.parse(raw) : null;
-      if(Array.isArray(arr)) return arr;
-    }catch(e){}
-    return fallback || [];
-  }
-  function mfListSet(key, arr){
-    localStorage.setItem(key, JSON.stringify(arr || []));
-  }
-  function mfSyncSelectPlaceholder(sel){
-    if(!sel) return;
-    sel.classList.toggle('is-placeholder', !sel.value);
-  }
-  function mfFillSelect(sel, key, defaults){
-    const cur = sel.value;
-    const items = mfListGet(key, defaults);
-    const first = sel.querySelector("option[value='']");
-    sel.innerHTML = "";
-    if(first) sel.appendChild(first);
-    items.forEach(v=>{
-      const o=document.createElement("option");
-      o.value=v; o.textContent=v;
-      sel.appendChild(o);
-    });
-    if(cur) sel.value = cur;
-    mfSyncSelectPlaceholder(sel);
-  }
-  function mfAddToList(key, defaults){
-    const v = prompt("เพิ่มรายการใหม่:");
-    if(!v) return;
-    const val = v.trim();
-    if(!val) return;
-    const items = mfListGet(key, defaults);
-    if(items.includes(val)) return;
-    items.push(val);
-    mfListSet(key, items);
-  }
-  function mfRemoveFromList(key){
-    const items = mfListGet(key, []);
-    if(!items.length){ alert("No items to remove."); return; }
-    const v = prompt("พิมพ์ค่าที่จะลบ:\n\n" + items.join("\n"));
-    if(!v) return;
-    const val = v.trim();
-    const idx = items.indexOf(val);
-    if(idx === -1){ alert("Not found: " + val); return; }
-    if(!confirm('Remove "'+val+'"?')) return;
-    items.splice(idx,1);
-    mfListSet(key, items);
-  }
-
-  // PR only: init editable select lists + +/- buttons
-  if($prForm){
-    const defaultsModels = ["XR280E","XR320E"];
-    const defaultsCustomers = [];
-
-    $prForm.querySelectorAll('select[data-listkey]').forEach(sel=>{
-      const key = sel.getAttribute('data-listkey');
-      if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
-      if(key === 'mf_pr_customers') mfFillSelect(sel, key, defaultsCustomers);
-      sel.addEventListener('change', ()=>mfSyncSelectPlaceholder(sel));
-    });
-
-    $prForm.querySelectorAll('.mfMiniBtn[data-add]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const key = btn.getAttribute('data-add');
-        if(key === 'mf_pr_models') mfAddToList(key, defaultsModels);
-        if(key === 'mf_pr_customers') mfAddToList(key, defaultsCustomers);
-        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
-          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
-          else mfFillSelect(sel, key, defaultsCustomers);
-        });
-      });
-    });
-    $prForm.querySelectorAll('.mfMiniBtn[data-del]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const key = btn.getAttribute('data-del');
-        mfRemoveFromList(key);
-        $prForm.querySelectorAll("select[data-listkey='"+key+"']").forEach(sel=>{
-          if(key === 'mf_pr_models') mfFillSelect(sel, key, defaultsModels);
-          else mfFillSelect(sel, key, defaultsCustomers);
-        });
-      });
-    });
-  }
 
   // Layout A: remove redundant "Items" title (if present) at top of right column
   try{
