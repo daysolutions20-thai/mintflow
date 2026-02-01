@@ -16211,3 +16211,13 @@ html body #frmCreate.isPR #mfS1 label *{
 #frmCreate.isPR .warnBox{
   display: none !important;
 }
+/* Hide Unit + button but keep DOM (avoid JS null errors) */
+.inputPlus [data-add-unit],
+.inputPlus button{
+  display: none !important;
+}
+
+/* Make Unit input full width */
+.inputPlus{
+  grid-template-columns: 1fr !important;
+}
