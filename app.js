@@ -966,6 +966,8 @@ const itemsEl = $("#items");
       });
     }
 
+    try{ if(typeof fillUnitSelectFromDatalist==='function') fillUnitSelectFromDatalist(block); }catch(e){}
+
     itemsEl.appendChild(block);
   };
 
@@ -1031,6 +1033,7 @@ const itemsEl = $("#items");
   $("#btnCancel").onclick = ()=> location.hash = "#/home";
 
   addItem();
+  try{ if(typeof fillUnitSelectFromDatalist==='function') fillUnitSelectFromDatalist(document); }catch(e){}
   renumberItems();
   syncItemControls();
 
