@@ -487,6 +487,63 @@ function renderHome(el){
         </div>
       </div>
 
+      
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">📦</div>
+            <div>
+              <div class="t-title">Summary PO</div>
+              <div class="t-sub">นำเข้า PO จาก Excel และค้นหาได้</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goSummaryPO">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">🚢</div>
+            <div>
+              <div class="t-title">Shipping Plan</div>
+              <div class="t-sub">ติดตามเลขจัดส่ง / BL / ETA</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goShippingPlan">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">🛠️</div>
+            <div>
+              <div class="t-title">Claim / Repair (MO)</div>
+              <div class="t-sub">ใบแจ้งซ่อม / Maintenance Order</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goClaimRepair">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">📋</div>
+            <div>
+              <div class="t-title">Summary MO</div>
+              <div class="t-sub">สรุปรายการแจ้งซ่อมทั้งหมด</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goSummaryMO">Go</button>
+        </div>
+
+        <div class="tile">
+          <div class="row tight" style="gap:12px; align-items:center">
+            <div class="ico">💰</div>
+            <div>
+              <div class="t-title">Cost</div>
+              <div class="t-sub">ค้นหาต้นทุนจาก Product Code / PO</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="goCost">Go</button>
+        </div>
+
+
       <div class="hr"></div>
 
       <div class="pill">Tip: ค้นจาก “ชื่อตัวเอง / เบอร์ / ชื่อสินค้า / model” ได้เลย ไม่ต้องไถไลน์ 😇</div>
@@ -520,10 +577,10 @@ function badge(status){
     "Shipping": ["shipping","Shipping"],
     "Closed": ["closed","Closed"],
     "Cancelled": ["closed","Cancelled"],
-    "summary-po": "SUM - PO",
+    "summary-po": "Summary PO",
     "shipping-plan": "Shipping Plan",
     "claim-repair": "Claim / Repair (MO)",
-    "summary-claim": "SUM - CLAIM / REPAIR",
+    "summary-claim": "Summary MO",
     "cost": "Cost"
   };
   const [cls, label] = map[status] || ["submitted", status];
@@ -3079,7 +3136,7 @@ renderRoute();
 
 
 function renderSummaryPO(view){
-  renderComingSoon(view, "SUM - PO", "Import from Excel • Export to Excel • Link to QR/PR/Delivery Plan", [
+  renderComingSoon(view, "Summary PO", "Import from Excel • Export to Excel • Link to QR/PR/Delivery Plan", [
     "PURCHASE: Date, PO No., Reff QT No., Request Type, For Job, Supplier, Model, Serial, Code, Detail, QTY, Unit, Price/Unit, Total, Currency, Requester, Contact, Receive Date",
     "ACCOUNTING: Tax 7%, WHT, Paid Amount (THB), Exchange Rate, Cost (THB), Payment Status, Payment Date",
     "CLAIM/REPAIR: Doc No., Reff QT (Claim), Reff PO (Claim), Status Claim",
@@ -3109,7 +3166,7 @@ function renderClaimRepair(view){
 
 
 function renderSummaryClaim(view){
-  renderComingSoon(view, "SUM - CLAIM / REPAIR", "Summary based on MO No., QT No., PO No. (for repair)", [
+  renderComingSoon(view, "Summary MO", "Summary based on MO No., QT No., PO No. (for repair)", [
     "Allow attachments: customer payment slip, customer PO, repair service docs"
   ]);
 }
@@ -3122,3 +3179,9 @@ function renderCost(view){
   ]);
 }
 
+
+  document.getElementById("goSummaryPO")?.addEventListener("click", ()=> location.hash = "#/summary-po");
+  document.getElementById("goShippingPlan")?.addEventListener("click", ()=> location.hash = "#/shipping-plan");
+  document.getElementById("goClaimRepair")?.addEventListener("click", ()=> location.hash = "#/claim-repair");
+  document.getElementById("goSummaryMO")?.addEventListener("click", ()=> location.hash = "#/summary-mo");
+  document.getElementById("goCost")?.addEventListener("click", ()=> location.hash = "#/cost");
