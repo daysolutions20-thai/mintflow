@@ -179,42 +179,6 @@ function setAdminMode(flag){
   renderRoute();
 }
 
-
-/* Edit / Lock helpers */
-function nowMs(){ return Date.now(); }
-function isExpiredEdit(req){
-  const until = req?.editApprovedUntil ? Date.parse(req.editApprovedUntil) : 0;
-  return !!until && nowMs() > until;
-}
-function normalizeEditState(req){
-  if(req && req.status === "EditApproved" && isExpiredEdit(req)){
-    req.status = "Submitted";
-    req.editApprovedUntil = "";
-    req.activity = req.activity || [];
-    req.activity.unshift({ at: nowISO(), actor: "SYSTEM", action:"AUTO_LOCK", detail:"Edit window expired" });
-    req.updatedAt = nowISO();
-  }
-  return req;
-}
-function canRequesterEdit(req){
-  normalizeEditState(req);
-  return req && req.status === "EditApproved";
-}
-function approveEdit(req, adminName){
-  req.status = "EditApproved";
-  const until = new Date(nowMs() + 24*60*60*1000).toISOString();
-  req.editApprovedUntil = until;
-  req.activity = req.activity || [];
-  req.activity.unshift({ at: nowISO(), actor: adminName || "ADMIN", action:"APPROVE_EDIT", detail:`until ${until}` });
-  req.updatedAt = nowISO();
-}
-function rejectEdit(req, adminName, reason){
-  req.status = "Submitted";
-  req.editApprovedUntil = "";
-  req.activity = req.activity || [];
-  req.activity.unshift({ at: nowISO(), actor: adminName || "ADMIN", action:"REJECT_EDIT", detail: reason||"" });
-  req.updatedAt = nowISO();
-}
 /* Escape */
 function escapeHtml(str){
   return String(str)
@@ -425,10 +389,15 @@ function renderRoute(){
   $$(".nav-item").forEach(a => a.classList.toggle("active", a.dataset.route === r));
   const view = $("#view");
   if(r === "home") renderHome(view);
-  else if(r === "request-qr") renderCreateQR(view, param);
+  else if(r === "request-qr") renderCreateQR(view);
   else if(r === "summary-qr") renderSummaryQR(view);
   else if(r === "request-pr") renderCreatePR(view);
   else if(r === "summary-pr") renderSummaryPR(view);
+  else if(r === "summary-po") renderSummaryPO(view);
+  else if(r === "shipping-plan") renderShippingPlan(view);
+  else if(r === "claim-repair") renderClaimRepair(view);
+  else if(r === "summary-claim") renderSummaryClaim(view);
+  else if(r === "cost") renderCost(view);
   else if(r === "detail") renderDetail(view, param);
   else if(r === "help") renderHelp(view);
   else renderHome(view);
@@ -545,8 +514,6 @@ function badge(status){
     "Draft": ["submitted","Draft"],
     "Submitted": ["submitted","Submitted"],
     "EditRequested": ["submitted","Edit Requested"],
-    "EditApproved": ["submitted","Edit Approved"],
-    "Resubmitted": ["submitted","Resubmitted"],
     "Unlocked": ["submitted","Unlocked"],
     "Quoted": ["quoted","Quoted"],
     "PO Issued": ["po","PO Issued"],
@@ -649,17 +616,9 @@ function renderSummaryQR(el){
   setupKebabs();
 }
 
-function renderCreateQR(el, docNo){
-  setPageTitle(docNo ? "Edit QR" : "Request QR", docNo ? "แก้ไขได้เฉพาะตอน Admin อนุมัติเท่านั้น" : "กรอกให้ครบ แนบรูปต่อรายการ แล้วระบบออกเลข QR อัตโนมัติ");
+function renderCreateQR(el){
+  setPageTitle("Request QR", "กรอกให้ครบ แนบรูปต่อรายการ แล้วระบบออกเลข QR อัตโนมัติ");
   const today = new Date().toISOString().slice(0,10);
-
-  const db0 = loadDB();
-  let editReq = null;
-  if(docNo){
-    editReq = (db0.qr||[]).find(r=>r.docNo===docNo);
-    if(editReq) normalizeEditState(editReq);
-  }
-  const isEdit = !!editReq;
 
   el.innerHTML = `
     <div class="card">
@@ -690,11 +649,11 @@ function renderCreateQR(el, docNo){
           <div class="row">
             <div class="field">
               <label>${biLabel("Doc Date", "วันที่")}</label>
-              <input class="input" name="docDate" type="date" value="${isEdit ? editReq.docDate : today}" />
+              <input class="input" name="docDate" type="date" value="${today}" />
             </div>
             <div class="field">
               <label>${biLabel("Urgency", "ความเร่งด่วน")}</label>
-              <select name="urgency" data-current="${isEdit ? escapeHtml(editReq.urgency||"") : "Normal"}">
+              <select name="urgency">
                 <option>Normal</option>
                 <option>Urgent</option>
                 <option>Very Urgent</option>
@@ -705,18 +664,18 @@ function renderCreateQR(el, docNo){
           <div class="row">
             <div class="field">
               <label>${biLabel("Project / Subject", "โครงการ / หัวข้อ")}</label>
-              <input class="input" name="project" value="${isEdit ? escapeHtml(editReq.project||"") : ""}" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
+              <input class="input" name="project" placeholder="เช่น XR280E spare parts / Pump / Track bolts" />
             </div>
             <div class="field">
               <label>${biLabel("For Customer", "สำหรับลูกค้า")}</label>
-              <input class="input" name="forCustomer" value="${isEdit ? escapeHtml(editReq.forCustomer||"") : ""}" placeholder="ระบุชื่อลูกค้า" />
+              <input class="input" name="forCustomer" placeholder="ระบุชื่อลูกค้า" />
             </div>
           </div>
 
           <div class="row">
             <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
-              <select class="input is-placeholder" name="requester" required data-current="${isEdit ? escapeHtml(editReq.requester||"") : ""}">
+              <select class="input is-placeholder" name="requester" required>
                 <option value="">-- Select requester --</option>
                 <option value="Chakrit (Heeb)">Chakrit (Heeb)</option>
                 <option value="Jirawat (Tor)">Jirawat (Tor)</option>
@@ -732,7 +691,7 @@ function renderCreateQR(el, docNo){
             </div>
             <div class="field">
               <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" required value="${isEdit ? escapeHtml(editReq.phone||"") : ""}" />
+              <input class="input" name="phone" required />
             </div>
           </div>
 
@@ -740,21 +699,21 @@ function renderCreateQR(el, docNo){
             <div class="field">
               <label>${biLabel("FOR", "สำหรับ")}</label>
               <div class="for-list">
-                <label class="chk"><input type="checkbox" name="forStock" value="Stock" ${isEdit && editReq.forStock ? "checked" : ""} /> Stock</label>
+                <label class="chk"><input type="checkbox" name="forStock" value="Stock" /> Stock</label>
                 <div class="for-line">
-                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" ${isEdit && editReq.forRepair ? "checked" : ""} /> Repair</label>
-                  <input class="input" id="forRepairTxt" name="forRepairTxt" value="${isEdit ? escapeHtml(editReq.forRepairTxt||"") : ""}" placeholder="For Sale / For Customer" disabled />
+                  <label class="chk"><input type="checkbox" id="forRepairChk" name="forRepair" value="Repair" /> Repair</label>
+                  <input class="input" id="forRepairTxt" name="forRepairTxt" placeholder="For Sale / For Customer" disabled />
                 </div>
                 <div class="for-line">
-                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" ${isEdit && editReq.forSale ? "checked" : ""} /> Sale</label>
-                  <input class="input" id="forSaleTxt" name="forSaleTxt" value="${isEdit ? escapeHtml(editReq.forSaleTxt||"") : ""}" placeholder="Name Customer" disabled />
+                  <label class="chk"><input type="checkbox" id="forSaleChk" name="forSale" value="Sale" /> Sale</label>
+                  <input class="input" id="forSaleTxt" name="forSaleTxt" placeholder="Name Customer" disabled />
                 </div>
               </div>
             </div>
 
             <div class="field">
               <label>${biLabel("Note", "หมายเหตุเพิ่มเติม")}</label>
-              <textarea name="note">${isEdit ? escapeHtml(editReq.note||"") : ""}</textarea>
+              <textarea name="note"></textarea>
             </div>
 </div>
             
@@ -861,27 +820,9 @@ function renderCreateQR(el, docNo){
     });
   };
   ensureUnitList();
-  // apply current selections (edit mode)
-  try{
-    const form0 = $("#frmCreate");
-    const curReq = form0.requester.getAttribute("data-current") || "";
-    if(curReq){
-      Array.from(form0.requester.options).forEach(o=>{ if(o.value===curReq){ o.selected=true; }});
-      form0.requester.classList.toggle("is-placeholder", !form0.requester.value);
-    }
-    const curUrg = form0.urgency.getAttribute("data-current") || "";
-    if(curUrg){
-      Array.from(form0.urgency.options).forEach(o=>{ if(o.value===curUrg){ o.selected=true; }});
-    }
-    if(isEdit && !canRequesterEdit(editReq)){
-      toast("เอกสารนี้ถูกล็อก (ยังไม่ได้รับอนุมัติแก้ไข)");
-      form0.querySelectorAll("input,select,textarea,button").forEach(x=>{ x.disabled = true; });
-    }
-  }catch(e){}
-
 
 const itemsEl = $("#items");
-  const addItem = (preset)=>{
+  const addItem = ()=>{
     const idx = itemsEl.children.length + 1;
     const block = document.createElement("div");
     block.className = "card";
@@ -894,7 +835,7 @@ const itemsEl = $("#items");
       <div class="row">
         <div class="field">
           <label>${biLabel("Name", "ชื่อสินค้า/อะไหล่ (จำเป็น)")}</label>
-          <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required value="${preset?escapeHtml(preset.name||""):""}" />
+          <input class="input" name="item_name" placeholder="ชื่ออะไหล่/สินค้า" required />
         </div>
         <div class="field">
           <label>${biLabel("Model", "รุ่น")}</label>
@@ -977,12 +918,6 @@ const itemsEl = $("#items");
     }
 
     itemsEl.appendChild(block);
-    try{
-      const rmk = (preset && preset.remark ? String(preset.remark) : "").toLowerCase();
-      if(rmk.includes("sea")) block.querySelector('input[name="exportSea"]').checked = true;
-      if(rmk.includes("land")) block.querySelector('input[name="exportLand"]').checked = true;
-      if(rmk.includes("air")) block.querySelector('input[name="exportAir"]').checked = true;
-    }catch(e){}
   };
 
   const renumberItems = ()=>{
@@ -1007,7 +942,7 @@ const itemsEl = $("#items");
 
     const action = btn.getAttribute("data-action");
     if(action === "addItem"){
-      if(isEdit){ (editReq.items||[]).forEach(it=> addItem(it)); } else { addItem(); }
+      addItem();
       renumberItems();
       syncItemControls();
       return;
@@ -1420,11 +1355,11 @@ const itemsEl = $("#items");
           }
 
           const docDate = form.docDate.value;
-          const docNo = isEdit ? editReq.docNo : newDocNo("QR", docDate);
+          const docNo = newDocNo("QR", docDate);
           const db = loadDB();
           db.qr = db.qr || [];
 
-          const reqObj = isEdit ? editReq : {
+          const reqObj = {
             kind: "QR",
             id: nanoid(12),
             docNo,
@@ -1439,50 +1374,17 @@ const itemsEl = $("#items");
             forSaleTxt: (form.forSaleTxt?.value || "").trim(),
             urgency: form.urgency.value,
             note: form.note.value.trim(),
-            status: isEdit ? "Resubmitted" : "Submitted",
-            editToken: isEdit ? (editReq.editToken||nanoid(24)) : nanoid(24),
-            createdAt: isEdit ? (editReq.createdAt||nowISO()) : nowISO(),
+            status: "Submitted",
+            editToken: nanoid(24),
+            createdAt: nowISO(),
             updatedAt: nowISO(),
             items: items.map(it=> ({...it, photos: it.photos.map(n=> ({ name:n, addedAt: nowISO() }))})),
             files: { quotation: [], po: [], shipping: [] },
-            activity: isEdit ? (editReq.activity||[]) : [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
+            activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
     };
   }
 
-    if(isEdit){
-    // merge existing photos + add new
-    const mergedItems = items.map((it, idx)=>{
-      const old = (editReq.items||[])[idx] || {};
-      const oldPhotos = (old.photos||[]);
-      const newPhotos = (it.photos||[]);
-      const names = new Set(oldPhotos.map(p=>p.name));
-      newPhotos.forEach(p=>{ if(!names.has(p.name)){ oldPhotos.push(p); names.add(p.name);} });
-      return { ...it, photos: oldPhotos };
-    });
-    reqObj.kind = "QR";
-    reqObj.docNo = docNo;
-    reqObj.docDate = docDate;
-    reqObj.project = form.project.value.trim();
-    reqObj.forCustomer = (form.forCustomer?.value||"").trim();
-    reqObj.requester = requester;
-    reqObj.phone = phone;
-    reqObj.forStock = !!form.forStock?.checked;
-    reqObj.forRepair = !!form.forRepair?.checked;
-    reqObj.forRepairTxt = (form.forRepairTxt?.value||"").trim();
-    reqObj.forSale = !!form.forSale?.checked;
-    reqObj.forSaleTxt = (form.forSaleTxt?.value||"").trim();
-    reqObj.urgency = form.urgency.value;
-    reqObj.note = form.note.value.trim();
-    reqObj.items = mergedItems;
-    reqObj.status = "Resubmitted";
-    reqObj.editApprovedUntil = "";
-    reqObj.updatedAt = nowISO();
-    reqObj.activity = reqObj.activity || [];
-    reqObj.activity.unshift({ at: nowISO(), actor: `${requester} (${phone})`, action:"EDIT_RESUBMIT", detail:"" });
-    db.qr = (db.qr||[]).map(x=> x.docNo===reqObj.docNo ? reqObj : x);
-  }else{
     db.qr.unshift(reqObj);
-  }
     saveDB(db);
 
     $("#preview").innerHTML = `
@@ -1496,7 +1398,7 @@ const itemsEl = $("#items");
     `;
 
     $("#btnGoDetail").onclick = ()=> location.hash = `#/detail/${encodeURIComponent(docNo)}`;
-    toast(isEdit ? ("บันทึกการแก้ไขแล้ว: " + docNo) : ("สร้าง QR สำเร็จ: " + docNo));
+    toast("สร้าง QR สำเร็จ: " + docNo);
   };
 }
 
@@ -2596,20 +2498,15 @@ function renderDetail(el, docNo){
         </div>
         <div class="row tight">
           ${badge(req.status)}
-          ${admin ? (req.status==="EditRequested" ? `
-            <button class="btn btn-primary" id="btnApproveEdit">✅ Approve Edit</button>
-            <button class="btn btn-ghost" id="btnRejectEdit">⛔ Reject</button>
-          ` : (isPR ? `
+          ${admin ? (isPR ? `
             <button class="btn btn-primary" id="btnAddReceipt">➕ Add Receipt</button>
           ` : `
             <button class="btn btn-primary" id="btnAddQuotation">➕ Add Quotation</button>
             <button class="btn btn-primary" id="btnAddPO">➕ Add PO</button>
             <button class="btn btn-primary" id="btnShip">➕ Update Shipping</button>
-          `)) : (req.status==="EditApproved" ? `
-            <button class="btn btn-primary" id="btnEditNow">✏️ Edit Now</button>
-          ` : `
+          `) : `
             <button class="btn btn-ghost" id="btnReqEdit">✍️ ขอแก้ไข</button>
-          `)}
+          `}
         </div>
       </div>
 
@@ -2812,22 +2709,7 @@ function renderDetail(el, docNo){
   }
 
   if(admin){
-    if(req.status==="EditRequested"){
-      const adminName = "ADMIN";
-      $("#btnApproveEdit") && ($("#btnApproveEdit").onclick = ()=>{
-        approveEdit(req, adminName);
-        saveBack(req);
-        toast("อนุมัติให้แก้ไขแล้ว (24 ชม.)");
-        renderRoute();
-      });
-      $("#btnRejectEdit") && ($("#btnRejectEdit").onclick = ()=>{
-        const reason = prompt("เหตุผลที่ไม่อนุมัติ (สั้นๆ):") || "";
-        rejectEdit(req, adminName, reason);
-        saveBack(req);
-        toast("ปฏิเสธคำขอแก้ไขแล้ว");
-        renderRoute();
-      });
-    }else if(isPR){
+    if(isPR){
       $("#btnAddReceipt").onclick = ()=> openUploadModal(req, "receipts");
     }else{
       $("#btnAddQuotation").onclick = ()=> openUploadModal(req, "quotation");
@@ -2835,24 +2717,16 @@ function renderDetail(el, docNo){
       $("#btnShip").onclick = ()=> openShippingModal(req);
     }
   }else{
-    const btnEditNow = $("#btnEditNow");
-    if(btnEditNow){
-      btnEditNow.onclick = ()=>{
-        location.hash = `#/request-qr/${encodeURIComponent(req.docNo)}`;
-      };
-    }
-    $("#btnReqEdit") && ($("#btnReqEdit").onclick = ()=>{
+    $("#btnReqEdit").onclick = ()=>{
       const reason = prompt("เหตุผลขอแก้ไข (สั้นๆ):") || "";
       if(!reason.trim()) return;
-      if(req.status==="EditRequested"){ toast("มีคำขอแก้ไขรออยู่แล้ว"); return; }
-      if(req.status==="EditApproved"){ toast("ตอนนี้แก้ไขได้อยู่แล้ว"); return; }
       req.status = "EditRequested";
       req.activity.unshift({ at: nowISO(), actor: `${req.requester} (${req.phone})`, action:"REQUEST_EDIT", detail: reason });
       req.updatedAt = nowISO();
       saveBack(req);
       toast("ส่งคำขอแก้ไขแล้ว");
       renderRoute();
-    });
+    };
   }
 
   $("#btnCaseSearch").onclick = ()=>{
@@ -2984,6 +2858,20 @@ function saveBack(updated){
   saveDB(db);
 }
 
+
+function renderComingSoon(view, title, subtitle, bullets){
+  view.innerHTML = `
+    <div class="card">
+      <div class="section-title">
+        <h2>${escapeHtml(title)}</h2>
+      </div>
+      <div class="subtext">${escapeHtml(subtitle||"")}</div>
+      <div class="hr"></div>
+      <div class="pill">Coming soon • โครงหน้านี้เตรียมไว้แล้ว เดี๋ยวค่อยเติมฟังก์ชัน/ตารางตามสเปก</div>
+      ${bullets && bullets.length ? `<ul style="margin:12px 0 0; color:var(--muted); font-size:13px; line-height:1.65">${bullets.map(b=>`<li>${escapeHtml(b)}</li>`).join("")}</ul>` : ``}
+    </div>
+  `;
+}
 function renderHelp(el){
   setPageTitle("วิธีใช้งาน", "สั้น ๆ แต่ใช้ได้จริง (โปรโตไทป์)");
   el.innerHTML = `
@@ -3183,3 +3071,49 @@ window.addEventListener("hashchange", renderRoute);
 
 bindGlobal();
 renderRoute();
+
+
+function renderSummaryPO(view){
+  renderComingSoon(view, "SUM - PO", "Import from Excel • Export to Excel • Link to QR/PR/Delivery Plan", [
+    "PURCHASE: Date, PO No., Reff QT No., Request Type, For Job, Supplier, Model, Serial, Code, Detail, QTY, Unit, Price/Unit, Total, Currency, Requester, Contact, Receive Date",
+    "ACCOUNTING: Tax 7%, WHT, Paid Amount (THB), Exchange Rate, Cost (THB), Payment Status, Payment Date",
+    "CLAIM/REPAIR: Doc No., Reff QT (Claim), Reff PO (Claim), Status Claim",
+    "Attachments: QT/PO customer, payment slips, supplier payment docs"
+  ]);
+}
+
+
+
+function renderShippingPlan(view){
+  renderComingSoon(view, "SHIPPING PLAN", "Track shipment status linked from QR / Delivery Plan", [
+    "List: Date | NO. | Project | Customer | PO Reff | Delivery Plan",
+    "Detail fields: BL No., ETD, ETA, FromE No., Container No., BL TH No., Form 32 No., Shipping accounting job No.",
+    "Allow attachments for shipping documents"
+  ]);
+}
+
+
+
+function renderClaimRepair(view){
+  renderComingSoon(view, "CLAIM / REPAIR (Maintenance Order)", "Form + request edit approval + PDF export", [
+    "Header: Date, MO No. (auto), Urgency, Project/Subject, Model, S/N, Customer, Requester, Note",
+    "Items: IT No., Name, Code, Brand, Export By, QTY, Unit, Detail, Attach photos per item"
+  ]);
+}
+
+
+
+function renderSummaryClaim(view){
+  renderComingSoon(view, "SUM - CLAIM / REPAIR", "Summary based on MO No., QT No., PO No. (for repair)", [
+    "Allow attachments: customer payment slip, customer PO, repair service docs"
+  ]);
+}
+
+
+
+function renderCost(view){
+  renderComingSoon(view, "COST", "Search multi-dimension by Product Code / Delivery Plan / PO", [
+    "SUM - COST: Date | Product Code | Detail | PO Reff | Delivery Plan | Receive Date | COST (from PO Accounting)"
+  ]);
+}
+
