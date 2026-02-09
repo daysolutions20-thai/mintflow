@@ -511,7 +511,7 @@ function renderHome(el){
 
 function badge(status){
   const map = {
-    "Draft": ["submitted","Draft"],
+"Draft": ["submitted","Draft"],
     "Submitted": ["submitted","Submitted"],
     "EditRequested": ["submitted","Edit Requested"],
     "Unlocked": ["submitted","Unlocked"],
@@ -519,7 +519,12 @@ function badge(status){
     "PO Issued": ["po","PO Issued"],
     "Shipping": ["shipping","Shipping"],
     "Closed": ["closed","Closed"],
-    "Cancelled": ["closed","Cancelled"]
+    "Cancelled": ["closed","Cancelled"],
+    "summary-po": "SUM - PO",
+    "shipping-plan": "Shipping Plan",
+    "claim-repair": "Claim / Repair (MO)",
+    "summary-claim": "SUM - CLAIM / REPAIR",
+    "cost": "Cost"
   };
   const [cls, label] = map[status] || ["submitted", status];
   return `<span class="badge ${cls}">${label}</span>`;
