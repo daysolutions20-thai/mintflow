@@ -16262,75 +16262,35 @@ html body #frmCreate.isPR #mfS1 label *{
 
 
 /* ===============================
-   PATCH v2: Anti-eye-strain (less orange, more calm contrast)
-   - Overrides v1: use neutral grays + clearer spacing
-   - Focus: long reading / data entry comfort
+   PATCH v3: Detail section comfort (PO Detail A/B/C)
+   - Make label/value blocks easier to scan
+   - Adds padding + subtle blocks inside .grid2
 ================================= */
 
-:root{
-  --mf-page-bg: #f6f7fb;
-  --mf-card-bg2: #ffffff;
-  --mf-card-border2: rgba(0,0,0,0.08);
-  --mf-card-shadow2: 0 10px 24px rgba(0,0,0,0.08);
-  --mf-head-bg: #f1f3f6;
-  --mf-row-alt: #fafbfc;
-  --mf-row-hover: #f0f4ff;
+.card .grid2{
+  gap: 12px !important;
 }
 
-/* soften main background (reduce white glare) */
-#view{
-  background: var(--mf-page-bg);
+.card .grid2 > div{
+  padding: 10px 12px;
+  background: #fafbfc;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
 }
 
-/* cards: clean white + shadow (less tint) */
-.card{
-  background: var(--mf-card-bg2) !important;
-  border: 1px solid var(--mf-card-border2) !important;
-  box-shadow: var(--mf-card-shadow2) !important;
+.card .grid2 > div .subtext{
+  font-size: 12px;
+  opacity: 0.75;
+  margin-bottom: 4px;
 }
 
-/* make sections easier to scan */
-.section-title{
-  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+.card .grid2 > div .mono,
+.card .grid2 > div b,
+.card .grid2 > div div:not(.subtext){
+  line-height: 1.45;
 }
 
-/* tables: clearer header + zebra + roomier rows */
-.table-wrap table{
-  border-collapse: separate;
-  border-spacing: 0;
+/* Attachments lists: increase spacing a bit */
+.card .subtext + div{
+  margin-top: 2px;
 }
-.table-wrap table thead th{
-  background: var(--mf-head-bg) !important;
-  border-bottom: 1px solid rgba(0,0,0,0.10) !important;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.table-wrap table tbody td{
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.table-wrap table tbody tr:nth-child(even){
-  background: var(--mf-row-alt) !important;
-}
-.table-wrap table tbody tr:hover{
-  background: var(--mf-row-hover) !important;
-}
-
-/* typography: reduce "twitchy" feeling */
-body, #view{
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.subtext{
-  line-height: 1.35;
-}
-
-/* keep hr subtle */
-.hr{
-  background: rgba(0,0,0,0.08) !important;
-  height: 1px;
-}
-
-/* ===============================
-   END PATCH v2
-================================= */
