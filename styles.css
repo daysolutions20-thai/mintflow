@@ -16279,3 +16279,9 @@ html body #frmCreate.isPR #mfS1 label *{
 .btn-danger:hover{ filter:brightness(.95); }
 .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.06); }
 .table-wrap{ overflow:auto; }
+
+/* v21 additions */
+.divider{height:1px;background:rgba(0,0,0,.06);margin:16px 0;}
+.t-right{text-align:right;}
+.link{color:var(--accent);text-decoration:none;font-weight:700;}
+.link:hover{text-decoration:underline;}
