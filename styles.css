@@ -16262,61 +16262,75 @@ html body #frmCreate.isPR #mfS1 label *{
 
 
 /* ===============================
-   PATCH: Add subtle depth + warm tone (Summary/Forms comfort)
-   - Goal: reduce "flat white" glare, improve readability for long data entry
-   - Low-risk: mainly enhances existing .card / tables with subtle shadow & warm tint
+   PATCH v2: Anti-eye-strain (less orange, more calm contrast)
+   - Overrides v1: use neutral grays + clearer spacing
+   - Focus: long reading / data entry comfort
 ================================= */
 
 :root{
-  --mf-card-bg: #fffdfb;
-  --mf-card-border: rgba(255,153,102,0.22);
-  --mf-card-shadow: 0 10px 24px rgba(0,0,0,0.06);
-  --mf-soft-warm: rgba(255,153,102,0.10);
-  --mf-soft-warm-2: rgba(255,153,102,0.06);
+  --mf-page-bg: #f6f7fb;
+  --mf-card-bg2: #ffffff;
+  --mf-card-border2: rgba(0,0,0,0.08);
+  --mf-card-shadow2: 0 10px 24px rgba(0,0,0,0.08);
+  --mf-head-bg: #f1f3f6;
+  --mf-row-alt: #fafbfc;
+  --mf-row-hover: #f0f4ff;
 }
 
-/* Cards: add gentle depth */
+/* soften main background (reduce white glare) */
+#view{
+  background: var(--mf-page-bg);
+}
+
+/* cards: clean white + shadow (less tint) */
 .card{
-  background: linear-gradient(180deg, var(--mf-card-bg), rgba(255,153,102,0.04));
-  border: 1px solid var(--mf-card-border);
-  box-shadow: var(--mf-card-shadow);
+  background: var(--mf-card-bg2) !important;
+  border: 1px solid var(--mf-card-border2) !important;
+  box-shadow: var(--mf-card-shadow2) !important;
 }
 
-/* Section titles: clearer separation without harsh lines */
+/* make sections easier to scan */
 .section-title{
-  border-bottom: 1px solid rgba(255,153,102,0.18);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
 }
 
-/* Tables: reduce eye strain with soft header + zebra rows */
+/* tables: clearer header + zebra + roomier rows */
+.table-wrap table{
+  border-collapse: separate;
+  border-spacing: 0;
+}
 .table-wrap table thead th{
-  background: rgba(255,153,102,0.10);
-  border-bottom: 1px solid rgba(255,153,102,0.20);
+  background: var(--mf-head-bg) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.10) !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.table-wrap table tbody td{
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .table-wrap table tbody tr:nth-child(even){
-  background: rgba(255,153,102,0.04);
+  background: var(--mf-row-alt) !important;
 }
 .table-wrap table tbody tr:hover{
-  background: rgba(255,153,102,0.08);
+  background: var(--mf-row-hover) !important;
 }
 
-/* Light separators */
+/* typography: reduce "twitchy" feeling */
+body, #view{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.subtext{
+  line-height: 1.35;
+}
+
+/* keep hr subtle */
 .hr{
-  background: linear-gradient(90deg, rgba(255,153,102,0.00), rgba(255,153,102,0.25), rgba(255,153,102,0.00));
+  background: rgba(0,0,0,0.08) !important;
   height: 1px;
 }
 
-/* Inputs inside cards: subtle inset to feel "clickable" */
-input[type="text"], input[type="number"], input[type="date"], select, textarea{
-  box-shadow: inset 0 1px 0 rgba(0,0,0,0.03);
-}
-
-/* Sticky top bar remains same; just soften main content background a bit */
-#view{
-  background: linear-gradient(180deg, rgba(255,153,102,0.05), rgba(255,255,255,0));
-}
-
 /* ===============================
-   END PATCH
+   END PATCH v2
 ================================= */
