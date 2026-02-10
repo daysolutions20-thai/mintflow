@@ -2544,6 +2544,7 @@ function renderSummaryPO(el){
         <div class="row tight">
           <button class="btn btn-primary" id="btnPOImport">📥 Import (mock)</button>
           <button class="btn btn-ghost" id="btnPOExport">📤 Export (mock)</button>
+          <button class="btn btn-ghost" id="btnPONew">➕ New PO</button>
         </div>
       </div>
 
@@ -2605,6 +2606,48 @@ function renderSummaryPO(el){
 
   $("#btnPOImport").onclick = ()=> toast("Import (mock) — เดี๋ยวต่อ PO Import จริง");
   $("#btnPOExport").onclick = ()=> toast("Export (mock) — เดี๋ยวต่อ Export Excel จริง");
+
+  // Quick create PO (prompt-based, low-risk; no UI changes)
+  $("#btnPONew")?.addEventListener("click", ()=>{
+    try{
+      const db2 = loadDB();
+      db2.po = db2.po || [];
+      const today = new Date().toISOString().slice(0,10);
+
+      const date = (prompt("PO Date (YYYY-MM-DD):", today) || "").trim() || today;
+      const poNo = (prompt("PO No.:", "") || "").trim();
+      if(!poNo){ toast("ยกเลิก: ต้องมี PO No."); return; }
+      if(db2.po.some(x => (x.poNo||"") === poNo)){ toast("มี PO No นี้แล้ว"); return; }
+
+      const supplier = (prompt("Supplier:", "") || "").trim();
+      const requester = (prompt("Requester:", "") || "").trim();
+      const status = (prompt("Status (Open/Paid/Partially/etc):", "Open") || "").trim() || "Open";
+      const qrNo = (prompt("Reff QR No (ถ้ามี):", "") || "").trim();
+      const prNo = (prompt("Reff PR No (ถ้ามี):", "") || "").trim();
+      const qtNo = (prompt("Reff QT No (ถ้ามี):", "") || "").trim();
+
+      const po = {
+        date,
+        poNo,
+        supplier,
+        requester,
+        status,
+        currency: "THB",
+        refs: { qrNo, prNo, qtNo },
+        items: [],
+        payments: []
+      };
+      db2.po.unshift(po);
+      saveDB(db2);
+
+      window.__po_open = poNo;
+      toast("เพิ่ม PO แล้ว");
+      renderRoute();
+    }catch(err){
+      console.error(err);
+      toast("เพิ่ม PO ไม่สำเร็จ");
+    }
+  });
 
   $$("[data-poopen]", el).forEach(b=>{
     b.onclick = ()=>{
