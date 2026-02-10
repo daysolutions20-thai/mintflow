@@ -2554,18 +2554,14 @@ function renderSummaryPO(el){
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>PO No.</th>
-              <th>Supplier</th>
-              <th>Reff (QR/PR/QT)</th>
-              <th>Currency</th>
-              <th class="right">Grand</th>
-              <th class="right">Paid</th>
-              <th class="right">Balance</th>
-              <th>Status</th>
-              <th>Receive</th>
-              <th>Action</th>
-            </tr>
+            <th>Date</th>
+            <th>PO No.</th>
+            <th>Supplier</th>
+            <th>Reff (QR/PR/QT)</th>
+            <th>Requester</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
           </thead>
           <tbody>
             ${rows.map(p=>{
@@ -2579,20 +2575,14 @@ function renderSummaryPO(el){
                   <td class="mono">${escapeHtml(p.poNo||"")}</td>
                   <td>${escapeHtml(p.supplier||"")}</td>
                   <td class="mono">${escapeHtml(refText(p)||"-")}</td>
-                  <td class="mono">${escapeHtml(p.currency||"")}</td>
-                  <td class="mono right">${fmtMoney(grand)}</td>
-                  <td class="mono right">${fmtMoney(paid)}</td>
-                  <td class="mono right">${fmtMoney(bal)}</td>
+                  <td>${escapeHtml(p.requester || p.purchase?.requester || "-")}</td>
                   <td>${badge(p.status||"Open")}</td>
-                  <td class="mono">${escapeHtml(p.refs?.receiveDate || "-")}</td>
                   <td>
-                    <button class="btn btn-small" data-poopen="${escapeHtml(p.poNo||"")}">
-                      ${isOpen ? "Hide" : "Open"}
-                    </button>
+                    <button class="btn btn-small" data-poopen="${escapeHtml(p.poNo||"")}">${isOpen ? "Hide" : "Open"}</button>
                   </td>
                 </tr>
               `;
-            }).join("") || `<tr><td colspan="11">ไม่พบข้อมูล</td></tr>`}
+            }).join("") || `<tr><td colspan="7">ไม่พบข้อมูล</td></tr>`}
           </tbody>
         </table>
       </div>
