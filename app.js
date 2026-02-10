@@ -2623,6 +2623,57 @@ function renderSummaryPO(el){
       renderSummaryPO(el);
     };
   });
+
+  // Payment Table actions (low-risk; only touches db.po[*].payments)
+  $$("[data-popayadd]", el).forEach(btn=>{
+    btn.onclick = ()=>{
+      const poNo = btn.dataset.popayadd || "";
+      const dbx = loadDB();
+      dbx.po = dbx.po || [];
+      const po = dbx.po.find(x => (x.poNo||"") === poNo);
+      if(!po) return toast("ไม่พบ PO ในฐานข้อมูล");
+      po.payments = Array.isArray(po.payments) ? po.payments : [];
+
+      const date = prompt("Payment Date (YYYY-MM-DD)", nowISO().slice(0,10));
+      if(date === null) return;
+      const amtStr = prompt("Amount (THB)", "0");
+      if(amtStr === null) return;
+      const amt = Number(String(amtStr).replace(/,/g,"").trim());
+      if(!isFinite(amt) || amt <= 0) return toast("Amount ต้องเป็นตัวเลขมากกว่า 0");
+
+      const note = prompt("Note (optional)", "") ?? "";
+      const slip = prompt("Slip Link (optional)", "") ?? "";
+
+      po.payments.push({ date: String(date).trim(), amountTHB: amt, note: String(note), slipLink: String(slip) });
+      saveDB(dbx);
+      window.__po_open = poNo; // keep open
+      renderSummaryPO(el);
+      toast("เพิ่ม Payment แล้ว");
+    };
+  });
+
+  $$("[data-popaydel]", el).forEach(btn=>{
+    btn.onclick = ()=>{
+      const poNo = btn.dataset.popaydel || "";
+      const idx = Number(btn.dataset.payidx || "-1");
+      const ok = confirm("ลบ payment งวดนี้?");
+      if(!ok) return;
+
+      const dbx = loadDB();
+      dbx.po = dbx.po || [];
+      const po = dbx.po.find(x => (x.poNo||"") === poNo);
+      if(!po) return toast("ไม่พบ PO ในฐานข้อมูล");
+      po.payments = Array.isArray(po.payments) ? po.payments : [];
+      if(idx < 0 || idx >= po.payments.length) return;
+
+      po.payments.splice(idx, 1);
+      saveDB(dbx);
+      window.__po_open = poNo;
+      renderSummaryPO(el);
+      toast("ลบ Payment แล้ว");
+    };
+  });
+
 }
 
 function renderPODetailPanels(po){
@@ -2743,7 +2794,10 @@ function renderPODetailPanels(po){
 
         <div class="hr" style="margin:12px 0"></div>
 
-        <div class="subtext"><b>Payment Table</b> (${payments.length} งวด)</div>
+        <div class="row tight" style="justify-content:space-between;align-items:center">
+  <div class="subtext"><b>Payment Table</b> (${payments.length} งวด)</div>
+  <button class="btn btn-primary" data-popayadd="${escapeHtml(po.poNo||"")}">➕ Add Payment</button>
+</div>
         <div class="table-wrap" style="margin-top:6px">
           <table>
             <thead>
@@ -2753,6 +2807,7 @@ function renderPODetailPanels(po){
                 <th class="right">Amount (THB)</th>
                 <th>Note</th>
                 <th>Slip Link</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -2765,6 +2820,7 @@ function renderPODetailPanels(po){
                     <td class="mono right">${fmtMoney(amt)}</td>
                     <td>${escapeHtml(pm.note||"")}</td>
                     <td class="mono">${escapeHtml(pm.slipLink||pm.slip||"-")}</td>
+                    <td><button class="btn btn-ghost" data-popaydel="${escapeHtml(po.poNo||"")}" data-payidx="${idx}">🗑️</button></td>
                   </tr>
                 `;
               }).join("") || `<tr><td colspan="5">-</td></tr>`}
