@@ -16262,35 +16262,45 @@ html body #frmCreate.isPR #mfS1 label *{
 
 
 /* ===============================
-   PATCH v3: Detail section comfort (PO Detail A/B/C)
-   - Make label/value blocks easier to scan
-   - Adds padding + subtle blocks inside .grid2
+   PATCH v4: Add depth color behind cards + richer field blocks
+   - Gives "background layer" so cards pop
+   - Adds subtle gradient + inset for PO Detail mini-cards
 ================================= */
 
-.card .grid2{
-  gap: 12px !important;
+:root{
+  --mf-layer-bg: #f3f6fb;
+  --mf-card-glow: rgba(255, 140, 82, 0.10);
 }
 
+/* Background behind the big content area (so white cards pop) */
+#view{
+  background: radial-gradient(1200px 500px at 60% 0%, rgba(255,140,82,0.10), rgba(243,246,251,0) 70%),
+              linear-gradient(180deg, var(--mf-layer-bg), #ffffff 55%);
+}
+
+/* Cards: keep clean but add a soft edge + gentle warm glow */
+.card{
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08), 0 1px 0 rgba(255,140,82,0.10) !important;
+}
+
+/* PO Detail mini blocks (grid2): more depth */
 .card .grid2 > div{
-  padding: 10px 12px;
-  background: #fafbfc;
-  border: 1px solid rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, #ffffff, #f7f9fc) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 6px 14px rgba(0,0,0,0.06);
+}
+
+/* Help the headings stand out slightly */
+.card h2, .card h3{
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* Tables inside cards: tiny lift */
+.table-wrap{
+  background: rgba(255,255,255,0.60);
   border-radius: 12px;
 }
 
-.card .grid2 > div .subtext{
-  font-size: 12px;
-  opacity: 0.75;
-  margin-bottom: 4px;
-}
-
-.card .grid2 > div .mono,
-.card .grid2 > div b,
-.card .grid2 > div div:not(.subtext){
-  line-height: 1.45;
-}
-
-/* Attachments lists: increase spacing a bit */
-.card .subtext + div{
-  margin-top: 2px;
-}
+/* ===============================
+   END PATCH v4
+================================= */
