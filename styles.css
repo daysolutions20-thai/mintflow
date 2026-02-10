@@ -16260,18 +16260,22 @@ html body #frmCreate.isPR #mfS1 label *{
 #items .inputPlus::before{ display:none !important; }
 
 
-/* ===== MintFlow: system badge in topbar ===== */
-.system-badge{
-  color:#fff;
-  font-weight:800;
-  letter-spacing:.12em;
-  font-size:12px;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.45);
-  background: rgba(255,255,255,.10);
-  white-space:nowrap;
+
+/* ===========================
+   MintFlow additions (v20)
+   =========================== */
+.modal{ position:fixed; inset:0; z-index:50; }
+.modal.hidden{ display:none; }
+.modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.35); }
+.modal-card{ position:relative; margin:60px auto; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width: 960px){
+  .grid2{ grid-template-columns:1fr; }
 }
-@media (max-width: 520px){
-  .system-badge{display:none;}
-}
+.card.inner{ background:rgba(255,255,255,.65); border:1px solid rgba(0,0,0,.06); }
+.input-sm{ padding:8px 10px; font-size:13px; }
+.btn-sm{ padding:6px 10px; font-size:12px; border-radius:10px; }
+.btn-danger{ background:#d63a3a; color:#fff; border:none; }
+.btn-danger:hover{ filter:brightness(.95); }
+.pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.06); }
+.table-wrap{ overflow:auto; }
