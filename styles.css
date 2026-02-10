@@ -16258,3 +16258,20 @@ html body #frmCreate.isPR #mfS1 label *{
 }
 #items .inputPlus::after,
 #items .inputPlus::before{ display:none !important; }
+
+
+/* ===== MintFlow: system badge in topbar ===== */
+.system-badge{
+  color:#fff;
+  font-weight:800;
+  letter-spacing:.12em;
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.45);
+  background: rgba(255,255,255,.10);
+  white-space:nowrap;
+}
+@media (max-width: 520px){
+  .system-badge{display:none;}
+}
