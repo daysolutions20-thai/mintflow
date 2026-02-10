@@ -1,14 +1,38 @@
 /**
  * MINT FLOW (static HTML)
  * - No backend. Uses localStorage as a fake database.
- * - Procurement / QR / PR / PO / Shipping / Cost (Import) workflow prototype
+ * - Modules: PR/Work Order, QR, PO Summary (with PDF import), Shipping Plan, MO, Cost (Import only)
+ * - Uses Google Drive links for attachments (no heavy file storage).
  */
 
 const $ = (sel, el=document) => el.querySelector(sel);
 const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
-const LS_KEY = "qr_proto_db_v1";
+const LS_KEY = "mintflow_db_v2";
 const LS_ADMIN = "qr_proto_admin";
+
+/* ===========================
+   Master Lists (edit in code only)
+   =========================== */
+const MASTER = {
+  requesters: [
+    "Mint",
+  ],
+  suppliers: [
+    "XUZHOU PLUTO CONSTRUCTION MACHINERY CO.,LTD.",
+  ],
+  units: [
+    "PCS",
+    "SET",
+    "EA",
+  ],
+  brands: [
+    "N/A",
+  ],
+  models: [
+    "N/A",
+  ],
+};
 
 function nowISO(){ return new Date().toISOString(); }
 
@@ -95,18 +119,37 @@ function toast(msg){
 }
 
 function loadDB(){
-  const raw = localStorage.getItem(LS_KEY);
-  if(!raw){
-    const seeded = seedDB();
-    localStorage.setItem(LS_KEY, JSON.stringify(seeded));
-    return seeded;
-  }
-  try { return JSON.parse(raw); } catch {
-    const seeded = seedDB();
-    localStorage.setItem(LS_KEY, JSON.stringify(seeded));
-    return seeded;
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    const db = raw ? JSON.parse(raw) : {};
+    // Backward compatible defaults
+    db.qr = Array.isArray(db.qr) ? db.qr : [];
+    db.pr = Array.isArray(db.pr) ? db.pr : [];
+    db.po = Array.isArray(db.po) ? db.po : [];
+    db.shipping = Array.isArray(db.shipping) ? db.shipping : [];
+    db.mo = Array.isArray(db.mo) ? db.mo : [];
+    db.cost = Array.isArray(db.cost) ? db.cost : [];
+    // Shared master lists (editable in code only)
+    db.master = db.master && typeof db.master === "object" ? db.master : {};
+    db.master.requesters = Array.isArray(db.master.requesters) ? db.master.requesters : MASTER.requesters.slice();
+    db.master.suppliers = Array.isArray(db.master.suppliers) ? db.master.suppliers : MASTER.suppliers.slice();
+    db.master.units = Array.isArray(db.master.units) ? db.master.units : MASTER.units.slice();
+    db.master.brands = Array.isArray(db.master.brands) ? db.master.brands : MASTER.brands.slice();
+    db.master.models = Array.isArray(db.master.models) ? db.master.models : MASTER.models.slice();
+    return db;
+  }catch(e){
+    console.warn("DB parse error, reset", e);
+    return { qr:[], pr:[], po:[], shipping:[], mo:[], cost:[], master:{
+      requesters: MASTER.requesters.slice(),
+      suppliers: MASTER.suppliers.slice(),
+      units: MASTER.units.slice(),
+      brands: MASTER.brands.slice(),
+      models: MASTER.models.slice(),
+    }};
   }
 }
+
+
 function saveDB(db){ localStorage.setItem(LS_KEY, JSON.stringify(db)); }
 
 function seedDB(){
@@ -186,6 +229,50 @@ function escapeHtml(str){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+
+
+// Short alias
+function esc(v){ return escapeHtml(v); }
+
+// Safe number parse
+function num(v){
+  if(v === null || v === undefined) return 0;
+  const n = parseFloat(String(v).replace(/,/g,""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function fmtMoney(v){
+  const n = num(v);
+  return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function fmtDT(iso){
+  if(!iso) return "";
+  try{
+    const d = new Date(iso);
+    if(isNaN(d)) return String(iso);
+    return d.toLocaleString();
+  }catch(_){
+    return String(iso);
+  }
+}
+
+async function copyToClipboard(text){
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+}
+
 
 /* Bilingual Label helper (EN + TH) */
 function biLabel(en, th){
@@ -386,15 +473,31 @@ function renderRoute(){
   const { r, param } = route();
   $$(".nav-item").forEach(a => a.classList.toggle("active", a.dataset.route === r));
   const view = $("#view");
+
   if(r === "home") renderHome(view);
-  else if(r === "request-qr") renderCreateQR(view);
-  else if(r === "summary-qr") renderSummaryQR(view);
+
+  // Forms
   else if(r === "request-pr") renderCreatePR(view);
+  else if(r === "request-qr") renderCreateQR(view);
+  else if(r === "request-mo") renderCreateMO(view);
+
+  // Summaries
   else if(r === "summary-pr") renderSummaryPR(view);
+  else if(r === "summary-qr") renderSummaryQR(view);
+  else if(r === "summary-po") renderSummaryPO(view);
+  else if(r === "summary-mo") renderSummaryMO(view);
+
+  // Logistics / Cost
+  else if(r === "shipping-plan") renderShippingPlan(view);
+  else if(r === "cost") renderCost(view);
+
+  // Detail (generic)
   else if(r === "detail") renderDetail(view, param);
+
   else if(r === "help") renderHelp(view);
   else renderHome(view);
 }
+
 
 /* Views */
 function renderHome(el){
@@ -3045,6 +3148,982 @@ function bindGlobal(){
   const role = $("#roleLabel");
   if(role) role.textContent = isAdmin() ? "Admin" : "Requester";
 }
+
+
+/* ===========================
+   PO (Summary + Import from Flow PDF)
+   =========================== */
+function renderSummaryPO(el){
+  setPageTitle("SUM - PO", "สรุปรายการ PO (นำเข้าจาก Flow PDF + จ่ายหลายงวด + เอกสารแนบลิงก์)");
+
+  const db = loadDB();
+  const list = db.po.slice().sort((a,b)=> (b.updatedAt||"").localeCompare(a.updatedAt||""));
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap">
+        <div>
+          <div class="section-title"><h2 style="margin:0">PO Summary</h2></div>
+          <div class="subtext">นำเข้า PO จาก PDF ที่ Save จาก Flow (ไฟล์ต้นฉบับไม่สแกน)</div>
+        </div>
+
+        <div class="row" style="gap:10px; flex-wrap:wrap">
+          <label class="btn btn-soft" style="cursor:pointer">
+            <input id="poPdfInput" type="file" accept="application/pdf" style="display:none">
+            Import PO from PDF
+          </label>
+          <button class="btn" id="btnNewPO">New PO (manual)</button>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row" style="gap:10px; flex-wrap:wrap">
+        <input id="poSearch" class="input" placeholder="Search: PO No / Supplier / QR Ref / Product Code..." style="flex:1; min-width:260px" />
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>PO No.</th>
+              <th>Supplier</th>
+              <th>QR Ref</th>
+              <th>Currency</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="poTbody">
+            ${list.map(po => poRowHTML(po)).join("") || `<tr><td colspan="8" class="muted">No PO yet</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="poModal" class="modal hidden"></div>
+  `;
+
+  $("#btnNewPO").onclick = () => openPOEditor(null);
+
+  $("#poSearch").addEventListener("input", (e)=>{
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = list.filter(po => {
+      const hay = [
+        po.docDate, po.poNo, po.supplier, po.qrRef, po.currency,
+        (po.items||[]).map(it=>`${it.code} ${it.desc}`).join(" ")
+      ].join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+    $("#poTbody").innerHTML = filtered.map(po => poRowHTML(po)).join("") || `<tr><td colspan="8" class="muted">No results</td></tr>`;
+    attachPORowClicks();
+  });
+
+  attachPORowClicks();
+
+  // PDF import
+  const input = $("#poPdfInput");
+  input.addEventListener("change", async ()=>{
+    const file = input.files && input.files[0];
+    if(!file) return;
+    try{
+      const parsed = await parseFlowPOFromPDF(file);
+      openPOEditor(parsed);
+    }catch(err){
+      alert("Import failed: " + (err?.message || err));
+      console.error(err);
+    }finally{
+      input.value = "";
+    }
+  });
+
+  function attachPORowClicks(){
+    $$("#poTbody tr[data-id]").forEach(tr=>{
+      tr.onclick = ()=> {
+        const id = tr.dataset.id;
+        const po = loadDB().po.find(x=>x.id===id);
+        openPOEditor(po);
+      };
+    });
+  }
+
+  function openPOEditor(seed){
+    const db = loadDB();
+    let po = seed;
+
+    if(!po){
+      po = {
+        id: nanoid(12),
+        kind: "PO",
+        poNo: "",
+        docDate: new Date().toISOString().slice(0,10),
+        supplier: "",
+        qrRef: "",
+        project: "",
+        currency: "THB",
+        total: 0,
+        poExchangeRate: "", // reference only
+        items: [],
+        payments: [],
+        attachments: [],
+        folderLink: "",
+        status: "Draft",
+        rev: 0,
+        history: [],
+        createdAt: nowISO(),
+        createdBy: "unknown",
+        updatedAt: nowISO(),
+        updatedBy: "unknown",
+      };
+    }else{
+      // clone for editing
+      po = JSON.parse(JSON.stringify(po));
+    }
+
+    const modal = $("#poModal");
+    modal.classList.remove("hidden");
+    modal.innerHTML = poEditorHTML(po);
+
+    $("#poClose").onclick = ()=> { modal.classList.add("hidden"); modal.innerHTML=""; };
+
+    $("#poSave").onclick = ()=>{
+      // validation
+      if(!po.poNo.trim()){
+        alert("PO No is required");
+        return;
+      }
+      const db2 = loadDB();
+      const idx = db2.po.findIndex(x=>x.id===po.id);
+      po.updatedAt = nowISO();
+      // auto totals
+      po.total = (po.items||[]).reduce((s,it)=> s + (num(it.total)||0), 0);
+      po.paymentTotal = (po.payments||[]).reduce((s,p)=> s + (num(p.amount)||0), 0);
+      po.balance = (po.totalTHB ? num(po.totalTHB) : null);
+      // store
+      if(idx>=0) db2.po[idx]=po; else db2.po.unshift(po);
+      saveDB(db2);
+      modal.classList.add("hidden"); modal.innerHTML="";
+      renderSummaryPO(el);
+    };
+
+    // bind fields
+    bindPOEditor(po);
+  }
+
+  function poRowHTML(po){
+    const paid = (po.payments||[]).reduce((s,p)=> s + (num(p.amount)||0), 0);
+    const status = paid<=0 ? "Unpaid" : (paid >= (num(po.totalTHB)||0) && (num(po.totalTHB)||0)>0 ? "Paid" : "Partially Paid");
+    const totalCell = (po.currency||"") + " " + fmtMoney(po.total);
+    return `
+      <tr data-id="${po.id}">
+        <td>${esc(po.docDate||"")}</td>
+        <td><b>${esc(po.poNo||"")}</b></td>
+        <td>${esc(po.supplier||"")}</td>
+        <td>${esc(po.qrRef||"")}</td>
+        <td>${esc(po.currency||"")}</td>
+        <td>${esc(totalCell)}</td>
+        <td>${esc(status)} (${fmtMoney(paid)} THB)</td>
+        <td class="muted">${fmtDT(po.updatedAt||po.createdAt)}</td>
+      </tr>
+    `;
+  }
+
+  function poEditorHTML(po){
+    return `
+      <div class="modal-backdrop" id="poBackdrop"></div>
+      <div class="modal-card card" style="max-width:1100px; width:calc(100% - 24px); max-height:90vh; overflow:auto">
+        <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">PO Editor</h2>
+            <div class="subtext">Import from Flow PDF → ตรวจทาน → Save. Exchange rate ใน PO เป็นอ้างอิงเท่านั้น (Cost ใช้จากใบขน/รอบเข้า)</div>
+          </div>
+          <div class="row" style="gap:10px">
+            <button class="btn btn-soft" id="poClose">Close</button>
+            <button class="btn" id="poSave">Save</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="card inner">
+            <div class="field">
+              <label>PO Date <span class="subtext">วันที่</span></label>
+              <input id="po_docDate" class="input" type="date" value="${esc(po.docDate||"")}" />
+            </div>
+
+            <div class="field">
+              <label>PO No. <span class="subtext">เลข PO</span></label>
+              <input id="po_poNo" class="input" value="${esc(po.poNo||"")}" placeholder="PO2026..." />
+            </div>
+
+            <div class="field">
+              <label>Supplier <span class="subtext">ชื่อซัพพลายเออร์</span></label>
+              <input id="po_supplier" class="input" value="${esc(po.supplier||"")}" />
+            </div>
+
+            <div class="field">
+              <label>QR Ref <span class="subtext">อ้างอิง QR</span></label>
+              <input id="po_qrRef" class="input" value="${esc(po.qrRef||"")}" />
+            </div>
+
+            <div class="field">
+              <label>Project / Subject <span class="subtext">หัวข้อ</span></label>
+              <input id="po_project" class="input" value="${esc(po.project||"")}" />
+            </div>
+
+            <div class="field">
+              <label>Currency <span class="subtext">สกุลเงิน</span></label>
+              <input id="po_currency" class="input" value="${esc(po.currency||"")}" />
+            </div>
+
+            <div class="field">
+              <label>PO Exchange Rate (Reference) <span class="subtext">อัตราแลกเปลี่ยนใน PO (อ้างอิง)</span></label>
+              <input id="po_poRate" class="input" value="${esc(po.poExchangeRate||"")}" placeholder="1 CNY = 4.5303 THB (reference only)" />
+            </div>
+
+            <div class="field">
+              <label>PO Folder Link <span class="subtext">ลิงก์โฟลเดอร์เอกสาร (Drive)</span></label>
+              <input id="po_folderLink" class="input" value="${esc(po.folderLink||"")}" placeholder="https://drive.google.com/..." />
+              <div class="subtext">แนะนำ: MINTFLOW_ATTACHMENTS/PO/${esc(po.poNo||"PO_NO")}/</div>
+            </div>
+          </div>
+
+          <div class="card inner">
+            <h3 style="margin-top:0">Payments (หลายงวด)</h3>
+            <div class="subtext">แนบสลิปเป็นลิงก์ Drive ต่อรายการจ่าย (ไม่อัปโหลดไฟล์เข้าเว็บ)</div>
+
+            <div class="row" style="justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+              <div class="pill">Paid Total: <b id="po_paidTotal">0</b> THB</div>
+              <button class="btn btn-soft" id="po_addPay">+ Add Payment</button>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>#</th><th>Date</th><th>Amount (THB)</th><th>Note</th><th>Slip Link</th><th></th></tr>
+                </thead>
+                <tbody id="po_payTbody"></tbody>
+              </table>
+            </div>
+
+            <div class="hr"></div>
+
+            <h3>Attachments (Auto Naming)</h3>
+            <div class="subtext">ระบบสร้างชื่อมาตรฐานให้ 100% เพื่อค้นย้อนหลังได้ (ไม่ต้องพึ่งชื่อไฟล์จริงใน Drive)</div>
+
+            <div class="row" style="justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+              <button class="btn btn-soft" id="po_addAtt">+ Add Attachment</button>
+              <button class="btn btn-soft" id="po_copyTemplate">Copy Naming Examples</button>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>Name (Std)</th><th>Type</th><th>Seq</th><th>Drive Link</th><th></th></tr>
+                </thead>
+                <tbody id="po_attTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Items</h3>
+        <div class="subtext">นำเข้าจาก PDF ได้ (โค้ดบริษัท + รายละเอียด + Qty + ราคา)</div>
+        <div class="row" style="justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+          <button class="btn btn-soft" id="po_addItem">+ Add Item</button>
+          <div class="pill">Total: <b id="po_total">${fmtMoney((po.items||[]).reduce((s,it)=>s+num(it.total),0))}</b> ${esc(po.currency||"")}</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>#</th><th>Product Code</th><th>Description</th><th>Qty</th><th>Unit</th><th>Price/Unit</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody id="po_itemTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindPOEditor(po){
+    const modal = $("#poModal");
+
+    // close when click backdrop
+    $("#poBackdrop").onclick = ()=> { $("#poClose").click(); };
+
+    // header fields
+    $("#po_docDate").oninput = (e)=> po.docDate = e.target.value;
+    $("#po_poNo").oninput = (e)=> {
+      po.poNo = e.target.value;
+      // update folder hint? not necessary
+      renderAttachmentRows();
+    };
+    $("#po_supplier").oninput = (e)=> po.supplier = e.target.value;
+    $("#po_qrRef").oninput = (e)=> po.qrRef = e.target.value;
+    $("#po_project").oninput = (e)=> po.project = e.target.value;
+    $("#po_currency").oninput = (e)=> po.currency = e.target.value;
+    $("#po_poRate").oninput = (e)=> po.poExchangeRate = e.target.value;
+    $("#po_folderLink").oninput = (e)=> po.folderLink = e.target.value;
+
+    // items
+    $("#po_addItem").onclick = ()=>{
+      po.items.push({ id:nanoid(8), code:"", desc:"", qty:1, unit:"PCS", price:0, total:0 });
+      renderItemRows();
+    };
+
+    // payments
+    $("#po_addPay").onclick = ()=>{
+      po.payments.push({ id:nanoid(8), no: (po.payments.length+1), date: new Date().toISOString().slice(0,10), amount:0, note:"", link:"" });
+      renderPayRows();
+    };
+
+    // attachments
+    $("#po_addAtt").onclick = ()=>{
+      po.attachments.push({ id:nanoid(8), type:"QT_SUPPLIER", seq:1, link:"" });
+      renderAttachmentRows();
+    };
+
+    $("#po_copyTemplate").onclick = ()=>{
+      const base = (po.poNo||"PO_NO").trim() || "PO_NO";
+      const examples = [
+        `${base}_QT_SUPPLIER`,
+        `${base}_QT_CUSTOMER`,
+        `${base}_PAY_SLIP-1`,
+        `${base}_PAY_SLIP-2`,
+        `${base}_CI`,
+        `${base}_PACKING_LIST`,
+        `${base}_BL`,
+        `${base}_CUSTOMS_DECLARATION`,
+        `${base}_DRAWING`,
+      ].join("\n");
+      copyToClipboard(examples);
+      toast("Copied naming examples");
+    };
+
+    function renderItemRows(){
+      const tbody = $("#po_itemTbody");
+      tbody.innerHTML = (po.items||[]).map((it, idx)=>`
+        <tr data-id="${it.id}">
+          <td>${idx+1}</td>
+          <td><input class="input input-sm" value="${esc(it.code||"")}" data-k="code" /></td>
+          <td><input class="input input-sm" value="${esc(it.desc||"")}" data-k="desc" /></td>
+          <td><input class="input input-sm" type="number" min="0" step="1" value="${esc(it.qty??"")}" data-k="qty" /></td>
+          <td><input class="input input-sm" value="${esc(it.unit||"")}" data-k="unit" /></td>
+          <td><input class="input input-sm" type="number" min="0" step="0.01" value="${esc(it.price??"")}" data-k="price" /></td>
+          <td><span class="pill">${fmtMoney(num(it.total))}</span></td>
+          <td><button class="btn btn-danger btn-sm" data-act="del">Del</button></td>
+        </tr>
+      `).join("") || `<tr><td colspan="8" class="muted">No items</td></tr>`;
+
+      $$("#po_itemTbody tr[data-id]").forEach(tr=>{
+        const id = tr.dataset.id;
+        const item = po.items.find(x=>x.id===id);
+        $$("input", tr).forEach(inp=>{
+          inp.oninput = ()=>{
+            const k = inp.dataset.k;
+            let v = inp.value;
+            if(k==="qty"||k==="price") v = num(v);
+            item[k]=v;
+            item.total = num(item.qty)*num(item.price);
+            $("#po_total").textContent = fmtMoney((po.items||[]).reduce((s,x)=>s+num(x.total),0));
+            renderItemRows();
+            renderPayRows();
+          };
+        });
+        $("button[data-act='del']", tr).onclick = ()=>{
+          po.items = po.items.filter(x=>x.id!==id);
+          renderItemRows();
+          renderPayRows();
+        };
+      });
+    }
+
+    function renderPayRows(){
+      const tbody = $("#po_payTbody");
+      tbody.innerHTML = (po.payments||[]).map((p, idx)=>`
+        <tr data-id="${p.id}">
+          <td>${idx+1}</td>
+          <td><input class="input input-sm" type="date" value="${esc(p.date||"")}" data-k="date"/></td>
+          <td><input class="input input-sm" type="number" min="0" step="0.01" value="${esc(p.amount??"")}" data-k="amount"/></td>
+          <td><input class="input input-sm" value="${esc(p.note||"")}" data-k="note"/></td>
+          <td><input class="input input-sm" value="${esc(p.link||"")}" data-k="link" placeholder="https://drive.google.com/..."/></td>
+          <td><button class="btn btn-danger btn-sm" data-act="del">Del</button></td>
+        </tr>
+      `).join("") || `<tr><td colspan="6" class="muted">No payments</td></tr>`;
+
+      $$("#po_payTbody tr[data-id]").forEach(tr=>{
+        const id = tr.dataset.id;
+        const p = po.payments.find(x=>x.id===id);
+        $$("input", tr).forEach(inp=>{
+          inp.oninput = ()=>{
+            const k = inp.dataset.k;
+            let v = inp.value;
+            if(k==="amount") v = num(v);
+            p[k]=v;
+            $("#po_paidTotal").textContent = fmtMoney((po.payments||[]).reduce((s,x)=>s+num(x.amount),0));
+          };
+        });
+        $("button[data-act='del']", tr).onclick = ()=>{
+          po.payments = po.payments.filter(x=>x.id!==id);
+          renderPayRows();
+        };
+      });
+
+      $("#po_paidTotal").textContent = fmtMoney((po.payments||[]).reduce((s,x)=>s+num(x.amount),0));
+    }
+
+    function stdName(type, seq){
+      const base = (po.poNo||"PO_NO").trim() || "PO_NO";
+      if(type==="PAY_SLIP") return `${base}_PAY_SLIP-${seq||1}`;
+      return `${base}_${type}${seq && type!=="PAY_SLIP" ? `-${seq}`:""}`;
+    }
+
+    function renderAttachmentRows(){
+      const tbody = $("#po_attTbody");
+      tbody.innerHTML = (po.attachments||[]).map(att=>{
+        const name = stdName(att.type, att.seq);
+        return `
+          <tr data-id="${att.id}">
+            <td><span class="pill">${esc(name)}</span></td>
+            <td>
+              <select class="input input-sm" data-k="type">
+                ${["QT_SUPPLIER","QT_CUSTOMER","PAY_SLIP","CI","PACKING_LIST","BL","CUSTOMS_DECLARATION","DRAWING","OTHER"].map(t=>`
+                  <option value="${t}" ${att.type===t?"selected":""}>${t}</option>
+                `).join("")}
+              </select>
+            </td>
+            <td><input class="input input-sm" type="number" min="1" step="1" value="${esc(att.seq||1)}" data-k="seq"/></td>
+            <td><input class="input input-sm" value="${esc(att.link||"")}" data-k="link" placeholder="https://drive.google.com/..."/></td>
+            <td><button class="btn btn-danger btn-sm" data-act="del">Del</button></td>
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="5" class="muted">No attachments</td></tr>`;
+
+      $$("#po_attTbody tr[data-id]").forEach(tr=>{
+        const id = tr.dataset.id;
+        const att = po.attachments.find(x=>x.id===id);
+        const sel = $("select", tr);
+        const seq = $("input[data-k='seq']", tr);
+        const link = $("input[data-k='link']", tr);
+
+        sel.onchange = ()=>{ att.type = sel.value; renderAttachmentRows(); };
+        seq.oninput = ()=>{ att.seq = parseInt(seq.value||"1",10) || 1; renderAttachmentRows(); };
+        link.oninput = ()=>{ att.link = link.value; };
+
+        $("button[data-act='del']", tr).onclick = ()=>{
+          po.attachments = po.attachments.filter(x=>x.id!==id);
+          renderAttachmentRows();
+        };
+      });
+    }
+
+    renderItemRows();
+    renderPayRows();
+    renderAttachmentRows();
+  }
+}
+
+/* PDF Import using pdf.js (Flow original PDF, not scanned) */
+async function parseFlowPOFromPDF(file){
+  if(!window.pdfjsLib) throw new Error("pdf.js not loaded");
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = "";
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const strings = content.items.map(it => it.str);
+    fullText += strings.join(" ") + "\n";
+  }
+  return parseFlowPOText(fullText);
+}
+
+function parseFlowPOText(text){
+  const t = (text||"").replace(/\s+/g, " ").trim();
+
+  const poNo = (t.match(/PO\s*No\.?\s*[:]?\s*(PO\d{6,})/i) || t.match(/(PO\d{6,})/))?.[1] || "";
+  const date = (t.match(/Date\s*[:]?\s*(\d{2}\/\d{2}\/\d{4})/i) || [])[1] || "";
+  const qrRef = (t.match(/Reff\s*\(QR\)\s*[:]?\s*([A-Z0-9\-\.]+)/i) || [])[1] || "";
+  const currency = (t.match(/Currency\s*[:]?\s*([A-Z]{3})/i) || [])[1] || "";
+  const grandTotal = (t.match(/Grand\s*Total\s*\(?[A-Z]{3}\)?\s*[:]?\s*([0-9,]+\.?\d*)/i) || [])[1] || "";
+  const rate = (t.match(/1\s*[A-Z]{3}\s*=\s*([0-9.]+)\s*THB/i) || [])[0] || "";
+
+  // Supplier: between Supplier: and Buyer: (best-effort)
+  let supplier = "";
+  const supM = t.match(/Supplier\s*[:]?\s*(.*?)\s*Buyer\s*[:]?/i);
+  if(supM) supplier = supM[1].trim();
+
+  // Items: look for company code pattern like DAY0...
+  const rawTokens = (text||"").split(/\s+/).filter(Boolean);
+  const items = [];
+  for(let i=0; i<rawTokens.length; i++){
+    const code = rawTokens[i];
+    if(!/^DAY[A-Z0-9]{3,}$/i.test(code)) continue;
+
+    // try pattern: CODE DESC... Qty Unit Price Total
+    // We look ahead for qty and prices near the end.
+    // Find next numeric token as qty, then next token as unit, then next numeric as unitPrice, then next numeric as total.
+    let j=i+1;
+    const descParts = [];
+    // find qty token (integer)
+    while(j<rawTokens.length && !/^\d+(?:\.\d+)?$/.test(rawTokens[j])){
+      descParts.push(rawTokens[j]);
+      j++;
+      if(descParts.length>40) break;
+    }
+    const qty = rawTokens[j]; j++;
+    const unit = rawTokens[j]; j++;
+    const price = rawTokens[j]; j++;
+    const total = rawTokens[j]; j++;
+
+    if(qty && unit && price && total && /^\d+(?:\.\d+)?$/.test(qty) && /^\d+(?:\.\d+)?$/.test(price) && /^\d+(?:\.\d+)?$/.test(total)){
+      items.push({
+        id: nanoid(8),
+        code: code,
+        desc: descParts.join(" ").replace(/\s+/g," ").trim(),
+        qty: num(qty),
+        unit: unit,
+        price: num(price),
+        total: num(total),
+      });
+    }
+  }
+
+  // dedupe by code+total
+  const uniq = [];
+  const seen = new Set();
+  for(const it of items){
+    const k = it.code + "|" + it.total;
+    if(seen.has(k)) continue;
+    seen.add(k);
+    uniq.push(it);
+  }
+
+  // Convert dd/mm/yyyy -> yyyy-mm-dd
+  let docDate = "";
+  if(date){
+    const [dd,mm,yyyy] = date.split("/");
+    docDate = `${yyyy}-${mm}-${dd}`;
+  }
+
+  const po = {
+    id: nanoid(12),
+    kind: "PO",
+    poNo,
+    docDate: docDate || new Date().toISOString().slice(0,10),
+    supplier,
+    qrRef,
+    project: "",
+    currency: currency || "CNY",
+    total: num((grandTotal||"").replace(/,/g,"")),
+    poExchangeRate: rate,
+    items: uniq,
+    payments: [],
+    attachments: [],
+    folderLink: "",
+    status: "Draft",
+    rev: 0,
+    history: [],
+    createdAt: nowISO(),
+    createdBy: "unknown",
+    updatedAt: nowISO(),
+    updatedBy: "unknown",
+  };
+
+  return po;
+}
+
+/* ===========================
+   SHIPPING PLAN (minimal scaffold)
+   =========================== */
+function renderShippingPlan(el){
+  setPageTitle("SHIPPING PLAN", "อิงจาก Delivery Plan / BL และเก็บ Receive Date ในหน้านี้");
+
+  const db = loadDB();
+  const list = db.shipping.slice().sort((a,b)=> (b.updatedAt||"").localeCompare(a.updatedAt||""));
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0">Shipping Plan</h2>
+          <div class="subtext">Delivery Plan detail + Receive (BL Only)</div>
+        </div>
+        <button class="btn" id="btnNewShip">New Delivery Plan</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Delivery Plan</th>
+              <th>BL No.</th>
+              <th>ETD</th>
+              <th>ETA</th>
+              <th>Receive Date</th>
+              <th>PO Ref</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="shipTbody">
+            ${list.map(s=> shipRowHTML(s)).join("") || `<tr><td colspan="7" class="muted">No delivery plan</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="shipModal" class="modal hidden"></div>
+  `;
+
+  $("#btnNewShip").onclick = ()=> openShipEditor(null);
+  $$("#shipTbody tr[data-id]").forEach(tr=>{
+    tr.onclick = ()=>{
+      const s = loadDB().shipping.find(x=>x.id===tr.dataset.id);
+      openShipEditor(s);
+    };
+  });
+
+  function shipRowHTML(s){
+    return `
+      <tr data-id="${s.id}">
+        <td><b>${esc(s.planNo||"")}</b></td>
+        <td>${esc(s.blNo||"")}</td>
+        <td>${esc(s.etd||"")}</td>
+        <td>${esc(s.eta||"")}</td>
+        <td>${esc(s.receiveDate||"")}</td>
+        <td>${esc(s.poRef||"")}</td>
+        <td class="muted">${fmtDT(s.updatedAt||s.createdAt)}</td>
+      </tr>
+    `;
+  }
+
+  function openShipEditor(seed){
+    let s = seed ? JSON.parse(JSON.stringify(seed)) : {
+      id:nanoid(12),
+      planNo:"",
+      blNo:"",
+      etd:"",
+      eta:"",
+      fromeNo:"",
+      containerNo:"",
+      blThNo:"",
+      form32No:"",
+      transportJobNo:"",
+      poRef:"",
+      receiveDate:"",
+      receiveNote:"",
+      receiveAttach:"",
+      attachments: [],
+      status:"Draft",
+      createdAt: nowISO(),
+      updatedAt: nowISO(),
+    };
+
+    const modal = $("#shipModal");
+    modal.classList.remove("hidden");
+    modal.innerHTML = `
+      <div class="modal-backdrop" id="shipBackdrop"></div>
+      <div class="modal-card card" style="max-width:920px; width:calc(100% - 24px); max-height:90vh; overflow:auto">
+        <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Delivery Plan</h2>
+            <div class="subtext">Receive อยู่หน้านี้ (BL Only) ไม่แยกหน้าเพิ่ม</div>
+          </div>
+          <div class="row" style="gap:10px">
+            <button class="btn btn-soft" id="shipClose">Close</button>
+            <button class="btn" id="shipSave">Save</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="card inner">
+            <div class="field"><label>Delivery Plan No.</label><input id="ship_planNo" class="input" value="${esc(s.planNo)}" /></div>
+            <div class="field"><label>BL No.</label><input id="ship_blNo" class="input" value="${esc(s.blNo)}" /></div>
+            <div class="field"><label>ETD Date</label><input id="ship_etd" class="input" type="date" value="${esc(s.etd)}" /></div>
+            <div class="field"><label>ETA Date</label><input id="ship_eta" class="input" type="date" value="${esc(s.eta)}" /></div>
+            <div class="field"><label>PO Ref</label><input id="ship_poRef" class="input" value="${esc(s.poRef)}" placeholder="PO2026..." /></div>
+
+            <div class="hr"></div>
+            <h3 style="margin:0">Receive (BL Only)</h3>
+            <div class="field"><label>Receive Date</label><input id="ship_receiveDate" class="input" type="date" value="${esc(s.receiveDate)}" /></div>
+            <div class="field"><label>Receive Note</label><input id="ship_receiveNote" class="input" value="${esc(s.receiveNote)}" /></div>
+            <div class="field"><label>Receive Attach (Drive Link)</label><input id="ship_receiveAttach" class="input" value="${esc(s.receiveAttach)}" placeholder="https://drive.google.com/..." /></div>
+          </div>
+
+          <div class="card inner">
+            <div class="field"><label>FromE No.</label><input id="ship_fromeNo" class="input" value="${esc(s.fromeNo)}" /></div>
+            <div class="field"><label>Container No.</label><input id="ship_containerNo" class="input" value="${esc(s.containerNo)}" /></div>
+            <div class="field"><label>BL TH No.</label><input id="ship_blThNo" class="input" value="${esc(s.blThNo)}" /></div>
+            <div class="field"><label>Form 32 No.</label><input id="ship_form32No" class="input" value="${esc(s.form32No)}" /></div>
+            <div class="field"><label>Transport A/C Job No.</label><input id="ship_transportJobNo" class="input" value="${esc(s.transportJobNo)}" /></div>
+
+            <div class="hr"></div>
+
+            <h3 style="margin:0">Attachments</h3>
+            <div class="subtext">เอกสารแนบอื่นๆ (Drive link)</div>
+            <button class="btn btn-soft" id="ship_addAtt">+ Add Attachment</button>
+            <div class="hr"></div>
+            <div id="ship_attWrap"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $("#shipBackdrop").onclick = ()=> $("#shipClose").click();
+    $("#shipClose").onclick = ()=> { modal.classList.add("hidden"); modal.innerHTML=""; };
+
+    function renderAtt(){
+      const wrap = $("#ship_attWrap");
+      wrap.innerHTML = (s.attachments||[]).map(att=>`
+        <div class="row" style="gap:8px; align-items:center; margin-bottom:8px" data-id="${att.id}">
+          <input class="input input-sm" style="flex:1" value="${esc(att.name||"")}" placeholder="Doc Name" data-k="name"/>
+          <input class="input input-sm" style="flex:2" value="${esc(att.link||"")}" placeholder="Drive link" data-k="link"/>
+          <button class="btn btn-danger btn-sm" data-act="del">Del</button>
+        </div>
+      `).join("") || `<div class="muted">No attachments</div>`;
+
+      $$("#ship_attWrap [data-id]").forEach(row=>{
+        const id = row.dataset.id;
+        const att = s.attachments.find(x=>x.id===id);
+        $$("input", row).forEach(inp=>{
+          inp.oninput = ()=>{ att[inp.dataset.k]=inp.value; };
+        });
+        $("button[data-act='del']", row).onclick = ()=>{
+          s.attachments = s.attachments.filter(x=>x.id!==id);
+          renderAtt();
+        };
+      });
+    }
+
+    $("#ship_addAtt").onclick = ()=>{
+      s.attachments.push({ id:nanoid(8), name:"", link:"" });
+      renderAtt();
+    };
+
+    renderAtt();
+
+    // bind fields
+    const bind = (id, key)=> { $(id).oninput = e=> s[key]=e.target.value; };
+    bind("#ship_planNo","planNo");
+    bind("#ship_blNo","blNo");
+    bind("#ship_etd","etd");
+    bind("#ship_eta","eta");
+    bind("#ship_fromeNo","fromeNo");
+    bind("#ship_containerNo","containerNo");
+    bind("#ship_blThNo","blThNo");
+    bind("#ship_form32No","form32No");
+    bind("#ship_transportJobNo","transportJobNo");
+    bind("#ship_poRef","poRef");
+    bind("#ship_receiveDate","receiveDate");
+    bind("#ship_receiveNote","receiveNote");
+    bind("#ship_receiveAttach","receiveAttach");
+
+    $("#shipSave").onclick = ()=>{
+      if(!s.planNo.trim()){
+        alert("Delivery Plan No is required");
+        return;
+      }
+      const db2 = loadDB();
+      const idx = db2.shipping.findIndex(x=>x.id===s.id);
+      s.updatedAt = nowISO();
+      if(idx>=0) db2.shipping[idx]=s; else db2.shipping.unshift(s);
+      saveDB(db2);
+      modal.classList.add("hidden"); modal.innerHTML="";
+      renderShippingPlan(el);
+    };
+  }
+}
+
+/* ===========================
+   COST (Import only - scaffold)
+   =========================== */
+function renderCost(el){
+  setPageTitle("COST (Import)", "คำนวณต้นทุนเฉพาะขาเข้า เริ่มจาก Delivery Plan/BL เท่านั้น");
+
+  const db = loadDB();
+  const list = db.cost.slice().sort((a,b)=> (b.updatedAt||"").localeCompare(a.updatedAt||""));
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0">Cost (Import)</h2>
+          <div class="subtext">เริ่มจาก Delivery Plan/BL → กรอก Exchange rate ตามใบขน → คำนวณต้นทุน</div>
+        </div>
+        <button class="btn" id="btnNewCost">New Cost Lot</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Delivery Plan</th>
+              <th>BL No.</th>
+              <th>Exchange</th>
+              <th>All Add Detail</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="costTbody">
+            ${list.map(c=>`
+              <tr data-id="${c.id}">
+                <td><b>${esc(c.planNo||"")}</b></td>
+                <td>${esc(c.blNo||"")}</td>
+                <td>${esc(c.exchangeRate||"")}</td>
+                <td>${fmtMoney(num(c.allAddDetail||0))}</td>
+                <td class="muted">${fmtDT(c.updatedAt||c.createdAt)}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="5" class="muted">No cost lots</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div class="subtext" style="margin-top:10px">* เวอร์ชันนี้เป็นโครง (scaffold) เพื่อให้เริ่มใช้งาน/ไม่พัง แล้วค่อยเติมสูตรเต็ม + โหมดแยกกล่อง</div>
+    </div>
+
+    <div id="costModal" class="modal hidden"></div>
+  `;
+
+  $("#btnNewCost").onclick = ()=> openCostEditor(null);
+  $$("#costTbody tr[data-id]").forEach(tr=>{
+    tr.onclick = ()=>{
+      const c = loadDB().cost.find(x=>x.id===tr.dataset.id);
+      openCostEditor(c);
+    };
+  });
+
+  function openCostEditor(seed){
+    let c = seed ? JSON.parse(JSON.stringify(seed)) : {
+      id:nanoid(12),
+      planNo:"",
+      blNo:"",
+      poRef:"",
+      exchangeRate:"",
+      freightCNY:"",
+      insuranceTHB:"",
+      allAddDetail:"",
+      totalWeight:"",
+      notes:"",
+      createdAt: nowISO(),
+      updatedAt: nowISO(),
+    };
+
+    const modal = $("#costModal");
+    modal.classList.remove("hidden");
+    modal.innerHTML = `
+      <div class="modal-backdrop" id="costBackdrop"></div>
+      <div class="modal-card card" style="max-width:920px; width:calc(100% - 24px); max-height:90vh; overflow:auto">
+        <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap">
+          <div>
+            <h2 style="margin:0">Cost Lot</h2>
+            <div class="subtext">Exchange rate ต้องแก้ได้และยึดใบขนขาเข้าแต่ละรอบ (ไม่ใช้ของ PO)</div>
+          </div>
+          <div class="row" style="gap:10px">
+            <button class="btn btn-soft" id="costClose">Close</button>
+            <button class="btn" id="costSave">Save</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div class="card inner">
+            <div class="field"><label>Delivery Plan No.</label><input id="c_planNo" class="input" value="${esc(c.planNo)}"/></div>
+            <div class="field"><label>BL No.</label><input id="c_blNo" class="input" value="${esc(c.blNo)}"/></div>
+            <div class="field"><label>PO Ref</label><input id="c_poRef" class="input" value="${esc(c.poRef)}"/></div>
+            <div class="field"><label>Exchange Rate (Import)</label><input id="c_exchange" class="input" value="${esc(c.exchangeRate)}" placeholder="เช่น 4.5016"/></div>
+            <div class="field"><label>All Add Detail (THB)</label><input id="c_add" class="input" value="${esc(c.allAddDetail)}"/></div>
+          </div>
+
+          <div class="card inner">
+            <div class="field"><label>Freight Total (CNY)</label><input id="c_freight" class="input" value="${esc(c.freightCNY)}"/></div>
+            <div class="field"><label>Insurance Total (THB)</label><input id="c_ins" class="input" value="${esc(c.insuranceTHB)}"/></div>
+            <div class="field"><label>Total Weight (KG)</label><input id="c_w" class="input" value="${esc(c.totalWeight)}"/></div>
+            <div class="field"><label>Note</label><input id="c_note" class="input" value="${esc(c.notes)}"/></div>
+            <div class="subtext">สูตรเต็ม + โหมดแยกกล่องจะเติมในเฟสถัดไปหลัง PO/Shipping นิ้ง</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $("#costBackdrop").onclick = ()=> $("#costClose").click();
+    $("#costClose").onclick = ()=> { modal.classList.add("hidden"); modal.innerHTML=""; };
+
+    const bind = (sel,key)=> { $(sel).oninput = e=> c[key]=e.target.value; };
+    bind("#c_planNo","planNo");
+    bind("#c_blNo","blNo");
+    bind("#c_poRef","poRef");
+    bind("#c_exchange","exchangeRate");
+    bind("#c_add","allAddDetail");
+    bind("#c_freight","freightCNY");
+    bind("#c_ins","insuranceTHB");
+    bind("#c_w","totalWeight");
+    bind("#c_note","notes");
+
+    $("#costSave").onclick = ()=>{
+      if(!c.planNo.trim()){
+        alert("Delivery Plan No is required");
+        return;
+      }
+      const db2 = loadDB();
+      const idx = db2.cost.findIndex(x=>x.id===c.id);
+      c.updatedAt = nowISO();
+      if(idx>=0) db2.cost[idx]=c; else db2.cost.unshift(c);
+      saveDB(db2);
+      modal.classList.add("hidden"); modal.innerHTML="";
+      renderCost(el);
+    };
+  }
+}
+
+/* ===========================
+   MO (CLAIM/REPAIR) - scaffold
+   =========================== */
+function renderCreateMO(el){
+  setPageTitle("CLAIM/REPAIR (MO)", "ใบแจ้งซ่อม (ยังเป็นโครง) — จะเติมตามแพทเทิร์น PR/QR");
+
+  el.innerHTML = `
+    <div class="card">
+      <h2 style="margin:0">Maintenance Order (MO)</h2>
+      <div class="subtext">เวอร์ชันนี้เป็น placeholder เพื่อให้เมนูครบก่อน (ไม่พัง) แล้วค่อยเติมฟอร์มเต็ม</div>
+      <div class="hr"></div>
+      <div class="muted">TODO: Build MO form (same pattern as PR/QR) + PDF export + lock/edit workflow.</div>
+    </div>
+  `;
+}
+
+function renderSummaryMO(el){
+  setPageTitle("SUM - CLAIM/REPAIR", "สรุปใบแจ้งซ่อม (MO) — โครง");
+  const db = loadDB();
+  el.innerHTML = `
+    <div class="card">
+      <h2 style="margin:0">MO Summary</h2>
+      <div class="subtext">TODO: list MO + status + refs (QT/PO) + attachments</div>
+      <div class="hr"></div>
+      <div class="muted">MO count: ${(db.mo||[]).length}</div>
+    </div>
+  `;
+}
+
 
 window.addEventListener("hashchange", renderRoute);
 
