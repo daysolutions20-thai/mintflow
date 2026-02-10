@@ -2809,7 +2809,7 @@ function renderPODetailPanels(po){
   `;
 }
 
-function renderShippingPlan(el){(el){
+function renderShippingPlan(el){
   setPageTitle("Shipping Plan", "ติดตามการจัดส่ง (BL/ETD/ETA/Container)");
   el.innerHTML = `<div class="card"><b>Shipping Plan</b><div class="subtext" style="margin-top:6px">Coming soon (เดี๋ยวค่อยใส่ฟอร์ม/ตารางจริง)</div></div>`;
 }
