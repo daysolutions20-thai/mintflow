@@ -16260,13 +16260,148 @@ html body #frmCreate.isPR #mfS1 label *{
 #items .inputPlus::before{ display:none !important; }
 
 
-/* =============================
-   PATCH: Color-only depth layer (no block/input changes)
-   - Add subtle background behind cards to reduce flatness
-   - SAFE: affects only #view background
-   ============================= */
-#view{
-  background:
-    radial-gradient(1200px 520px at 60% 0%, rgba(255,140,82,0.10), rgba(246,247,251,0) 72%),
-    linear-gradient(180deg, #f6f7fb, #ffffff 58%) !important;
+/* === PATCH: SUMMARY PO COMFORT COLORS v7 === */
+/* Goal:
+   - เพิ่มมิติ + ลดตาลาย (แต่ไม่แตะ layout / ไม่แตะโครงกล่องคีย์)
+   - ใช้สีแบบ subtle: แยกชั้นหลังการ์ด, ขอบ, และกล่อง field
+*/
+
+:root{
+  /* background layers */
+  --pageBg: #FFF7ED;      /* base cream */
+  --panelBg: #FFF3E6;     /* slightly darker layer */
+  --cardBg: #FFFFFF;
+
+  /* borders */
+  --lineSoft: rgba(249,115,22,.16);
+  --line: rgba(17,24,39,.10);
+
+  /* field background */
+  --fieldBg: #FFFDFB;
+  --fieldBg2: #FFF7F0;
+
+  /* text */
+  --label: #6B7280;
+  --value: #111827;
+
+  /* shadows */
+  --shadowSoft: 0 10px 22px rgba(17,24,39,.06);
+  --shadowTiny: 0 3px 10px rgba(17,24,39,.05);
 }
+
+/* 1) พื้นหลังรวมของหน้า (ไม่ไปยุ่ง header/sidebar) */
+.main,
+.content,
+.page,
+.page-content,
+.app-main,
+.container{
+  background: transparent;
+}
+
+/* 2) กล่อง section หลัก (แยกชั้นจากพื้น) */
+.card,
+.panel,
+.box,
+.section,
+.table-wrap{
+  background: var(--cardBg);
+  box-shadow: var(--shadowSoft);
+}
+
+/* 3) Summary PO: เพิ่มชั้นพื้นหลังเฉพาะโซน detail */
+.po-detail,
+.poDetail,
+.po-detail-wrap,
+.po-detail-grid,
+.poDetailWrap{
+  background: var(--panelBg);
+  border: 1px solid var(--lineSoft);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+/* 4) การ์ด 3 ส่วน A/B/C (ไม่แตะขนาด/ตำแหน่ง) */
+.po-card,
+.po-section,
+.po-box,
+.po-panel,
+.summary-po .card,
+#summary-po .card{
+  background: var(--cardBg);
+  border: 1px solid var(--lineSoft);
+  box-shadow: var(--shadowTiny);
+}
+
+/* 5) กล่อง field / row ของข้อมูล ให้ดูเป็น “ช่องคีย์” แบบสบายตา */
+.field,
+.field-box,
+.kv,
+.kv-row,
+.po-kv,
+.po-field,
+.detail-grid .item,
+.detailGrid .item,
+.po-detail .row,
+.poDetail .row{
+  background: var(--fieldBg);
+  border: 1px solid rgba(17,24,39,.08);
+  border-radius: 12px;
+}
+
+/* hover เบาๆ ช่วยอ่านเวลามีเยอะ */
+.field:hover,
+.field-box:hover,
+.kv:hover,
+.kv-row:hover,
+.po-kv:hover,
+.po-field:hover{
+  background: var(--fieldBg2);
+  border-color: rgba(249,115,22,.22);
+}
+
+/* 6) label/value contrast */
+label,
+.kv .k,
+.kv-row .k,
+.field .label,
+.po-field .label,
+.po-kv .k{
+  color: var(--label) !important;
+}
+
+.value,
+.kv .v,
+.kv-row .v,
+.field .value,
+.po-field .value,
+.po-kv .v{
+  color: var(--value) !important;
+  font-weight: 600;
+}
+
+/* 7) ตารางใน detail: ลดตาลายด้วย header สีอ่อน */
+table thead th{
+  background: rgba(249,115,22,.06);
+  border-bottom: 1px solid rgba(249,115,22,.18);
+}
+
+/* 8) เส้นคั่นใน card ให้ซอฟต์ลง */
+.hr,
+.hrline,
+.divider,
+.po-divider{
+  background: rgba(249,115,22,.12);
+}
+
+/* 9) Badge / pill ให้กลืนกับธีม */
+.badge,
+.pill,
+.tag{
+  background: rgba(249,115,22,.10);
+  border: 1px solid rgba(249,115,22,.18);
+  color: #9A3412;
+}
+
+/* === END PATCH: SUMMARY PO COMFORT COLORS v7 === */
+
