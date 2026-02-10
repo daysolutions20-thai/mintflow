@@ -74,7 +74,7 @@ function newDocNo(prefix, dateStr){
   const {yy, mm} = yymmFromDate(d);
   const key = `${yy}-${mm}`;
   const db = loadDB();
-  db.counters = db.counters || { QR:{}, PR:{} };
+  db.counters = db.counters || { QR:{}, PR:{}, PO:{}, SHIP:{}, COST:{}, MO:{} };
   db.counters[prefix] = db.counters[prefix] || {};
   db.counters[prefix][key] = (db.counters[prefix][key] || 0) + 1;
   saveDB(db);
@@ -112,7 +112,7 @@ function loadDB(){
 function saveDB(db){ localStorage.setItem(LS_KEY, JSON.stringify(db)); }
 
 function seedDB(){
-  const base = { counters: { QR: {}, PR: {} }, qr: [], pr: [] };
+  const base = { counters: { QR: {}, PR: {}, PO: {}, SHIP: {}, COST: {}, MO: {} }, qr: [], pr: [], po: [], shipping: [], cost: [], mo: [] };
 
   const mkQR = (docNo, status, requester, phone, project, items, createdAt) => ({
     kind: "QR",
@@ -143,6 +143,63 @@ function seedDB(){
     activity: [{ at: createdAt, actor: `${requester} (${phone})`, action: "SUBMIT", detail: "" }]
   });
 
+  const mkPO = (poNo, status, supplier, currency, items, refs, createdAt) => ({
+    kind: "PO",
+    id: nanoid(12),
+    poNo,
+    date: createdAt.slice(0,10),
+    supplier,
+    currency: currency || "THB",
+    status: status || "Draft",
+
+    // references (link to QR/PR + shipping/cost later)
+    refs: {
+      qrNo: refs?.qrNo || "",
+      prNo: refs?.prNo || "",
+      qtNo: refs?.qtNo || "",
+      deliveryPlan: refs?.deliveryPlan || "",
+      receiveDate: refs?.receiveDate || ""
+    },
+
+    // purchase items
+    items: (items||[]).map((it, idx)=> ({
+      lineNo: idx+1,
+      productCode: it.productCode || "",
+      detail: it.detail || "",
+      model: it.model || "",
+      serial: it.serial || "",
+      qty: Number(it.qty || 0),
+      unit: it.unit || "",
+      priceUnit: Number(it.priceUnit || 0),
+      total: Number(it.total || (Number(it.qty||0)*Number(it.priceUnit||0)))
+    })),
+
+    // accounting (v1: minimal fields; v2 will follow worklist)
+    accounting: {
+      tax7: 0,
+      wht: 0,
+      exchangeRate: 0, // reference only (cost uses shipment exchange rate)
+    },
+
+    // payment table (multi)
+    payments: [], // rows: {no, date, amountTHB, note, slipLink}
+    attachments: {
+      folderLink: "",
+      quotation: [],
+      customerPO: [],
+      customerSlip: [],
+      supplierDocs: [],
+      supplierSlip: [],
+      spec: [],
+      shippingDocs: []
+    },
+
+    createdAt,
+    updatedAt: createdAt,
+    activity: [{ at: createdAt, actor: "admin", action: "IMPORT/CREATE", detail: "" }]
+  });
+
+
   base.qr.push(mkQR("QR26-01.001","Submitted","Somchai","0812345678","XR280E spare parts",[
     { code:"", name:"Clamping block", model:"XR280E", qty:2, unit:"pcs", detail:"Original/OEM", remark:"Urgent" },
     { code:"", name:"Drilling rod", model:"XR280E", qty:10, unit:"pcs", detail:"Length 3m", remark:"Export by sea" }
@@ -161,9 +218,15 @@ function seedDB(){
     { code:"", detail:"GLASS WOOL PIPE WRAP", qty:1, unit:"lot", price:1000 },
     { code:"", detail:"BELT", qty:1, unit:"lot", price:2000 }
   ], "2025-11-21T09:15:00.000Z"));
+  // --- Seed 1 PO (demo) linked to QR26-01.003 ---
+  base.po.push(mkPO("PO26-01.001","Open","Demo Supplier","THB",[
+    { productCode:"DAY0-TRACK-BOLT", detail:"Track bolt M16", model:"", serial:"", qty:50, unit:"pcs", priceUnit:120, total:6000 }
+  ], { qrNo:"QR26-01.003", qtNo:"", prNo:"", deliveryPlan:"", receiveDate:"" }, "2026-01-07T09:00:00.000Z"));
+
 
   base.counters.QR["26-01"] = 3;
   base.counters.PR["25-11"] = 1;
+  base.counters.PO["26-01"] = 1;
 
   return base;
 }
@@ -485,6 +548,40 @@ function badge(status){
   const [cls, label] = map[status] || ["submitted", status];
   return `<span class="badge ${cls}">${label}</span>`;
 }
+
+function fmtMoney(n){
+  const x = Number(n || 0);
+  return x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function poGrandTotal(po){
+  return (po.items||[]).reduce((s,it)=> s + Number(it.total||0), 0);
+}
+function poPaidTotal(po){
+  return (po.payments||[]).reduce((s,p)=> s + Number(p.amountTHB||0), 0);
+}
+function filterPO(pos, q){
+  if(!q) return pos;
+  const qq = q.toLowerCase();
+  return (pos||[]).filter(p=>{
+    const hay = [
+      p.poNo, p.date, p.supplier, p.currency, p.status,
+      p.refs?.qrNo, p.refs?.prNo, p.refs?.qtNo,
+      p.refs?.deliveryPlan, p.refs?.receiveDate
+    ].filter(Boolean).join(" ").toLowerCase();
+    if(hay.includes(qq)) return true;
+
+    for(const it of p.items||[]){
+      const ih = [it.productCode, it.detail, it.model, it.serial, it.unit].filter(Boolean).join(" ").toLowerCase();
+      if(ih.includes(qq)) return true;
+    }
+    for(const pay of p.payments||[]){
+      const ph = [pay.date, pay.note, pay.slipLink].filter(Boolean).join(" ").toLowerCase();
+      if(ph.includes(qq)) return true;
+    }
+    return false;
+  });
+}
+
 
 function renderSummaryQR(el){
   setPageTitle("Summary QR", "ค้นหาได้ทุกมิติ: QR / ชื่อคน / เบอร์ / ชื่อสินค้า / model / code");
@@ -2426,8 +2523,82 @@ function filterPR(reqs, q){
     กูไม่ได้ยุ่ง logic อื่นนะ (แต่ถ้ามึงต้องการให้ Activity/Detail ก็ 2 ภาษา เดี๋ยวค่อยสั่ง) */
 
 function renderSummaryPO(el){
-  setPageTitle("Summary PO", "สรุป PO (Import จาก Excel + Export ได้)");
-  el.innerHTML = `<div class="card"><b>Summary PO</b><div class="subtext" style="margin-top:6px">Coming soon (เดี๋ยวค่อยใส่ฟอร์ม/ตารางจริง)</div></div>`;
+  setPageTitle("Summary PO", "ค้นหา PO + ดูยอดจ่าย/คงเหลือ (เวอร์ชันฐาน: list ก่อน แล้วค่อย Import/Export)");
+  const db = loadDB();
+  db.po = db.po || [];
+  saveDB(db);
+
+  const q = ($("#globalSearch").value || "").trim().toLowerCase();
+  const rows = filterPO(db.po, q);
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="section-title">
+        <h2 style="margin:0">รายการ PO</h2>
+        <div class="row tight">
+          <button class="btn btn-primary" id="btnPOImport">📥 Import (mock)</button>
+          <button class="btn btn-ghost" id="btnPOExport">📤 Export (mock)</button>
+        </div>
+      </div>
+
+      <div class="subtext">ผลการค้นหา: <b>${escapeHtml(q || "ทั้งหมด")}</b> (${rows.length} รายการ)</div>
+      <div class="hr"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>PO No.</th>
+              <th>Supplier</th>
+              <th>Reff (QR/PR/QT)</th>
+              <th>Currency</th>
+              <th class="right">Grand</th>
+              <th class="right">Paid</th>
+              <th class="right">Balance</th>
+              <th>Status</th>
+              <th>Receive</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(p=>{
+              const grand = poGrandTotal(p);
+              const paid = poPaidTotal(p);
+              const bal = Math.max(0, grand - paid);
+              const ref = [p.refs?.qrNo, p.refs?.prNo, p.refs?.qtNo].filter(Boolean).join(" / ");
+              return `
+                <tr>
+                  <td class="mono">${escapeHtml(p.date||"")}</td>
+                  <td class="mono">${escapeHtml(p.poNo||"")}</td>
+                  <td>${escapeHtml(p.supplier||"")}</td>
+                  <td class="mono">${escapeHtml(ref||"-")}</td>
+                  <td class="mono">${escapeHtml(p.currency||"")}</td>
+                  <td class="mono right">${fmtMoney(grand)}</td>
+                  <td class="mono right">${fmtMoney(paid)}</td>
+                  <td class="mono right">${fmtMoney(bal)}</td>
+                  <td>${badge(p.status||"Open")}</td>
+                  <td class="mono">${escapeHtml(p.refs?.receiveDate || "-")}</td>
+                  <td><button class="btn btn-small" data-poopen="${escapeHtml(p.poNo||"")}">Open</button></td>
+                </tr>
+              `;
+            }).join("") || `<tr><td colspan="11">ไม่พบข้อมูล</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pill" style="margin-top:10px">
+        ฐานวันนี้: “ทำให้ Summary PO แสดงรายการ + ค้นหาได้ก่อน” แล้วค่อยไล่ทำ Import/Payment/Attachments ตามเช็คลิสต์ทีละข้อ 😈
+      </div>
+    </div>
+  `;
+
+  $("#btnPOImport").onclick = ()=> toast("Import (mock) — เดี๋ยวค่อยต่อ PO Import จริง");
+  $("#btnPOExport").onclick = ()=> toast("Export (mock) — เดี๋ยวค่อยต่อ Export Excel จริง");
+
+  $$("[data-poopen]", el).forEach(b=>{
+    b.onclick = ()=> toast(`Open PO ${b.dataset.poopen} (mock)`);
+  });
 }
 
 function renderShippingPlan(el){
