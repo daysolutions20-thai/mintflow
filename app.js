@@ -2523,13 +2523,19 @@ function filterPR(reqs, q){
     กูไม่ได้ยุ่ง logic อื่นนะ (แต่ถ้ามึงต้องการให้ Activity/Detail ก็ 2 ภาษา เดี๋ยวค่อยสั่ง) */
 
 function renderSummaryPO(el){
-  setPageTitle("Summary PO", "ค้นหา PO + ดูยอดจ่าย/คงเหลือ (เวอร์ชันฐาน: list ก่อน แล้วค่อย Import/Export)");
+  setPageTitle("Summary PO", "แยก 3 ส่วน: PURCHASE / ACCOUNTING / CLAIM (ทำแบบไม่ทำตารางแตก)");
   const db = loadDB();
   db.po = db.po || [];
   saveDB(db);
 
   const q = ($("#globalSearch").value || "").trim().toLowerCase();
   const rows = filterPO(db.po, q);
+
+  // Keep open state in-memory only (low-risk)
+  const openPoNo = window.__po_open || "";
+  const openPo = openPoNo ? rows.find(x => (x.poNo||"") === openPoNo) || (db.po||[]).find(x => (x.poNo||"")===openPoNo) : null;
+
+  const refText = (p)=> [p?.refs?.qrNo, p?.refs?.prNo, p?.refs?.qtNo].filter(Boolean).join(" / ");
 
   el.innerHTML = `
     <div class="card">
@@ -2566,20 +2572,24 @@ function renderSummaryPO(el){
               const grand = poGrandTotal(p);
               const paid = poPaidTotal(p);
               const bal = Math.max(0, grand - paid);
-              const ref = [p.refs?.qrNo, p.refs?.prNo, p.refs?.qtNo].filter(Boolean).join(" / ");
+              const isOpen = (p.poNo||"") === openPoNo;
               return `
-                <tr>
+                <tr ${isOpen ? 'style="background: rgba(255,153,102,0.10)"' : ""}>
                   <td class="mono">${escapeHtml(p.date||"")}</td>
                   <td class="mono">${escapeHtml(p.poNo||"")}</td>
                   <td>${escapeHtml(p.supplier||"")}</td>
-                  <td class="mono">${escapeHtml(ref||"-")}</td>
+                  <td class="mono">${escapeHtml(refText(p)||"-")}</td>
                   <td class="mono">${escapeHtml(p.currency||"")}</td>
                   <td class="mono right">${fmtMoney(grand)}</td>
                   <td class="mono right">${fmtMoney(paid)}</td>
                   <td class="mono right">${fmtMoney(bal)}</td>
                   <td>${badge(p.status||"Open")}</td>
                   <td class="mono">${escapeHtml(p.refs?.receiveDate || "-")}</td>
-                  <td><button class="btn btn-small" data-poopen="${escapeHtml(p.poNo||"")}">Open</button></td>
+                  <td>
+                    <button class="btn btn-small" data-poopen="${escapeHtml(p.poNo||"")}">
+                      ${isOpen ? "Hide" : "Open"}
+                    </button>
+                  </td>
                 </tr>
               `;
             }).join("") || `<tr><td colspan="11">ไม่พบข้อมูล</td></tr>`}
@@ -2587,21 +2597,219 @@ function renderSummaryPO(el){
         </table>
       </div>
 
-      <div class="pill" style="margin-top:10px">
-        ฐานวันนี้: “ทำให้ Summary PO แสดงรายการ + ค้นหาได้ก่อน” แล้วค่อยไล่ทำ Import/Payment/Attachments ตามเช็คลิสต์ทีละข้อ 😈
-      </div>
+      ${openPo ? `
+        <div class="hr" style="margin-top:14px"></div>
+        <div class="section-title" style="margin-top:6px">
+          <h2 style="margin:0">PO Detail: <span class="mono">${escapeHtml(openPo.poNo||"")}</span></h2>
+          <div class="subtext">แยก 3 ส่วนตามเช็คลิสต์: PURCHASE / ACCOUNTING / CLAIM</div>
+        </div>
+
+        ${renderPODetailPanels(openPo)}
+      ` : `
+        <div class="pill" style="margin-top:10px">
+          ทิป: กด Open ที่ PO ใดๆ เพื่อดูรายละเอียดแบบแยก 3 ส่วน (ไม่ยัดคอลัมน์จนตารางพัง)
+        </div>
+      `}
     </div>
   `;
 
-  $("#btnPOImport").onclick = ()=> toast("Import (mock) — เดี๋ยวค่อยต่อ PO Import จริง");
-  $("#btnPOExport").onclick = ()=> toast("Export (mock) — เดี๋ยวค่อยต่อ Export Excel จริง");
+  $("#btnPOImport").onclick = ()=> toast("Import (mock) — เดี๋ยวต่อ PO Import จริง");
+  $("#btnPOExport").onclick = ()=> toast("Export (mock) — เดี๋ยวต่อ Export Excel จริง");
 
   $$("[data-poopen]", el).forEach(b=>{
-    b.onclick = ()=> toast(`Open PO ${b.dataset.poopen} (mock)`);
+    b.onclick = ()=>{
+      const poNo = b.dataset.poopen || "";
+      window.__po_open = (window.__po_open === poNo) ? "" : poNo;
+      renderSummaryPO(el);
+    };
   });
 }
 
-function renderShippingPlan(el){
+function renderPODetailPanels(po){
+  const grand = poGrandTotal(po);
+  const paid = poPaidTotal(po);
+  const bal = Math.max(0, grand - paid);
+
+  const refs = po.refs || {};
+  const items = Array.isArray(po.items) ? po.items : [];
+  const payments = Array.isArray(po.payments) ? po.payments : [];
+  const atts = po.attachments || {};
+
+  const attBlock = (label, arr)=>{
+    const list = Array.isArray(arr) ? arr : [];
+    if(!list.length) return `<div class="subtext">-</div>`;
+    return `
+      <ul class="subtext" style="margin:6px 0 0 18px">
+        ${list.map(a=>{
+          if(typeof a === "string") return `<li><span class="mono">${escapeHtml(a)}</span></li>`;
+          return `<li>${escapeHtml(a.name||"File")} ${a.url ? `— <span class="mono">${escapeHtml(a.url)}</span>` : ""}</li>`;
+        }).join("")}
+      </ul>
+    `;
+  };
+
+  return `
+    <div class="row" style="gap:12px; flex-wrap:wrap">
+      <div class="card" style="flex:1; min-width:280px">
+        <div class="section-title" style="margin:0 0 8px">
+          <h2 style="margin:0">A) PURCHASE</h2>
+          <div class="subtext">ข้อมูลสั่งซื้อ + รายการสินค้า</div>
+        </div>
+
+        <div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><div class="subtext">Date</div><div class="mono"><b>${escapeHtml(po.date||"-")}</b></div></div>
+          <div><div class="subtext">PO No.</div><div class="mono"><b>${escapeHtml(po.poNo||"-")}</b></div></div>
+
+          <div><div class="subtext">Reff QT No.</div><div class="mono">${escapeHtml(refs.qtNo||"-")}</div></div>
+          <div><div class="subtext">Request Type</div><div>${escapeHtml(po.requestType||"-")}</div></div>
+
+          <div><div class="subtext">For Job</div><div>${escapeHtml(po.forJob||"-")}</div></div>
+          <div><div class="subtext">Supplier</div><div>${escapeHtml(po.supplier||"-")}</div></div>
+
+          <div><div class="subtext">Model</div><div>${escapeHtml(po.model||"-")}</div></div>
+          <div><div class="subtext">Serial</div><div class="mono">${escapeHtml(po.serial||"-")}</div></div>
+
+          <div><div class="subtext">Requester</div><div>${escapeHtml(po.requester||"-")}</div></div>
+          <div><div class="subtext">Contact</div><div class="mono">${escapeHtml(po.contactNo||"-")}</div></div>
+
+          <div><div class="subtext">Receive Date</div><div class="mono">${escapeHtml(refs.receiveDate||"-")}</div></div>
+          <div><div class="subtext">Refs (QR/PR)</div><div class="mono">${escapeHtml([refs.qrNo, refs.prNo].filter(Boolean).join(" / ")||"-")}</div></div>
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+
+        <div class="subtext"><b>Items</b> (${items.length})</div>
+        <div class="table-wrap" style="margin-top:6px">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Product Code</th>
+                <th>Detail</th>
+                <th class="right">QTY</th>
+                <th>Unit</th>
+                <th class="right">Price/Unit</th>
+                <th class="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map((it,idx)=>{
+                const qty = Number(it.qty||0);
+                const price = Number(it.price||it.unitPrice||0);
+                const total = Number(it.total|| (qty*price));
+                return `
+                  <tr>
+                    <td class="mono">${idx+1}</td>
+                    <td class="mono">${escapeHtml(it.code||it.productCode||"-")}</td>
+                    <td>${escapeHtml(it.detail||it.desc||it.description||"-")}</td>
+                    <td class="mono right">${escapeHtml(qty||0)}</td>
+                    <td class="mono">${escapeHtml(it.unit||"-")}</td>
+                    <td class="mono right">${fmtMoney(price)}</td>
+                    <td class="mono right">${fmtMoney(total)}</td>
+                  </tr>
+                `;
+              }).join("") || `<tr><td colspan="7">-</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+        <div class="subtext"><b>Attachments</b></div>
+        <div style="margin-top:6px">
+          <div class="subtext">Customer quotation</div>${attBlock("quotation", atts.customerQuotation)}
+          <div class="subtext" style="margin-top:6px">Customer PO</div>${attBlock("customerPO", atts.customerPO)}
+          <div class="subtext" style="margin-top:6px">Drawings / Spec</div>${attBlock("spec", atts.spec)}
+        </div>
+      </div>
+
+      <div class="card" style="flex:1; min-width:280px">
+        <div class="section-title" style="margin:0 0 8px">
+          <h2 style="margin:0">B) ACCOUNTING</h2>
+          <div class="subtext">ภาษี/หัก ณ ที่จ่าย + จ่ายหลายงวด</div>
+        </div>
+
+        <div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><div class="subtext">Tax 7%</div><div class="mono">${escapeHtml(String(po.tax7 ?? "-"))}</div></div>
+          <div><div class="subtext">WHT</div><div class="mono">${escapeHtml(String(po.wht ?? "-"))}</div></div>
+          <div><div class="subtext">Exchange Rate</div><div class="mono">${escapeHtml(String(po.exchangeRate ?? "-"))}</div></div>
+          <div><div class="subtext">Cost (THB)</div><div class="mono">${escapeHtml(String(po.costTHB ?? "-"))}</div></div>
+
+          <div><div class="subtext">Grand</div><div class="mono"><b>${fmtMoney(grand)}</b></div></div>
+          <div><div class="subtext">Paid / Balance</div><div class="mono"><b>${fmtMoney(paid)}</b> / ${fmtMoney(bal)}</div></div>
+
+          <div><div class="subtext">Payment Status</div><div>${badge(po.paymentStatus || (bal<=0 && grand>0 ? "Paid" : (paid>0 ? "Partially Paid" : "Unpaid")))}</div></div>
+          <div><div class="subtext">Payment Date</div><div class="mono">${escapeHtml(po.paymentDate || "-")}</div></div>
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+
+        <div class="subtext"><b>Payment Table</b> (${payments.length} งวด)</div>
+        <div class="table-wrap" style="margin-top:6px">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Date</th>
+                <th class="right">Amount (THB)</th>
+                <th>Note</th>
+                <th>Slip Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${payments.map((pm, idx)=>{
+                const amt = Number(pm.amountTHB || pm.amount || 0);
+                return `
+                  <tr>
+                    <td class="mono">${idx+1}</td>
+                    <td class="mono">${escapeHtml(pm.date||"-")}</td>
+                    <td class="mono right">${fmtMoney(amt)}</td>
+                    <td>${escapeHtml(pm.note||"")}</td>
+                    <td class="mono">${escapeHtml(pm.slipLink||pm.slip||"-")}</td>
+                  </tr>
+                `;
+              }).join("") || `<tr><td colspan="5">-</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+        <div class="subtext"><b>Attachments</b></div>
+        <div style="margin-top:6px">
+          <div class="subtext">Supplier payment documents</div>${attBlock("supplierDocs", atts.supplierDocs)}
+          <div class="subtext" style="margin-top:6px">Supplier payment slip</div>${attBlock("supplierSlip", atts.supplierSlip)}
+          <div class="subtext" style="margin-top:6px">Customer payment slip</div>${attBlock("customerSlip", atts.customerSlip)}
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+        <div class="subtext"><b>PO Folder</b></div>
+        <div class="mono" style="margin-top:6px">${escapeHtml(po.poFolderLink || "-")}</div>
+      </div>
+
+      <div class="card" style="flex:1; min-width:280px">
+        <div class="section-title" style="margin:0 0 8px">
+          <h2 style="margin:0">C) CLAIM / REPAIR</h2>
+          <div class="subtext">ลิงก์เคลม/ซ่อม (ถ้ามี)</div>
+        </div>
+
+        <div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><div class="subtext">Doc No.</div><div class="mono">${escapeHtml(po.claim?.docNo || "-")}</div></div>
+          <div><div class="subtext">Status Claim</div><div>${badge(po.claim?.status || "-")}</div></div>
+
+          <div><div class="subtext">Reff QT (Claim)</div><div class="mono">${escapeHtml(po.claim?.qtNo || "-")}</div></div>
+          <div><div class="subtext">Reff PO (Claim)</div><div class="mono">${escapeHtml(po.claim?.poNo || "-")}</div></div>
+        </div>
+
+        <div class="hr" style="margin:12px 0"></div>
+        <div class="subtext"><b>Attachments</b></div>
+        <div style="margin-top:6px">
+          <div class="subtext">CI / packing list / BL etc.</div>${attBlock("shippingDocs", atts.shippingDocs)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderShippingPlan(el){(el){
   setPageTitle("Shipping Plan", "ติดตามการจัดส่ง (BL/ETD/ETA/Container)");
   el.innerHTML = `<div class="card"><b>Shipping Plan</b><div class="subtext" style="margin-top:6px">Coming soon (เดี๋ยวค่อยใส่ฟอร์ม/ตารางจริง)</div></div>`;
 }
