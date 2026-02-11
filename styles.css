@@ -16260,57 +16260,18 @@ html body #frmCreate.isPR #mfS1 label *{
 #items .inputPlus::before{ display:none !important; }
 
 
-/* =============================
-   PATCH: Color-only depth layer (no block/input changes)
-   - Add subtle background behind cards to reduce flatness
-   - SAFE: affects only #view background
-   ============================= */
-#view{
-  background:
-    radial-gradient(1200px 520px at 60% 0%, rgba(255,140,82,0.10), rgba(246,247,251,0) 72%),
-    linear-gradient(180deg, #f6f7fb, #ffffff 58%) !important;
-}
-
-/* =========================
-   PATCH: Summary PO - Payment button tone down
-   - Make Add Payment look like status pill (Unpaid)
-   - Keep Delete/Minus close visually
-   ========================= */
-
-.summary-po .payment-header,
-.summary-po .payment-actions{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.summary-po .btn-add-payment{
-  background: #fff3ea !important;
-  color: #ff6b1a !important;
-  border: 1px solid #ffd1b5 !important;
+/* === SUMPO: tone down Add Payment button (scoped by data attribute) === */
+button[data-popayadd]{
+  background: rgba(255, 247, 237, 0.95) !important;
+  border: 1px dashed rgba(249, 115, 22, 0.35) !important;
+  color: #9a3412 !important;
   box-shadow: none !important;
-  font-weight: 700;
 }
-
-.summary-po .btn-add-payment:hover{
-  background: #ffe8d9 !important;
-  border-color: #ffb88f !important;
+button[data-popayadd]:hover{
+  background: rgba(255, 237, 213, 0.95) !important;
+  border-color: rgba(249, 115, 22, 0.55) !important;
+  transform: none !important;
 }
-
-.summary-po .btn-add-payment:active{
-  transform: translateY(0) !important;
-}
-
-.summary-po .btn-add-payment svg,
-.summary-po .btn-add-payment i{
-  color: #ff6b1a !important;
-}
-
-/* Optional: soften remove/minus button */
-.summary-po .btn-pay-remove,
-.summary-po .btn-remove-payment{
-  background: #fff !important;
-  border: 1px solid #e9e1da !important;
-  color: #7a6f68 !important;
-  box-shadow: none !important;
+button[data-popayadd] .ico{
+  color: #9a3412 !important;
 }
