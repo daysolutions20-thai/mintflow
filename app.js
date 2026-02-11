@@ -2707,6 +2707,27 @@ function renderSummaryPO(el){
     };
   });
 
+  $$("[data-popayminus]", el).forEach(btn=>{
+    btn.onclick = ()=>{
+      const poNo = btn.dataset.popayminus || "";
+      const ok = confirm("ลบงวดล่าสุด?");
+      if(!ok) return;
+
+      const dbx = loadDB();
+      dbx.po = dbx.po || [];
+      const po = dbx.po.find(x => (x.poNo||"") === poNo);
+      if(!po) return toast("ไม่พบ PO ในฐานข้อมูล");
+      po.payments = Array.isArray(po.payments) ? po.payments : [];
+      if(!po.payments.length) return toast("ยังไม่มี payment");
+      po.payments.pop();
+      saveDB(dbx);
+      window.__po_open = poNo;
+      renderSummaryPO(el);
+      toast("ลบงวดล่าสุดแล้ว");
+    };
+  });
+
+
 }
 
 function renderPODetailPanels(po){
@@ -2830,6 +2851,7 @@ function renderPODetailPanels(po){
         <div class="row tight" style="justify-content:space-between;align-items:center">
   <div class="subtext"><b>Payment Table</b> (${payments.length} งวด)</div>
   <button class="btn btn-primary" data-popayadd="${escapeHtml(po.poNo||"")}">➕ Add Payment</button>
+              <button class="btn btn-ghost" data-popayminus="${escapeHtml(po.poNo||"")}" title="Remove last payment">➖</button>
 </div>
         <div class="table-wrap" style="margin-top:6px">
           <table>
