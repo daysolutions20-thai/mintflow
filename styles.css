@@ -16259,19 +16259,72 @@ html body #frmCreate.isPR #mfS1 label *{
 #items .inputPlus::after,
 #items .inputPlus::before{ display:none !important; }
 
+/* ===== MintFlow: Summary PO comfort (color-only + subtle depth) ===== */
+/* Background behind cards: gentle gradient (very subtle, should not break other pages) */
+.content{
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.0) 60%);
+}
 
-/* === SUMPO: tone down Add Payment button (scoped by data attribute) === */
-button[data-popayadd]{
-  background: rgba(255, 247, 237, 0.95) !important;
-  border: 1px dashed rgba(249, 115, 22, 0.35) !important;
-  color: #9a3412 !important;
+/* Summary PO detail uses .grid2 tiles created in renderPODetailPanels() */
+.grid2{
+  /* keep layout from inline styles; only add spacing polish */
+  gap: 10px !important;
+}
+
+/* make each kv tile look like a soft input (readable, not “เด็กหัดแต่งช่องคีย์”) */
+.grid2 > div{
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(243, 181, 130, 0.28); /* warm, subtle */
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 10px 24px rgba(18, 24, 38, 0.04);
+}
+
+/* labels inside tiles */
+.grid2 > div > div:first-child{
+  color: rgba(16, 24, 40, 0.62);
+  font-size: 12px;
+  letter-spacing: .2px;
+}
+
+/* values inside tiles */
+.grid2 > div > div:last-child{
+  color: rgba(16, 24, 40, 0.92);
+  font-weight: 600;
+}
+
+/* Improve section separators in PO detail (less “ตาลาย”) */
+.card .hr{
+  background: rgba(243, 181, 130, 0.22);
+}
+
+/* Tables inside PO detail: softer header strip */
+.table-wrap thead th{
+  background: rgba(255, 247, 241, 0.9);
+}
+.table-wrap tbody tr:nth-child(even){
+  background: rgba(255, 255, 255, 0.65);
+}
+
+/* --- PATCH v12: tone down Add Payment button + align near minus (only PO payment row) --- */
+button.btn.btn-primary[data-popayadd] {
+  margin-left: auto;              /* push buttons group to the right */
+  background: #fff1e6 !important; /* same family as badges (warm, soft) */
+  color: #c95e1d !important;
+  border: 1px solid #f2c8aa !important;
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  line-height: 1 !important;
   box-shadow: none !important;
 }
-button[data-popayadd]:hover{
-  background: rgba(255, 237, 213, 0.95) !important;
-  border-color: rgba(249, 115, 22, 0.55) !important;
-  transform: none !important;
+button.btn.btn-primary[data-popayadd]:hover {
+  background: #ffe6d3 !important;
+  border-color: #efb890 !important;
 }
-button[data-popayadd] .ico{
-  color: #9a3412 !important;
+button.btn.btn-primary[data-popayadd]:active {
+  transform: translateY(0);
 }
