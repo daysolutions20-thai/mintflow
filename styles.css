@@ -16259,51 +16259,58 @@ html body #frmCreate.isPR #mfS1 label *{
 #items .inputPlus::after,
 #items .inputPlus::before{ display:none !important; }
 
-/* ===== MintFlow: Summary PO comfort (color-only + subtle depth) ===== */
-/* Background behind cards: gentle gradient (very subtle, should not break other pages) */
-.content{
-  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.0) 60%);
+
+/* =============================
+   PATCH: Color-only depth layer (no block/input changes)
+   - Add subtle background behind cards to reduce flatness
+   - SAFE: affects only #view background
+   ============================= */
+#view{
+  background:
+    radial-gradient(1200px 520px at 60% 0%, rgba(255,140,82,0.10), rgba(246,247,251,0) 72%),
+    linear-gradient(180deg, #f6f7fb, #ffffff 58%) !important;
 }
 
-/* Summary PO detail uses .grid2 tiles created in renderPODetailPanels() */
-.grid2{
-  /* keep layout from inline styles; only add spacing polish */
-  gap: 10px !important;
+/* =========================
+   PATCH: Summary PO - Payment button tone down
+   - Make Add Payment look like status pill (Unpaid)
+   - Keep Delete/Minus close visually
+   ========================= */
+
+.summary-po .payment-header,
+.summary-po .payment-actions{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* make each kv tile look like a soft input (readable, not “เด็กหัดแต่งช่องคีย์”) */
-.grid2 > div{
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(243, 181, 130, 0.28); /* warm, subtle */
-  border-radius: 12px;
-  padding: 10px 12px;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.9) inset,
-    0 10px 24px rgba(18, 24, 38, 0.04);
+.summary-po .btn-add-payment{
+  background: #fff3ea !important;
+  color: #ff6b1a !important;
+  border: 1px solid #ffd1b5 !important;
+  box-shadow: none !important;
+  font-weight: 700;
 }
 
-/* labels inside tiles */
-.grid2 > div > div:first-child{
-  color: rgba(16, 24, 40, 0.62);
-  font-size: 12px;
-  letter-spacing: .2px;
+.summary-po .btn-add-payment:hover{
+  background: #ffe8d9 !important;
+  border-color: #ffb88f !important;
 }
 
-/* values inside tiles */
-.grid2 > div > div:last-child{
-  color: rgba(16, 24, 40, 0.92);
-  font-weight: 600;
+.summary-po .btn-add-payment:active{
+  transform: translateY(0) !important;
 }
 
-/* Improve section separators in PO detail (less “ตาลาย”) */
-.card .hr{
-  background: rgba(243, 181, 130, 0.22);
+.summary-po .btn-add-payment svg,
+.summary-po .btn-add-payment i{
+  color: #ff6b1a !important;
 }
 
-/* Tables inside PO detail: softer header strip */
-.table-wrap thead th{
-  background: rgba(255, 247, 241, 0.9);
-}
-.table-wrap tbody tr:nth-child(even){
-  background: rgba(255, 255, 255, 0.65);
+/* Optional: soften remove/minus button */
+.summary-po .btn-pay-remove,
+.summary-po .btn-remove-payment{
+  background: #fff !important;
+  border: 1px solid #e9e1da !important;
+  color: #7a6f68 !important;
+  box-shadow: none !important;
 }
