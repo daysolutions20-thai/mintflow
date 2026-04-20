@@ -732,6 +732,10 @@ function renderCreateQR(el){
 
           <div class="row">
             <div class="field">
+              <label>${biLabel("Claim", "ชื่อบริษัทลูกค้า")}</label>
+              <input class="input" name="phone" />
+            </div>
+            <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <select class="input is-placeholder" name="requester" required>
                 <option value="">-- Select requester --</option>
@@ -746,10 +750,6 @@ function renderCreateQR(el){
                 <option value="Saowarak (Nok)">Saowarak (Nok)</option>
                 <option value="Sudarat (Mhork)">Sudarat (Mhork)</option>
               </select>
-            </div>
-            <div class="field">
-              <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" required />
             </div>
           </div>
 
@@ -922,17 +922,6 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-      <div class="row row-export-attach row-export-only">
-  <div class="field">
-    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-    <div class="exportByRow">
-      <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-    </div>
-  </div>
-</div>
-
 <div class="row row-export-attach row-attach-only">
   <div class="field">
     <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
@@ -1159,7 +1148,7 @@ const itemsEl = $("#items");
             <h3>Section 1</h3>
             ${line("Project", project)}
             ${line("Requester", requester)}
-            ${line("Phone", phone)}
+            ${line("Claim", phone)}
             ${line("FOR", forMode)}
             ${noteLine("Note", note)}
           </div>
@@ -1364,8 +1353,8 @@ const itemsEl = $("#items");
       const form = $("#frmCreate");
           const requester = form.requester.value.trim();
           const phone = form.phone.value.trim();
-          if(!requester || !phone){
-            toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
+          if(!requester){
+            toast("ต้องกรอก Requester ก่อนส่ง");
             return;
           }
 
@@ -1585,6 +1574,10 @@ function renderCreatePR(el){
 
 <div class="row">
             <div class="field">
+              <label>${biLabel("Claim", "ชื่อบริษัทลูกค้า")}</label>
+              <input class="input" name="phone" placeholder="Customer company name" />
+            </div>
+            <div class="field">
               <label>${biLabel("Requester", "ชื่อผู้ขอ (จำเป็น)")}</label>
               <select class="input is-placeholder" name="requester" required>
                 <option value="">-- Select requester --</option>
@@ -1599,10 +1592,6 @@ function renderCreatePR(el){
                 <option value="Saowarak (Nok)">Saowarak (Nok)</option>
                 <option value="Sudarat (Mhork)">Sudarat (Mhork)</option>
               </select>
-            </div>
-            <div class="field">
-              <label>${biLabel("Phone", "เบอร์โทร (จำเป็น)")}</label>
-              <input class="input" name="phone" required />
             </div>
           </div>
 
@@ -1890,18 +1879,7 @@ const itemsEl = $("#items");
         <label>${biLabel("Detail", "รายละเอียด/สเปก")}</label>
         <textarea class="input" name="detail" rows="2" placeholder="Spec/Detail e.g. Original/OEM, size, length..." style="min-height:56px; resize:vertical;"></textarea>
       </div>
-      <div class="row row-export-attach row-export-only">
-  <div class="field">
-    <label>${biLabel("Export By :", "การส่งออกทาง")}</label>
-    <div class="exportByRow">
-      <label class="chkLine" ><input type="checkbox" name="exportSea" /> <span>By Sea</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportLand" /> <span>By Land</span></label>
-      <label class="chkLine" ><input type="checkbox" name="exportAir" /> <span>By Air</span></label>
-    </div>
-  </div>
-</div>
-
-<div class="row row-export-attach row-attach-only">
+      <div class="row row-export-attach row-attach-only">
   <div class="field">
     <label>${biLabel("Attach photos", "แนบรูปต่อรายการ")}</label>
     <input class="input" name="photos" type="file" accept="image/*" multiple />
@@ -2127,7 +2105,7 @@ const itemsEl = $("#items");
             <h3>Section 1</h3>
             ${line("Project", project)}
             ${line("Requester", requester)}
-            ${line("Phone", phone)}
+            ${line("Claim", phone)}
             ${line("FOR", forMode)}
             ${noteLine("Note", note)}
           </div>
@@ -2332,8 +2310,8 @@ const itemsEl = $("#items");
       const form = $("#frmCreate");
           const requester = form.requester.value.trim();
           const phone = form.phone.value.trim();
-          if(!requester || !phone){
-            toast("ต้องกรอกชื่อ + เบอร์ ก่อนส่ง");
+          if(!requester){
+            toast("ต้องกรอก Requester ก่อนส่ง");
             return;
           }
 
