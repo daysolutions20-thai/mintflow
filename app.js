@@ -717,6 +717,15 @@ function renderCreateQR(el){
                 <option>Very Urgent</option>
               </select>
             </div>
+            <div class="field">
+              <label>${biLabel("Export By", "การส่งออกทาง")}</label>
+              <select class="input" name="exportBy">
+                <option value="">-- Select export method --</option>
+                <option value="By Sea">By Sea</option>
+                <option value="By Land">By Land</option>
+                <option value="By Air">By Air</option>
+              </select>
+            </div>
           </div>
 
           <div class="row">
@@ -1201,6 +1210,7 @@ const itemsEl = $("#items");
 
     const requester = getTrim("requester");
     const phone = getTrim("phone");
+    const exportBy = getTrim("exportBy");
 
     const itemsBlocks = itemsEl ? Array.from(itemsEl.children) : [];
     const items = itemsBlocks.map((blk, idx)=>{
@@ -1250,7 +1260,7 @@ const itemsEl = $("#items");
       urgency: getFormVal("urgency"),
       project: getTrim("project"),
       subject: getTrim("subject"),
-      requester, phone,
+      requester, phone, exportBy,
       forBy,
       note: getTrim("note"),
       items
@@ -1353,6 +1363,7 @@ const itemsEl = $("#items");
       const form = $("#frmCreate");
           const requester = form.requester.value.trim();
           const phone = form.phone.value.trim();
+          const exportBy = form.exportBy.value.trim();
           if(!requester){
             toast("ต้องกรอก Requester ก่อนส่ง");
             return;
@@ -1414,6 +1425,7 @@ const itemsEl = $("#items");
             project: form.project.value.trim(),
             requester,
             phone,
+            exportBy,
             forStock: !!form.forStock?.checked,
             forRepair: !!form.forRepair?.checked,
             forRepairTxt: (form.forRepairTxt?.value || "").trim(),
@@ -1429,6 +1441,10 @@ const itemsEl = $("#items");
             files: { quotation: [], po: [], shipping: [] },
             activity: [{ at: nowISO(), actor: `${requester} (${phone})`, action:"SUBMIT", detail:"" }]
     };
+
+    if(!reqObj.exportBy){
+      reqObj.exportBy = "";
+    }
   }
 
     db.qr.unshift(reqObj);
@@ -1439,6 +1455,7 @@ const itemsEl = $("#items");
       <div class="hr"></div>
       <div><b>Project:</b> ${escapeHtml(reqObj.project||"-")}</div>
       <div><b>Requester:</b> ${escapeHtml(reqObj.requester)} (${escapeHtml(reqObj.phone)})</div>
+      <div><b>Export By:</b> ${escapeHtml(reqObj.exportBy || "-")}</div>
       <div><b>Items:</b> ${reqObj.items.length}</div>
       <div class="hr"></div>
       <button class="btn btn-primary" id="btnGoDetail">เปิดเคสนี้</button>
